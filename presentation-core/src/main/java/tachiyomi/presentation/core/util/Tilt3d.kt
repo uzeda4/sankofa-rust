@@ -18,9 +18,10 @@ private val TiltOut = spring<Float>(dampingRatio = 0.7f, stiffness = Spring.Stif
 
 /**
  * Tilts the element in 3D toward the finger while it is pressed, then springs back.
- * Observes pointers in the Initial pass without consuming them, so clicks, long presses and scrolling
- * on the same element keep working. Does nothing when [tilt][tachiyomi.presentation.core.theme.MotionPolicy.tilt]
- * is off.
+ * Observes pointers in the Final pass without consuming them, so clicks, long presses and scrolling
+ * on the same element keep working. A pointer that was consumed by someone else (a scroll, a click) resets
+ * the tilt, so a list item does not wobble while the list is scrolled under the finger.
+ * Does nothing when [tilt][tachiyomi.presentation.core.theme.MotionPolicy.tilt] is off.
  *
  * @param maxDegrees rotation at the edge of the element. 11 for grids, 15 for the hero cover.
  * @param pressedScale scale while pressed.
@@ -37,11 +38,11 @@ fun Modifier.tilt3d(maxDegrees: Float = 11f, pressedScale: Float = 1.05f): Modif
         .pointerInput(maxDegrees, pressedScale) {
             awaitPointerEventScope {
                 while (true) {
-                    val event = awaitPointerEvent(PointerEventPass.Initial)
+                    val event = awaitPointerEvent(PointerEventPass.Final)
                     val change = event.changes.firstOrNull()
                     val w = size.width.toFloat()
                     val h = size.height.toFloat()
-                    if (change != null && change.pressed && w > 0f && h > 0f) {
+                    if (change != null && change.pressed && !change.isConsumed && w > 0f && h > 0f) {
                         val fx = (change.position.x / w).coerceIn(0f, 1f) - 0.5f
                         val fy = (change.position.y / h).coerceIn(0f, 1f) - 0.5f
                         scope.launch { rotationX.animateTo(-fy * 2f * maxDegrees, TiltIn) }

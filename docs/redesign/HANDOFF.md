@@ -224,6 +224,11 @@ Fase 0, já aplicada em `chore/fork-identity` (sem commit):
 - Remote `origin` renomeado para `upstream`.
 - Ainda pendente: ícone, assinatura própria (keystore), `README`/`LICENSE` de atribuição, CI do fork, `google-services` se usar telemetria, e o nome definitivo da marca.
 
+Estado das fases seguintes (branches empilhadas `chore/fork-identity` → `feat/cover-theme-tokens` → `feat/base-components`):
+- **Fase 1 feita**: `CoverPalette`, `MotionPolicy`, `Modifier.tilt3d`, ligação em `TachiyomiTheme`, testes em `presentation-core`.
+- **Fase 2 em andamento**: feitos `CoverChip`, `CoverBadge`, `SectionLabel`, `CoverProgress`, `GlassSurface` (`presentation-core/.../components/CoverComponents.kt`) e o tilt na grade da biblioteca e do browse (`CommonMangaItem.kt`). Faltam: `CoverCard` completo (parallax em camadas, brilho), `GlassDock`, `SettingRow`, `Skeleton`, `Banner`, `UndoToast`, `CoverFlow`, fontes do redesign (Bricolage Grotesque, DM Sans) e blur real do fundo (Haze).
+- Nenhum desses itens foi rodado em aparelho ainda; a verificação até aqui é compilação, formatação e testes unitários.
+
 Regras do fork:
 - Hard fork da UI. Só trazer do upstream correções de `domain`, `data`, `source-api` e segurança, por cherry-pick.
 - Manter o contrato de `source-api` e o formato de repositório de extensões.

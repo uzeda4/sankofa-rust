@@ -49,6 +49,7 @@ import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.BadgeGroup
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.util.selectedBackground
+import tachiyomi.presentation.core.util.tilt3d
 import tachiyomi.domain.manga.model.MangaCover as MangaCoverModel
 
 object CommonMangaItemDefaults {
@@ -69,6 +70,12 @@ private val ContinueReadingButtonGridPadding = 6.dp
 private val ContinueReadingButtonListSpacing = 8.dp
 
 internal const val GRID_SELECTED_COVER_ALPHA = 0.76f
+
+// KMK -->
+// Small on purpose: GridItemSelectable clips its content, so a bigger scale would cut the cover edges.
+private const val GRID_TILT_DEGREES = 8f
+private const val GRID_TILT_SCALE = 1.02f
+// KMK <--
 
 /**
  * Layout of grid list item with title overlaying the cover.
@@ -340,7 +347,10 @@ private fun MangaGridCover(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .aspectRatio(ratio),
+            .aspectRatio(ratio)
+            // KMK -->
+            .tilt3d(maxDegrees = GRID_TILT_DEGREES, pressedScale = GRID_TILT_SCALE),
+        // KMK <--
     ) {
         cover()
         content?.invoke(this)
