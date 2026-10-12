@@ -15,11 +15,16 @@ class UiPreferences(
     private val preferenceStore: PreferenceStore,
 ) {
 
-    fun themeMode() = preferenceStore.getEnum("pref_theme_mode_key", ThemeMode.SYSTEM)
+    // KMK -->
+    // The redesign is dark-first; users can still pick light or follow the system.
+    fun themeMode() = preferenceStore.getEnum("pref_theme_mode_key", ThemeMode.DARK)
+    // KMK <--
 
     fun appTheme() = preferenceStore.getEnum(
         "pref_app_theme",
-        AppTheme.MONET,
+        // KMK -->
+        AppTheme.REDESIGN,
+        // KMK <--
     )
 
     fun themeDarkAmoled() = preferenceStore.getBoolean("pref_theme_dark_amoled_key", false)

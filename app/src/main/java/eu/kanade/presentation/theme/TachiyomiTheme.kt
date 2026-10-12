@@ -28,6 +28,7 @@ import eu.kanade.presentation.theme.colorscheme.MochaColorScheme
 import eu.kanade.presentation.theme.colorscheme.MonetColorScheme
 import eu.kanade.presentation.theme.colorscheme.MonochromeColorScheme
 import eu.kanade.presentation.theme.colorscheme.NordColorScheme
+import eu.kanade.presentation.theme.colorscheme.RedesignColorScheme
 import eu.kanade.presentation.theme.colorscheme.SapphireColorScheme
 import eu.kanade.presentation.theme.colorscheme.StrawberryColorScheme
 import eu.kanade.presentation.theme.colorscheme.TachiyomiColorScheme
@@ -37,8 +38,10 @@ import eu.kanade.presentation.theme.colorscheme.TidalWaveColorScheme
 import eu.kanade.presentation.theme.colorscheme.YinYangColorScheme
 import eu.kanade.presentation.theme.colorscheme.YotsubaColorScheme
 import tachiyomi.presentation.core.theme.CoverPalette
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 import tachiyomi.presentation.core.theme.LocalCoverPalette
 import tachiyomi.presentation.core.theme.LocalMotionPolicy
+import tachiyomi.presentation.core.theme.RedesignShapes
 import tachiyomi.presentation.core.theme.rememberMotionPolicy
 import tachiyomi.presentation.core.theme.withRedesignFonts
 import uy.kohesive.injekt.Injekt
@@ -76,15 +79,18 @@ fun TachiyomiTheme(
         // Redesign: expose the four cover tokens next to the Material scheme.
         val coverPalette = remember(seedColor) { CoverPalette.fromSeed(seedColor) }
         val redesignTypography = remember(typography) { typography.withRedesignFonts() }
+        val isRedesign = (appTheme ?: uiPreferences.appTheme().get()) == AppTheme.REDESIGN
         CompositionLocalProvider(
             LocalCoverPalette provides coverPalette,
             LocalMotionPolicy provides rememberMotionPolicy(),
+            LocalCoverAtmosphere provides isRedesign,
         ) {
             DynamicMaterialExpressiveTheme(
                 seedColor = seedColor,
                 isAmoled = isAmoled,
                 style = uiPreferences.themeCoverBasedStyle().get(),
                 typography = redesignTypography,
+                shapes = if (isRedesign) RedesignShapes else MaterialTheme.shapes,
                 animate = true,
                 content = content,
             )
@@ -120,15 +126,18 @@ private fun BaseTachiyomiTheme(
     // Without a cover in focus the palette follows whatever the chosen scheme calls "primary".
     val coverPalette = remember(colorScheme.primary) { CoverPalette.fromSeed(colorScheme.primary) }
     val typography = remember { Typography().withRedesignFonts() }
+    val isRedesign = appTheme == AppTheme.REDESIGN
     CompositionLocalProvider(
         LocalCoverPalette provides coverPalette,
         LocalMotionPolicy provides rememberMotionPolicy(),
+        LocalCoverAtmosphere provides isRedesign,
     ) {
         // KMK <--
         MaterialExpressiveTheme(
             colorScheme = colorScheme,
             // KMK -->
             typography = typography,
+            shapes = if (isRedesign) RedesignShapes else MaterialTheme.shapes,
             // KMK <--
             content = content,
         )
@@ -168,6 +177,9 @@ private fun getThemeColorScheme(
 }
 
 private val colorSchemes: Map<AppTheme, BaseColorScheme> = mapOf(
+    // KMK -->
+    AppTheme.REDESIGN to RedesignColorScheme,
+    // KMK <--
     AppTheme.DEFAULT to TachiyomiColorScheme,
     AppTheme.CATPPUCCIN to CatppuccinColorScheme,
     AppTheme.GREEN_APPLE to GreenAppleColorScheme,

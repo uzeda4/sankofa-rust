@@ -5,6 +5,10 @@ import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
 
 enum class AppTheme(val titleRes: StringResource?) {
+    // KMK -->
+    REDESIGN(KMR.strings.theme_redesign),
+
+    // KMK <--
     DEFAULT(MR.strings.label_default),
     MONET(MR.strings.theme_monet),
 

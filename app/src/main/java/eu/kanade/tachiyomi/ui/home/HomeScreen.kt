@@ -70,6 +70,7 @@ import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.pluralStringResource
 import tachiyomi.presentation.core.theme.LocalCoverPalette
 import tachiyomi.presentation.core.theme.LocalMotionPolicy
+import tachiyomi.presentation.core.theme.coverAtmosphere
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -153,7 +154,10 @@ object HomeScreen : Screen() {
                     Box(
                         modifier = Modifier
                             .padding(contentPadding)
-                            .consumeWindowInsets(contentPadding),
+                            .consumeWindowInsets(contentPadding)
+                            // KMK -->
+                            .coverAtmosphere(),
+                        // KMK <--
                     ) {
                         AnimatedContent(
                             targetState = tabNavigator.current,
