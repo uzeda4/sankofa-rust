@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -35,6 +36,10 @@ import eu.kanade.presentation.theme.colorscheme.TealTurqoiseColorScheme
 import eu.kanade.presentation.theme.colorscheme.TidalWaveColorScheme
 import eu.kanade.presentation.theme.colorscheme.YinYangColorScheme
 import eu.kanade.presentation.theme.colorscheme.YotsubaColorScheme
+import tachiyomi.presentation.core.theme.CoverPalette
+import tachiyomi.presentation.core.theme.LocalCoverPalette
+import tachiyomi.presentation.core.theme.LocalMotionPolicy
+import tachiyomi.presentation.core.theme.rememberMotionPolicy
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -67,14 +72,21 @@ fun TachiyomiTheme(
     } else {
         val uiPreferences = Injekt.get<UiPreferences>()
         val isAmoled = amoled ?: uiPreferences.themeDarkAmoled().get()
-        DynamicMaterialExpressiveTheme(
-            seedColor = seedColor,
-            isAmoled = isAmoled,
-            style = uiPreferences.themeCoverBasedStyle().get(),
-            typography = typography,
-            animate = true,
-            content = content,
-        )
+        // Redesign: expose the four cover tokens next to the Material scheme.
+        val coverPalette = remember(seedColor) { CoverPalette.fromSeed(seedColor) }
+        CompositionLocalProvider(
+            LocalCoverPalette provides coverPalette,
+            LocalMotionPolicy provides rememberMotionPolicy(),
+        ) {
+            DynamicMaterialExpressiveTheme(
+                seedColor = seedColor,
+                isAmoled = isAmoled,
+                style = uiPreferences.themeCoverBasedStyle().get(),
+                typography = typography,
+                animate = true,
+                content = content,
+            )
+        }
     }
 }
 // KMK <--
@@ -94,17 +106,23 @@ private fun BaseTachiyomiTheme(
 ) {
     val context = LocalContext.current
     val isDark = isSystemInDarkTheme()
-    MaterialExpressiveTheme(
-        colorScheme = remember(appTheme, isDark, isAmoled) {
-            getThemeColorScheme(
-                context = context,
-                appTheme = appTheme,
-                isDark = isDark,
-                isAmoled = isAmoled,
-            )
-        },
-        content = content,
-    )
+    // KMK -->
+    CompositionLocalProvider(LocalMotionPolicy provides rememberMotionPolicy()) {
+        // KMK <--
+        MaterialExpressiveTheme(
+            colorScheme = remember(appTheme, isDark, isAmoled) {
+                getThemeColorScheme(
+                    context = context,
+                    appTheme = appTheme,
+                    isDark = isDark,
+                    isAmoled = isAmoled,
+                )
+            },
+            content = content,
+        )
+        // KMK -->
+    }
+    // KMK <--
 }
 
 private fun getThemeColorScheme(

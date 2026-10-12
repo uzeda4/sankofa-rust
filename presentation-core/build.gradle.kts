@@ -48,4 +48,9 @@ dependencies {
     implementation(androidx.paging.runtime)
     implementation(androidx.paging.compose)
     implementation(kotlinx.immutables)
+
+    // KMK -->
+    testImplementation(libs.bundles.test)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    // KMK <--
 }

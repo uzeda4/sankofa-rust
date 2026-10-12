@@ -139,10 +139,12 @@ fun Modifier.tilt3d(state: TiltState, enabled: Boolean) = if (!enabled) this els
 | Remoção de item | tocar remover | translateX 60 dp, escala 0,96, opacidade 0 | 350 ms | emphasized |
 
 ### 4.2 Fallback obrigatório
-Desligar tilt, parallax, shader e blur pesado quando qualquer condição for verdadeira:
-- API < 33 (shaders AGSL) ou `ActivityManager.isLowRamDevice`
+Implementado em `presentation-core/.../theme/MotionPolicy.kt` (`LocalMotionPolicy`, `rememberMotionPolicy`). Tudo desligado (tilt, parallax, vidro) quando qualquer condição for verdadeira:
+- `ActivityManager.isLowRamDevice`
 - economia de bateria ativa (`PowerManager.isPowerSaveMode`)
 - escala de animação do sistema = 0 (`ANIMATOR_DURATION_SCALE`) ou preferência "Reduzir movimento" do app
+
+Em aparelhos normais, tilt e parallax ficam ligados em qualquer API; só o vidro (blur com `RenderEffect`) exige API 31+. Shaders AGSL, quando entrarem, exigem API 33+ e devem ter um campo próprio na política.
 
 Versão simples: troca de cor por fade de 150 ms, capa sem inclinação, vidro vira cor sólida `surface-glass @ 92%`.
 
