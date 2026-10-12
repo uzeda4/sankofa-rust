@@ -226,8 +226,9 @@ Fase 0, já aplicada em `chore/fork-identity` (sem commit):
 
 Estado das fases seguintes (branches empilhadas `chore/fork-identity` → `feat/cover-theme-tokens` → `feat/base-components`):
 - **Fase 1 feita**: `CoverPalette`, `MotionPolicy`, `Modifier.tilt3d`, ligação em `TachiyomiTheme`, testes em `presentation-core`.
-- **Fase 2 em andamento**: feitos `CoverChip`, `CoverBadge`, `SectionLabel`, `CoverProgress`, `GlassSurface` (`presentation-core/.../components/CoverComponents.kt`) e o tilt na grade da biblioteca e do browse (`CommonMangaItem.kt`). Faltam: `CoverCard` completo (parallax em camadas, brilho), `GlassDock`, `SettingRow`, `Skeleton`, `Banner`, `UndoToast`, `CoverFlow`, fontes do redesign (Bricolage Grotesque, DM Sans) e blur real do fundo (Haze).
-- Nenhum desses itens foi rodado em aparelho ainda; a verificação até aqui é compilação, formatação e testes unitários.
+- **Fase 2 em andamento**: feitos `CoverChip`, `CoverBadge`, `SectionLabel`, `CoverProgress`, `GlassSurface` (com blur via Haze quando há `LocalGlassBackdrop` e a política permite), `Modifier.shimmer()` (`presentation-core/.../components/CoverComponents.kt`), fontes Bricolage Grotesque e DM Sans aplicadas ao app todo (`RedesignTypography.kt`), tilt na grade da biblioteca e do browse (`CommonMangaItem.kt`) e item ativo do dock com accent e elevação (`HomeScreen.kt`). Faltam: `CoverCard` completo (parallax em camadas, brilho), dock flutuante (exige repensar os insets de cada aba), `SettingRow`, `Banner`, `UndoToast`, `CoverFlow`, e ligar `GlassSurface` com um `HazeState` real nas barras do reader.
+- Verificado em aparelho (aparelho Android 16): o app de debug instala e abre, as fontes novas aparecem na tela de boas-vindas. Tilt e dock ainda precisam ser conferidos depois do onboarding.
+- Aviso do Android 16 em builds de debug: libs nativas herdadas do upstream (`libsqliteJni`, `libimagedecoder`, `libarchive-jni`, `libquickjs`...) não estão alinhadas a 16 KB. Não é da nossa mudança; resolver antes de publicar na Play Store.
 
 Regras do fork:
 - Hard fork da UI. Só trazer do upstream correções de `domain`, `data`, `source-api` e segurança, por cherry-pick.
