@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Reader</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:rgba(255,255,255,.2)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;background:#F2A65A;border:3px solid #0F0E11;box-shadow:0 0 0 2px #F2A65A}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0A0A0C;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <!-- manga page: tap to toggle chrome -->
+  <button onClick="{{toggleChrome}}" aria-label="Mostrar ou esconder controles" style="position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;background:#0A0A0C;display:flex;align-items:center;justify-content:center">
+    <div style="width:350px;height:560px;background:#F1ECE2;border-radius:6px;padding:12px;box-sizing:border-box;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:10px;box-shadow:0 40px 60px -30px rgba(0,0,0,.9);transform:{{pageTf}};transition:transform 420ms cubic-bezier(.2,.8,.2,1)">
+      <sc-for list="{{panels}}" as="p" hint-placeholder-count="5">
+        <div style="position:relative;grid-column:{{p.col}};grid-row:{{p.row}};border:3px solid #141414;background:{{p.bg}};overflow:hidden;text-align:left">
+          <sc-if value="{{p.line}}" hint-placeholder-val="{{ false }}">
+            <span style="position:absolute;left:10px;top:10px;max-width:70%;padding:6px 9px;border-radius:14px;background:#F1ECE2;border:2px solid #141414;color:#141414;font-size:12px;font-weight:700;line-height:1.2">{{p.line}}</span>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </button>
+
+  <!-- top glass bar -->
+  <div style="position:absolute;left:12px;right:12px;top:12px;height:64px;border-radius:22px;padding:0 8px;display:flex;align-items:center;gap:8px;background:rgba(24,22,28,.66);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(24px) saturate(1.5);opacity:{{chromeOp}};transform:{{topTf}};transition:all 350ms cubic-bezier(.2,.8,.2,1);pointer-events:{{chromePE}}">
+    <a href="Detalhes.dc.html" aria-label="Voltar" style="width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#F4F0EA">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </a>
+    <div style="display:flex;flex-direction:column;min-width:0;flex:1">
+      <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Maré de Cinzas</span>
+      <span style="font-size:12.5px;color:rgba(244,240,234,.72)">Cap. 87 · A maré sobe</span>
+    </div>
+    <a href="ReaderConfig.dc.html" aria-label="Configurações do reader" style="width:44px;height:44px;border-radius:14px;color:#F4F0EA;display:grid;place-items:center">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M16 7a2 2 0 1 0 0 .01M8 17a2 2 0 1 0 0 .01"/></svg>
+    </a>
+  </div>
+
+  <!-- bottom glass bar -->
+  <div style="position:absolute;left:12px;right:12px;bottom:16px;border-radius:26px;padding:10px 14px 12px;display:flex;flex-direction:column;gap:2px;background:rgba(24,22,28,.66);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(24px) saturate(1.5);opacity:{{chromeOp}};transform:{{botTf}};transition:all 350ms cubic-bezier(.2,.8,.2,1);pointer-events:{{chromePE}}">
+    <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700">
+      <span>Página {{page}}</span>
+      <span style="color:rgba(244,240,234,.72)">de 31</span>
+    </div>
+    <label for="pg" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Página atual</label>
+    <input id="pg" type="range" min="1" max="31" value="{{page}}" onChange="{{setPage}}">
+    <div style="display:flex;gap:8px">
+      <sc-for list="{{modes}}" as="m" hint-placeholder-count="3">
+        <button onClick="{{m.pick}}" style="flex:1;height:44px;border-radius:14px;border:0;background:{{m.bg}};color:{{m.fg}};font-weight:700;font-size:13px;transition:all 300ms ease">{{m.label}}</button>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- chapter transition card -->
+  <sc-if value="{{atEnd}}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:24px;right:24px;top:210px;perspective:900px">
+      <div style="border-radius:28px;padding:22px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(150deg,rgba(242,166,90,.3),rgba(27,58,75,.9));border:1px solid rgba(242,166,90,.5);backdrop-filter:blur(26px);transform:rotateY(-10deg) rotateX(4deg);box-shadow:0 36px 50px -24px rgba(242,166,90,.6)">
+        <span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#F2A65A;font-weight:700">Fim do capítulo 87</span>
+        <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:28px;line-height:1.05">Capítulo 88<br>Maré alta</span>
+        <span style="font-size:14px;color:rgba(244,240,234,.8)">Baixado · 28 páginas</span>
+        <button onClick="{{restart}}" style="height:48px;border-radius:16px;border:0;background:#F2A65A;color:#0F0E11;font-weight:800;font-size:15px">Ler próximo capítulo</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const chrome = S.chrome ?? true;
+    const page = S.page ?? 12;
+    const mode = S.mode ?? 0;
+    const speed = 'repeating-linear-gradient(100deg,#CFC8B8 0 2px,#F1ECE2 2px 11px)';
+    const tone = 'radial-gradient(circle,#2a2a2a 1.4px,transparent 1.9px) 0 0/7px 7px,#E6DFD0';
+    const ink = 'radial-gradient(circle at 32% 62%,#F1ECE2 0 15%,transparent 16%),#151515';
+    const horizon = 'linear-gradient(180deg,#F1ECE2 0 54%,#1c1c1c 54%)';
+    const moon = 'radial-gradient(circle at 70% 38%,#151515 0 20%,transparent 21%),' + speed;
+    const layouts = [
+      [
+        { col: '1 / 5', row: '1', bg: moon, line: 'A maré está subindo...' },
+        { col: '5 / 7', row: '1', bg: ink, line: '' },
+        { col: '1 / 7', row: '2', bg: horizon, line: '' },
+        { col: '1 / 3', row: '3', bg: tone, line: '' },
+        { col: '3 / 7', row: '3', bg: speed, line: 'Rei! Volte já!' }
+      ],
+      [
+        { col: '1 / 7', row: '1', bg: speed, line: 'Ninguém lembra desse barco.' },
+        { col: '1 / 3', row: '2', bg: tone, line: '' },
+        { col: '3 / 5', row: '2', bg: ink, line: '' },
+        { col: '5 / 7', row: '2', bg: moon, line: '' },
+        { col: '1 / 7', row: '3', bg: horizon, line: '' }
+      ]
+    ];
+    const panels = layouts[page % 2];
+    const modes = ['Paginado', 'Webtoon', 'Duplo'].map((label, i) => ({
+      label,
+      pick: () => this.setState({ mode: i }),
+      bg: mode === i ? '#F2A65A' : 'rgba(255,255,255,.1)',
+      fg: mode === i ? '#0F0E11' : '#F4F0EA'
+    }));
+    return {
+      panels, modes, page,
+      atEnd: page >= 31,
+      chromeOp: chrome ? 1 : 0,
+      chromePE: chrome ? 'auto' : 'none',
+      topTf: chrome ? 'translateY(0)' : 'translateY(-24px)',
+      botTf: chrome ? 'translateY(0)' : 'translateY(32px)',
+      pageTf: page % 2 ? 'rotateY(0deg)' : 'rotateY(0deg)',
+      toggleChrome: () => this.setState({ chrome: !chrome }),
+      setPage: (e) => this.setState({ page: parseInt(e.target.value, 10) || 1 }),
+      restart: () => this.setState({ page: 1 })
+    };
+  }
+}
+</script>
+</body>
+</html>

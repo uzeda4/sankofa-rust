@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Detalhes da fonte</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+.scroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <div style="position:absolute;inset:0;background:radial-gradient(120% 50% at 50% -8%,rgba(242,166,90,.34),transparent 62%),radial-gradient(90% 45% at 100% 55%,rgba(27,58,75,.85),transparent 70%),#0F0E11"></div>
+
+  <div class="scroll" style="position:absolute;inset:0;overflow-y:auto;padding:20px 16px 40px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+
+    <a href="Fontes.dc.html" aria-label="Voltar para fontes" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);backdrop-filter:blur(14px);color:#F4F0EA;display:grid;place-items:center">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </a>
+
+    <div style="display:flex;align-items:center;gap:16px">
+      <span style="width:72px;height:72px;border-radius:24px;display:grid;place-items:center;background:rgba(242,166,90,.18);color:#F2A65A;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:34px;box-shadow:0 20px 30px -16px rgba(242,166,90,.7)">A</span>
+      <span style="display:flex;flex-direction:column;gap:2px">
+        <h1 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:30px;line-height:1.05">Aurora Scans</h1>
+        <span style="font-size:14px;color:rgba(244,240,234,.74)">v1.4.12 · PT-BR · extensão oficial</span>
+      </span>
+    </div>
+
+    <!-- account -->
+    <div style="border-radius:24px;padding:16px;display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border:1px solid {{accLine}}">
+      <span style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+        <span style="font-weight:700;font-size:16px">Conta</span>
+        <span style="font-size:13.5px;color:{{accColor}}">{{accNote}}</span>
+      </span>
+      <button onClick="{{toggleLogin}}" style="height:44px;min-width:96px;padding:0 16px;border-radius:14px;border:1px solid {{accBorder}};background:{{accBg}};color:{{accFg}};font-weight:800;font-size:14px">{{accBtn}}</button>
+    </div>
+
+    <!-- quality -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">Qualidade da imagem</span>
+      <div style="display:flex;padding:4px;gap:4px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)">
+        <sc-for list="{{quality}}" as="q" hint-placeholder-count="3">
+          <button onClick="{{q.pick}}" style="flex:1;height:44px;border-radius:14px;border:0;background:{{q.bg}};color:{{q.fg}};font-weight:700;font-size:14px;transition:all 300ms ease">{{q.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- switches -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{switches}}" as="t" hint-placeholder-count="3">
+        <button onClick="{{t.toggle}}" role="switch" aria-checked="{{t.on}}" style="min-height:64px;padding:8px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#F4F0EA;display:flex;align-items:center;gap:12px;text-align:left">
+          <span style="display:flex;flex-direction:column;gap:1px;flex:1">
+            <span style="font-weight:700;font-size:15.5px">{{t.label}}</span>
+            <span style="font-size:13px;color:rgba(244,240,234,.72)">{{t.hint}}</span>
+          </span>
+          <span style="width:52px;height:30px;border-radius:15px;background:{{t.bg}};position:relative;transition:background 250ms ease"><span style="position:absolute;top:3px;left:{{t.left}}px;width:24px;height:24px;border-radius:50%;background:{{t.knob}};transition:left 250ms cubic-bezier(.2,.8,.2,1)"></span></span>
+        </button>
+      </sc-for>
+    </div>
+
+    <!-- actions -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button style="min-height:56px;border-radius:18px;border:1px solid rgba(255,255,255,.18);background:transparent;color:#F4F0EA;font-weight:700;font-size:15.5px;text-align:left;padding:0 16px">Limpar cookies desta fonte</button>
+      <button style="min-height:56px;border-radius:18px;border:1px solid rgba(255,90,78,.5);background:rgba(255,90,78,.1);color:#FF8A80;font-weight:700;font-size:15.5px;text-align:left;padding:0 16px">Desinstalar extensão</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const login = !!S.login;
+    const q = S.q ?? 1;
+    const flags = S.flags || { 0: false, 1: true, 2: true };
+    const quality = ['Original', 'Alta', 'Econômica'].map((label, i) => ({
+      label, pick: () => this.setState({ q: i }),
+      bg: q === i ? '#F2A65A' : 'transparent', fg: q === i ? '#0F0E11' : '#F4F0EA'
+    }));
+    const defs = [
+      { label: 'Mostrar conteúdo adulto', hint: 'Desligado por padrão' },
+      { label: 'Servidor de imagens rápido', hint: 'Usa o espelho mais próximo' },
+      { label: 'Avisar de novos capítulos', hint: 'Entra na atualização da biblioteca' }
+    ];
+    const switches = defs.map((t, i) => ({
+      label: t.label, hint: t.hint, on: !!flags[i],
+      bg: flags[i] ? '#F2A65A' : 'rgba(255,255,255,.18)',
+      left: flags[i] ? 25 : 3,
+      knob: flags[i] ? '#0F0E11' : '#F4F0EA',
+      toggle: () => { const f = Object.assign({}, flags); f[i] = !f[i]; this.setState({ flags: f }); }
+    }));
+    return {
+      quality, switches,
+      accNote: login ? 'Conectado como leitor42' : 'Sem login. Alguns títulos ficam ocultos.',
+      accColor: login ? '#7CF0C9' : 'rgba(244,240,234,.72)',
+      accLine: login ? 'rgba(124,240,201,.5)' : 'rgba(255,255,255,.1)',
+      accBtn: login ? 'Sair' : 'Entrar',
+      accBg: login ? 'transparent' : '#F2A65A',
+      accFg: login ? '#F4F0EA' : '#0F0E11',
+      accBorder: login ? 'rgba(255,255,255,.2)' : '#F2A65A',
+      toggleLogin: () => this.setState({ login: !login })
+    };
+  }
+}
+</script>
+</body>
+</html>

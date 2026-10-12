@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Tela de erro</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+.scroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <div style="position:absolute;inset:0;background:radial-gradient(110% 50% at 50% -6%,rgba(255,90,78,.34),transparent 62%),radial-gradient(90% 45% at 0% 70%,rgba(58,20,20,.85),transparent 70%),#0F0E11"></div>
+
+  <div style="position:absolute;inset:0;padding:60px 20px 28px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:flex-start">
+      <span style="width:64px;height:64px;border-radius:22px;display:grid;place-items:center;background:rgba(255,90,78,.18);color:#FF8A80;transform:rotate(-6deg)">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v5m0 4h.01M10.3 4.3L3 17a2 2 0 0 0 1.7 3h14.6A2 2 0 0 0 21 17L13.7 4.3a2 2 0 0 0-3.4 0z"/></svg>
+      </span>
+      <h1 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:38px;line-height:1.02;letter-spacing:-.02em">Algo deu errado</h1>
+      <span style="font-size:16px;line-height:1.5;color:rgba(244,240,234,.82)">O app parou de repente. Sua estante e o progresso de leitura estão seguros. O relatório abaixo ajuda a corrigir o problema.</span>
+    </div>
+
+    <!-- report -->
+    <div style="flex:1;min-height:0;border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:8px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.12)">
+      <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">Relatório</span>
+      <div class="scroll" style="flex:1;overflow-y:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.6;color:rgba(244,240,234,.86);white-space:pre-wrap;word-break:break-word">IllegalStateException: página 12 sem imagem
+  at reader.PagerViewModel.loadPage
+  at reader.ReaderActivity.onPageSelected
+  at ui.compose.Pager.settle
+Versão do app: 0.1 (fork)
+Aparelho: API 34 · 6 GB de RAM
+Fonte: Aurora Scans 1.4.12</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <a href="Main.dc.html" style="height:56px;border-radius:20px;background:#F4F0EA;color:#0F0E11;font-weight:800;font-size:16px;text-decoration:none;display:flex;align-items:center;justify-content:center">Reiniciar o app</a>
+      <div style="display:flex;gap:10px">
+        <button onClick="{{copy}}" style="flex:1;height:52px;border-radius:18px;border:1px solid {{copyBorder}};background:{{copyBg}};color:{{copyFg}};font-weight:700;font-size:15px;transition:all 250ms ease">{{copyLabel}}</button>
+        <button style="flex:1;height:52px;border-radius:18px;border:1px solid rgba(255,255,255,.2);background:transparent;color:#F4F0EA;font-weight:700;font-size:15px">Compartilhar</button>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const copied = !!(this.state || {}).copied;
+    return {
+      copyLabel: copied ? 'Copiado' : 'Copiar relatório',
+      copyBg: copied ? 'rgba(124,240,201,.18)' : 'transparent',
+      copyFg: copied ? '#7CF0C9' : '#F4F0EA',
+      copyBorder: copied ? 'rgba(124,240,201,.6)' : 'rgba(255,255,255,.2)',
+      copy: () => this.setState({ copied: !copied })
+    };
+  }
+}
+</script>
+</body>
+</html>

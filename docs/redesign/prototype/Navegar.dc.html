@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Navegar na fonte</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Shippori+Mincho+B1:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+.scroll::-webkit-scrollbar{display:none}
+@keyframes kkshimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,rgba(255,255,255,.06) 0,rgba(255,255,255,.18) 50%,rgba(255,255,255,.06) 100%);background-size:200% 100%;animation:kkshimmer 1.5s linear infinite}
+@media (prefers-reduced-motion:reduce){.sk{animation:none}}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <div style="position:absolute;inset:0;background:radial-gradient(120% 50% at 80% -8%,rgba(242,166,90,.36),transparent 62%),radial-gradient(90% 45% at 0% 50%,rgba(27,58,75,.85),transparent 70%),#0F0E11"></div>
+
+  <div class="scroll" style="position:absolute;inset:0;overflow-y:auto;padding:20px 16px 130px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px">
+
+    <!-- header -->
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="Fontes.dc.html" aria-label="Voltar para fontes" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);backdrop-filter:blur(14px);color:#F4F0EA;display:grid;place-items:center;flex:none">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+      <div style="display:flex;flex-direction:column;flex:1;min-width:0">
+        <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72)">PT-BR</span>
+        <a href="FonteConfig.dc.html" aria-label="Ajustes de Aurora Scans" style="color:inherit;text-decoration:none"><h1 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:28px;line-height:1.05;letter-spacing:-.01em">Aurora Scans</h1></a>
+      </div>
+      <button onClick="{{toggleView}}" aria-label="{{viewLabel}}" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);backdrop-filter:blur(14px);color:#F4F0EA;display:grid;place-items:center;flex:none">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{viewIcon}}"/></svg>
+      </button>
+    </div>
+
+    <!-- search -->
+    <div style="display:flex;align-items:center;gap:10px;height:52px;padding:0 16px;border-radius:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(16px)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-4.3-4.3"/></svg>
+      <label for="q" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Buscar nesta fonte</label>
+      <input id="q" type="search" placeholder="Buscar nesta fonte" style="flex:1;min-width:0;height:44px;background:transparent;border:0;outline:0;color:#F4F0EA;font-family:inherit;font-size:15px">
+    </div>
+
+    <!-- tabs -->
+    <div style="display:flex;padding:4px;gap:4px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="2">
+        <button onClick="{{t.pick}}" style="flex:1;height:44px;border-radius:14px;border:0;background:{{t.bg}};color:{{t.fg}};font-weight:700;font-size:14px;transition:all 300ms ease">{{t.label}}</button>
+      </sc-for>
+    </div>
+
+    <!-- GRID -->
+    <sc-if value="{{isGrid}}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px">
+        <sc-for list="{{covers}}" as="c" hint-placeholder-count="6">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div onMouseMove="{{c.move}}" onMouseLeave="{{c.leave}}" style="perspective:700px">
+              <div style="position:relative;aspect-ratio:2/3;border-radius:18px;overflow:hidden;transform-style:preserve-3d;transform:{{c.tf}};transition:transform {{c.dur}} cubic-bezier(.2,.8,.2,1);background:linear-gradient(160deg,{{c.c1}},{{c.c2}});box-shadow:{{c.shadow}}">
+                <div style="position:absolute;left:{{c.sx}}%;top:{{c.sy}}%;width:62%;aspect-ratio:1;border-radius:50%;background:{{c.accent}};transform:{{c.sun}};transition:transform {{c.dur}} ease"></div>
+                <div style="position:absolute;inset:auto 0 0 0;height:48%;background:{{c.c1}};clip-path:{{c.clip}};transform:{{c.ridge}};transition:transform {{c.dur}} ease"></div>
+                <div style="position:absolute;right:10px;top:10px;font-family:'Shippori Mincho B1',serif;font-weight:700;font-size:26px;line-height:1;writing-mode:vertical-rl;text-shadow:0 2px 10px rgba(0,0,0,.45)">{{c.kanji}}</div>
+                <div style="position:absolute;inset:0;background:{{c.glare}};mix-blend-mode:soft-light;pointer-events:none"></div>
+                <sc-if value="{{c.inLib}}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;left:8px;bottom:8px;height:28px;padding:0 10px;border-radius:14px;display:flex;align-items:center;gap:6px;background:rgba(15,14,17,.78);border:1px solid {{c.accent}};color:{{c.accent}};font-size:12.5px;font-weight:800;backdrop-filter:blur(10px)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+                    Na estante
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+            <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:16px;line-height:1.15;padding:0 2px">{{c.title}}</span>
+          </div>
+        </sc-for>
+        <sc-for list="{{skeletons}}" as="s" hint-placeholder-count="2">
+          <div style="display:flex;flex-direction:column;gap:10px" aria-hidden="true">
+            <div class="sk" style="aspect-ratio:2/3;border-radius:18px"></div>
+            <div class="sk" style="height:16px;width:70%;border-radius:8px"></div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- LIST -->
+    <sc-if value="{{isList}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{covers}}" as="c" hint-placeholder-count="6">
+          <div style="display:flex;align-items:center;gap:14px;padding:10px;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)">
+            <div style="position:relative;width:56px;height:84px;flex:none;border-radius:12px;overflow:hidden;background:linear-gradient(160deg,{{c.c1}},{{c.c2}})">
+              <div style="position:absolute;left:{{c.sx}}%;top:{{c.sy}}%;width:62%;aspect-ratio:1;border-radius:50%;background:{{c.accent}}"></div>
+              <div style="position:absolute;inset:auto 0 0 0;height:48%;background:{{c.c1}};clip-path:{{c.clip}}"></div>
+            </div>
+            <span style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+              <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:17px;line-height:1.15">{{c.title}}</span>
+              <span style="font-size:13px;color:rgba(244,240,234,.72)">{{c.genre}} · {{c.chapters}} capítulos</span>
+            </span>
+            <sc-if value="{{c.inLib}}" hint-placeholder-val="{{ false }}">
+              <span style="width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:{{c.soft}};color:{{c.accent}}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-label="Na estante"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+              </span>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+      <div style="padding:28px 20px;border-radius:22px;border:1px dashed rgba(255,255,255,.22);text-align:center;display:flex;flex-direction:column;gap:6px">
+        <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:18px">Nada com esses filtros</span>
+        <span style="font-size:14px;color:rgba(244,240,234,.74)">Remova um gênero para ver mais títulos.</span>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- floating filter pill -->
+  <button onClick="{{openSheet}}" style="position:absolute;left:50%;margin-left:-72px;bottom:22px;width:144px;height:56px;border-radius:28px;border:1px solid rgba(255,255,255,.18);background:rgba(24,22,28,.7);backdrop-filter:blur(24px) saturate(1.5);color:#F4F0EA;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 20px 36px -12px rgba(0,0,0,.7)">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4"/></svg>
+    Filtros
+    <sc-if value="{{filterCount}}" hint-placeholder-val="{{ false }}">
+      <span style="min-width:24px;height:24px;padding:0 7px;box-sizing:border-box;border-radius:12px;display:grid;place-items:center;background:#F2A65A;color:#0F0E11;font-size:13px;font-weight:800">{{filterCount}}</span>
+    </sc-if>
+  </button>
+
+  <!-- filter sheet -->
+  <button onClick="{{closeSheet}}" aria-label="Fechar filtros" style="position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;background:rgba(5,5,7,.62);opacity:{{scrimOp}};pointer-events:{{scrimPE}};transition:opacity 350ms ease"></button>
+  <div role="dialog" aria-label="Filtros" style="position:absolute;left:0;right:0;bottom:0;border-radius:32px 32px 0 0;padding:12px 20px 28px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px;background:rgba(28,25,33,.88);backdrop-filter:blur(30px) saturate(1.5);border-top:1px solid rgba(255,255,255,.16);transform:{{sheetTf}};transition:transform 480ms cubic-bezier(.2,.8,.2,1);visibility:{{sheetVis}}">
+    <span style="width:44px;height:5px;border-radius:3px;background:rgba(255,255,255,.28);align-self:center"></span>
+    <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:24px">Filtros</span>
+    <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">Gênero</span>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <sc-for list="{{genres}}" as="g" hint-placeholder-count="5">
+        <button onClick="{{g.pick}}" aria-pressed="{{g.on}}" style="height:44px;padding:0 18px;border-radius:22px;border:1px solid {{g.border}};background:{{g.bg}};color:{{g.fg}};font-size:14px;font-weight:700;transition:all 250ms ease">{{g.label}}</button>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button onClick="{{clearFilters}}" style="flex:1;height:52px;border-radius:18px;border:1px solid rgba(255,255,255,.18);background:transparent;color:#F4F0EA;font-weight:700;font-size:15px">Limpar</button>
+      <button onClick="{{closeSheet}}" style="flex:2;height:52px;border-radius:18px;border:0;background:#F2A65A;color:#0F0E11;font-weight:800;font-size:15px">Mostrar {{resultCount}} títulos</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const tab = S.tab ?? 0;
+    const view = S.view || 'grid';
+    const sheet = !!S.sheet;
+    const gsel = S.gsel || {};
+    const tilt = S.tilt || null;
+    const rgba = (hex, a) => {
+      const n = parseInt(hex.slice(1), 16);
+      return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+    };
+    const data = [
+      { title: 'Maré de Cinzas', genre: 'Drama', chapters: 88, inLib: true, kanji: '灰', c1: '#1B3A4B', c2: '#0B1820', accent: '#F2A65A', sx: 18, sy: 12, clip: 'polygon(0 55%,18% 30%,36% 52%,58% 18%,80% 46%,100% 28%,100% 100%,0 100%)' },
+      { title: 'Estação Kitsune 9', genre: 'Mistério', chapters: 42, inLib: false, kanji: '狐', c1: '#3B1F4A', c2: '#150B1C', accent: '#FF6B8B', sx: 30, sy: 20, clip: 'polygon(0 40%,25% 60%,50% 25%,75% 55%,100% 35%,100% 100%,0 100%)' },
+      { title: 'Ronin Neon', genre: 'Ação', chapters: 128, inLib: true, kanji: '浪', c1: '#0F2B2A', c2: '#050F0F', accent: '#7CF0C9', sx: 8, sy: 28, clip: 'polygon(0 62%,30% 40%,52% 58%,100% 22%,100% 100%,0 100%)' },
+      { title: 'Café Lua de Papel', genre: 'Slice of life', chapters: 19, inLib: false, kanji: '月', c1: '#4A3A2A', c2: '#1E1710', accent: '#F4D58D', sx: 34, sy: 8, clip: 'polygon(0 48%,40% 62%,70% 30%,100% 50%,100% 100%,0 100%)' },
+      { title: 'Clube do Último Sino', genre: 'Fantasia', chapters: 64, inLib: false, kanji: '鐘', c1: '#1F2A55', c2: '#0A0E24', accent: '#8FB4FF', sx: 14, sy: 22, clip: 'polygon(0 35%,22% 52%,48% 30%,70% 58%,100% 40%,100% 100%,0 100%)' },
+      { title: 'Lótus de Ferro', genre: 'Ação', chapters: 203, inLib: false, kanji: '蓮', c1: '#3A1414', c2: '#150606', accent: '#FF5A4E', sx: 28, sy: 30, clip: 'polygon(0 58%,35% 34%,60% 56%,82% 24%,100% 44%,100% 100%,0 100%)' }
+    ].map((d, i) => Object.assign({}, d, { id: i, soft: rgba(d.accent, 0.18) }));
+
+    const rot = tab === 1 ? 3 : 0;
+    const ordered = data.slice(rot).concat(data.slice(0, rot));
+    const sel = Object.keys(gsel).filter((k) => gsel[k]);
+    const visible = sel.length ? ordered.filter((d) => gsel[d.genre]) : ordered;
+
+    const covers = visible.map((d) => {
+      const active = tilt && tilt.id === d.id;
+      const rx = active ? tilt.rx : 0, ry = active ? tilt.ry : 0;
+      return Object.assign({}, d, {
+        tf: 'rotateX(' + rx.toFixed(1) + 'deg) rotateY(' + ry.toFixed(1) + 'deg) scale(' + (active ? 1.05 : 1) + ')',
+        sun: 'translate3d(' + (-ry * 0.9).toFixed(1) + 'px,' + (rx * 0.9).toFixed(1) + 'px,0)',
+        ridge: 'translate3d(' + (ry * 0.6).toFixed(1) + 'px,' + (-rx * 0.4).toFixed(1) + 'px,0)',
+        glare: 'radial-gradient(circle at ' + (active ? tilt.gx : 50) + '% ' + (active ? tilt.gy : 50) + '%,rgba(255,255,255,' + (active ? 0.9 : 0) + '),transparent 55%)',
+        dur: active ? '120ms' : '600ms',
+        shadow: active ? '0 26px 34px -14px ' + rgba(d.accent, 0.6) : '0 10px 18px -12px rgba(0,0,0,.7)',
+        move: (e) => {
+          const r = e.currentTarget.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+          this.setState({ tilt: { id: d.id, rx: (0.5 - y) * 22, ry: (x - 0.5) * 22, gx: Math.round(x * 100), gy: Math.round(y * 100) } });
+        },
+        leave: () => this.setState({ tilt: null })
+      });
+    });
+
+    const tabs = ['Populares', 'Recentes'].map((label, i) => ({
+      label,
+      pick: () => this.setState({ tab: i }),
+      bg: tab === i ? '#F2A65A' : 'transparent',
+      fg: tab === i ? '#0F0E11' : '#F4F0EA'
+    }));
+    const genres = ['Ação', 'Drama', 'Fantasia', 'Mistério', 'Slice of life'].map((label) => {
+      const on = !!gsel[label];
+      return {
+        label, on,
+        bg: on ? '#F2A65A' : 'rgba(255,255,255,.08)',
+        fg: on ? '#0F0E11' : '#F4F0EA',
+        border: on ? '#F2A65A' : 'rgba(255,255,255,.18)',
+        pick: () => { const g = Object.assign({}, gsel); g[label] = !g[label]; this.setState({ gsel: g }); }
+      };
+    });
+
+    return {
+      tabs, genres, covers,
+      skeletons: [1, 2],
+      isGrid: view === 'grid' && covers.length > 0,
+      isList: view === 'list' && covers.length > 0,
+      empty: covers.length === 0,
+      viewIcon: view === 'grid' ? 'M4 6h16M4 12h16M4 18h16' : 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+      viewLabel: view === 'grid' ? 'Mostrar em lista' : 'Mostrar em grade',
+      toggleView: () => this.setState({ view: view === 'grid' ? 'list' : 'grid' }),
+      filterCount: sel.length || '',
+      resultCount: covers.length,
+      openSheet: () => this.setState({ sheet: true }),
+      closeSheet: () => this.setState({ sheet: false }),
+      clearFilters: () => this.setState({ gsel: {} }),
+      scrimOp: sheet ? 1 : 0,
+      scrimPE: sheet ? 'auto' : 'none',
+      sheetTf: sheet ? 'translateY(0)' : 'translateY(105%)',
+      sheetVis: sheet ? 'visible' : 'hidden'
+    };
+  }
+}
+</script>
+</body>
+</html>

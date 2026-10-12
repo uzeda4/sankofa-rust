@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Fontes e extensões</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+.scroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <div style="position:absolute;inset:0;background:radial-gradient(120% 50% at 15% -5%,rgba(242,166,90,.34),transparent 62%),radial-gradient(90% 45% at 100% 45%,rgba(27,58,75,.85),transparent 70%),#0F0E11"></div>
+
+  <div class="scroll" style="position:absolute;inset:0;overflow-y:auto;padding:28px 16px 130px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72)">De onde vem a leitura</span>
+        <h1 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:40px;line-height:1;letter-spacing:-.02em">Fontes</h1>
+      </div>
+      <a href="Migrar.dc.html" style="margin-left:auto;height:44px;padding:0 16px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#F4F0EA;font-weight:700;font-size:14px;text-decoration:none;display:flex;align-items:center;backdrop-filter:blur(14px)">Migrar</a>
+      <button aria-label="Buscar fonte" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#F4F0EA;display:grid;place-items:center;backdrop-filter:blur(14px)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-4.3-4.3"/></svg>
+      </button>
+    </div>
+
+    <!-- tabs -->
+    <div style="display:flex;padding:4px;gap:4px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="2">
+        <button onClick="{{t.pick}}" style="flex:1;height:44px;border-radius:14px;border:0;background:{{t.bg}};color:{{t.fg}};font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 300ms ease">
+          {{t.label}}
+          <sc-if value="{{t.count}}" hint-placeholder-val="{{ false }}">
+            <span style="min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;border-radius:11px;display:grid;place-items:center;background:{{t.badgeBg}};color:{{t.badgeFg}};font-size:12px;font-weight:800">{{t.count}}</span>
+          </sc-if>
+        </button>
+      </sc-for>
+    </div>
+
+    <!-- language -->
+    <div class="scroll" style="display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:0 16px">
+      <sc-for list="{{langs}}" as="l" hint-placeholder-count="5">
+        <button onClick="{{l.pick}}" style="flex:none;height:44px;padding:0 18px;border-radius:22px;border:1px solid {{l.border}};background:{{l.bg}};color:{{l.fg}};font-size:14px;font-weight:700;transition:all 300ms ease">{{l.label}}</button>
+      </sc-for>
+    </div>
+
+    <!-- SOURCES -->
+    <sc-if value="{{showSources}}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-if value="{{hasPinned}}" hint-placeholder-val="{{ true }}">
+          <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">Fixadas</span>
+        </sc-if>
+        <sc-for list="{{pinned}}" as="s" hint-placeholder-count="2">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 10px 10px 12px;border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.05));border:1px solid {{s.line}};backdrop-filter:blur(16px);box-shadow:0 14px 24px -18px {{s.color}}">
+            <span style="width:48px;height:48px;flex:none;border-radius:16px;display:grid;place-items:center;background:{{s.soft}};color:{{s.color}};font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:22px">{{s.mono}}</span>
+            <span style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+              <span style="font-weight:700;font-size:16px">{{s.name}}</span>
+              <span style="font-size:13px;color:rgba(244,240,234,.72)">{{s.lang}} · {{s.note}}</span>
+            </span>
+            <button onClick="{{s.pin}}" aria-label="Desafixar {{s.name}}" aria-pressed="true" style="width:44px;height:44px;border-radius:14px;border:0;background:{{s.soft}};color:{{s.color}};display:grid;place-items:center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l-1 6 4 4v2h-5v6l-1 1-1-1v-6H6v-2l4-4z"/></svg>
+            </button>
+            <a href="Navegar.dc.html" style="height:44px;padding:0 16px;border-radius:14px;background:{{s.color}};color:#0F0E11;font-weight:800;font-size:14px;text-decoration:none;display:flex;align-items:center">Abrir</a>
+          </div>
+        </sc-for>
+
+        <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700;margin-top:6px">Instaladas</span>
+        <sc-for list="{{others}}" as="s" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 10px 10px 12px;border-radius:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)">
+            <span style="width:48px;height:48px;flex:none;border-radius:16px;display:grid;place-items:center;background:{{s.soft}};color:{{s.color}};font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:22px">{{s.mono}}</span>
+            <span style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+              <span style="font-weight:700;font-size:16px">{{s.name}}</span>
+              <span style="font-size:13px;color:rgba(244,240,234,.72)">{{s.lang}} · {{s.note}}</span>
+            </span>
+            <button onClick="{{s.pin}}" aria-label="Fixar {{s.name}}" aria-pressed="false" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:transparent;color:#F4F0EA;display:grid;place-items:center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l-1 6 4 4v2h-5v6l-1 1-1-1v-6H6v-2l4-4z"/></svg>
+            </button>
+            <a href="Navegar.dc.html" style="height:44px;padding:0 16px;border-radius:14px;background:rgba(255,255,255,.12);color:#F4F0EA;font-weight:700;font-size:14px;text-decoration:none;display:flex;align-items:center">Abrir</a>
+          </div>
+        </sc-for>
+        <sc-if value="{{noSources}}" hint-placeholder-val="{{ false }}">
+          <div style="padding:28px 20px;border-radius:22px;border:1px dashed rgba(255,255,255,.22);text-align:center;display:flex;flex-direction:column;gap:6px">
+            <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:18px">Nenhuma fonte neste idioma</span>
+            <span style="font-size:14px;color:rgba(244,240,234,.74)">Instale uma extensão na aba ao lado.</span>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- EXTENSIONS -->
+    <sc-if value="{{showExt}}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-if value="{{hasUpdates}}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 12px 12px 16px;border-radius:22px;background:rgba(242,166,90,.16);border:1px solid rgba(242,166,90,.5)">
+            <span style="flex:1;font-weight:700;font-size:15px">{{updateLabel}}</span>
+            <button onClick="{{updateAll}}" style="height:44px;padding:0 16px;border-radius:14px;border:0;background:#F2A65A;color:#0F0E11;font-weight:800;font-size:14px">Atualizar tudo</button>
+          </div>
+        </sc-if>
+        <sc-for list="{{exts}}" as="x" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 10px 10px 12px;border-radius:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)">
+            <span style="width:48px;height:48px;flex:none;border-radius:16px;display:grid;place-items:center;background:{{x.soft}};color:{{x.color}};font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:22px">{{x.mono}}</span>
+            <span style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+              <span style="font-weight:700;font-size:16px">{{x.name}}</span>
+              <span style="font-size:13px;color:rgba(244,240,234,.72)">v{{x.ver}} · {{x.lang}}</span>
+            </span>
+            <button onClick="{{x.act}}" style="height:44px;min-width:104px;padding:0 14px;border-radius:14px;border:1px solid {{x.border}};background:{{x.bg}};color:{{x.fg}};font-weight:800;font-size:14px;transition:all 300ms ease">{{x.label}}</button>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- dock -->
+  <nav aria-label="Navegação principal" style="position:absolute;left:16px;right:16px;bottom:18px;height:68px;border-radius:26px;padding:6px;box-sizing:border-box;display:flex;gap:4px;background:rgba(24,22,28,.62);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(24px) saturate(1.5);box-shadow:0 20px 40px -12px rgba(0,0,0,.6)">
+    <sc-for list="{{dock}}" as="n" hint-placeholder-count="5">
+      <a href="{{n.href}}" aria-label="{{n.label}}" style="flex:1;min-width:0;border-radius:20px;background:{{n.bg}};color:{{n.fg}};text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transform:{{n.tf}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
+        <span style="font-size:11px;font-weight:700">{{n.label}}</span>
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const tab = S.tab ?? 0;
+    const lang = S.lang ?? 0;
+    const pins = S.pins || { 0: true };
+    // 0 = not installed, 1 = installed, 2 = update available
+    const st = S.st || { 0: 1, 1: 1, 2: 2, 3: 0, 4: 2, 5: 0 };
+    const rgba = (hex, a) => {
+      const n = parseInt(hex.slice(1), 16);
+      return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+    };
+    const all = [
+      { name: 'Aurora Scans', lang: 'PT-BR', color: '#F2A65A', ver: '1.4.12', note: 'Última leitura há 2 h' },
+      { name: 'Sakura Leitura', lang: 'PT-BR', color: '#FF6B8B', ver: '1.2.7', note: 'Usada esta semana' },
+      { name: 'Ponte Leste', lang: 'EN', color: '#7CF0C9', ver: '1.6.0', note: 'Catálogo amplo' },
+      { name: 'Tinta Aberta', lang: 'EN', color: '#F4D58D', ver: '1.1.3', note: 'Sem login' },
+      { name: 'Hoshi Reader', lang: 'JA', color: '#8FB4FF', ver: '1.0.9', note: 'Lançamentos do dia' },
+      { name: 'Mercado de Papel', lang: 'ES', color: '#FF5A4E', ver: '1.3.4', note: 'Comunidade' }
+    ].map((d, i) => Object.assign({}, d, {
+      id: i,
+      mono: d.name.charAt(0),
+      soft: rgba(d.color, 0.18),
+      line: rgba(d.color, 0.5),
+      status: st[i]
+    }));
+    const langNames = ['Todos', 'PT-BR', 'EN', 'JA', 'ES'];
+    const inLang = all.filter((d) => lang === 0 || d.lang === langNames[lang]);
+    const withPin = (d) => Object.assign({}, d, {
+      pin: () => { const p = Object.assign({}, pins); p[d.id] = !p[d.id]; this.setState({ pins: p }); }
+    });
+    const installed = inLang.filter((d) => d.status !== 0).map(withPin);
+    const pinned = installed.filter((d) => pins[d.id]);
+    const others = installed.filter((d) => !pins[d.id]);
+
+    const setSt = (id, v) => { const n = Object.assign({}, st); n[id] = v; this.setState({ st: n }); };
+    const exts = inLang.map((d) => {
+      const s = d.status;
+      return Object.assign({}, d, {
+        label: s === 0 ? 'Instalar' : (s === 2 ? 'Atualizar' : 'Instalada'),
+        bg: s === 0 ? d.color : (s === 2 ? rgba('#F2A65A', 0.2) : 'transparent'),
+        fg: s === 0 ? '#0F0E11' : (s === 2 ? '#F2A65A' : 'rgba(244,240,234,.78)'),
+        border: s === 0 ? d.color : (s === 2 ? rgba('#F2A65A', 0.6) : 'rgba(255,255,255,.16)'),
+        act: () => setSt(d.id, s === 0 ? 1 : (s === 2 ? 1 : 1))
+      });
+    });
+    const upCount = all.filter((d) => d.status === 2).length;
+
+    const tabs = [
+      { label: 'Fontes', count: 0 },
+      { label: 'Extensões', count: upCount }
+    ].map((t, i) => ({
+      label: t.label,
+      count: t.count || '',
+      pick: () => this.setState({ tab: i }),
+      bg: tab === i ? '#F2A65A' : 'transparent',
+      fg: tab === i ? '#0F0E11' : '#F4F0EA',
+      badgeBg: tab === i ? '#0F0E11' : '#F2A65A',
+      badgeFg: tab === i ? '#F2A65A' : '#0F0E11'
+    }));
+    const langs = langNames.map((label, i) => ({
+      label,
+      pick: () => this.setState({ lang: i }),
+      bg: lang === i ? '#F2A65A' : 'rgba(255,255,255,.08)',
+      fg: lang === i ? '#0F0E11' : '#F4F0EA',
+      border: lang === i ? '#F2A65A' : 'rgba(255,255,255,.14)'
+    }));
+    const nav = [
+      { label: 'Estante', d: 'M4 4h5v16H4zM10 4h5v16h-5zM16.3 5.2l4.4 1.2-3.9 14-4.4-1.2z', href: 'Main.dc.html' },
+      { label: 'Novos', d: 'M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5', href: 'Atualizacoes.dc.html' },
+      { label: 'Histórico', d: 'M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', href: 'Historico.dc.html' },
+      { label: 'Explorar', d: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM15.5 8.5l-2 5-5 2 2-5z', href: 'Explorar.dc.html' },
+      { label: 'Mais', d: 'M5 12h.01M12 12h.01M19 12h.01', href: 'Mais.dc.html' }
+    ];
+    const dock = nav.map((n, i) => ({
+      label: n.label, d: n.d, href: n.href,
+      bg: i === 3 ? 'rgba(242,166,90,.22)' : 'transparent',
+      fg: i === 3 ? '#F2A65A' : 'rgba(244,240,234,.78)',
+      tf: i === 3 ? 'translateY(-3px) scale(1.04)' : 'translateY(0) scale(1)'
+    }));
+    return {
+      tabs, langs, pinned, others, exts, dock,
+      showSources: tab === 0,
+      showExt: tab === 1,
+      hasPinned: pinned.length > 0,
+      noSources: installed.length === 0,
+      hasUpdates: upCount > 0,
+      updateLabel: upCount === 1 ? '1 extensão com atualização' : upCount + ' extensões com atualização',
+      updateAll: () => {
+        const n = Object.assign({}, st);
+        Object.keys(n).forEach((k) => { if (n[k] === 2) n[k] = 1; });
+        this.setState({ st: n });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

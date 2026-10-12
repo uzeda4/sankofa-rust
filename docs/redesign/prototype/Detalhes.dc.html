@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Detalhes do mangá</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Shippori+Mincho+B1:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+.scroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <div style="position:absolute;inset:0;background:{{atmo}}"></div>
+
+  <div class="scroll" style="position:absolute;inset:0;overflow-y:auto;padding:20px 16px 150px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+
+    <!-- top bar -->
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <a href="Main.dc.html" aria-label="Voltar" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);backdrop-filter:blur(14px);color:#F4F0EA;display:grid;place-items:center">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+      <button onClick="{{toggleFav}}" aria-pressed="{{fav}}" aria-label="Favoritar" style="width:44px;height:44px;border-radius:14px;border:1px solid {{favBorder}};background:{{favBg}};color:{{favFg}};display:grid;place-items:center;backdrop-filter:blur(14px);transition:all 300ms ease">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="{{favFill}}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>
+      </button>
+    </div>
+
+    <!-- hero cover with depth -->
+    <div onMouseMove="{{move}}" onMouseLeave="{{leave}}" style="perspective:900px;display:flex;justify-content:center;padding:6px 0 4px">
+      <div style="position:relative;width:200px;height:300px;border-radius:22px;overflow:hidden;transform-style:preserve-3d;transform:{{tf}};transition:transform {{dur}} cubic-bezier(.2,.8,.2,1);background:linear-gradient(160deg,#1B3A4B,#0B1820);box-shadow:0 40px 50px -24px {{shadowCol}}">
+        <div style="position:absolute;left:18%;top:12%;width:62%;aspect-ratio:1;border-radius:50%;background:{{accent}};transform:{{sun}};transition:transform {{dur}} ease"></div>
+        <div style="position:absolute;inset:0;opacity:.28;background:radial-gradient(circle,rgba(0,0,0,.6) 1.2px,transparent 1.6px) 0 0/8px 8px;-webkit-mask-image:linear-gradient(200deg,#000,transparent 60%);mask-image:linear-gradient(200deg,#000,transparent 60%)"></div>
+        <div style="position:absolute;inset:auto 0 0 0;height:48%;background:#1B3A4B;clip-path:polygon(0 55%,18% 30%,36% 52%,58% 18%,80% 46%,100% 28%,100% 100%,0 100%);transform:{{ridge}};transition:transform {{dur}} ease"></div>
+        <div style="position:absolute;right:12px;top:12px;font-family:'Shippori Mincho B1',serif;font-weight:700;font-size:34px;line-height:1;writing-mode:vertical-rl;text-shadow:0 2px 10px rgba(0,0,0,.45)">灰</div>
+        <div style="position:absolute;inset:0;background:{{glare}};mix-blend-mode:soft-light;pointer-events:none"></div>
+      </div>
+    </div>
+
+    <!-- title block -->
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center">
+      <h1 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:34px;line-height:1.04;letter-spacing:-.02em;text-wrap:balance">Maré de Cinzas</h1>
+      <span style="font-size:14px;color:rgba(244,240,234,.74)">Aiko Tanabe · Em publicação</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        <span style="height:30px;padding:0 12px;border-radius:15px;display:flex;align-items:center;font-size:13px;font-weight:700;background:{{accentSoft}};color:{{accent}}">Drama</span>
+        <span style="height:30px;padding:0 12px;border-radius:15px;display:flex;align-items:center;font-size:13px;font-weight:700;background:{{accentSoft}};color:{{accent}}">Mar</span>
+        <span style="height:30px;padding:0 12px;border-radius:15px;display:flex;align-items:center;font-size:13px;font-weight:700;background:{{accentSoft}};color:{{accent}}">Sobrenatural</span>
+      </div>
+    </div>
+
+    <!-- segmented tabs -->
+    <div style="display:flex;padding:4px;gap:4px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="2">
+        <button onClick="{{t.pick}}" style="flex:1;height:44px;border-radius:14px;border:0;background:{{t.bg}};color:{{t.fg}};font-weight:700;font-size:14px;transition:all 300ms ease">{{t.label}}</button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{showChapters}}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{chapters}}" as="ch" hint-placeholder-count="5">
+          <button onClick="{{ch.toggle}}" style="min-height:64px;padding:10px 14px;border-radius:18px;border:1px solid {{ch.border}};background:{{ch.bg}};color:#F4F0EA;display:flex;align-items:center;gap:12px;text-align:left;opacity:{{ch.op}};transition:all 300ms ease">
+            <span style="width:36px;height:36px;border-radius:12px;flex:none;display:grid;place-items:center;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:14px;background:{{ch.badgeBg}};color:{{ch.badgeFg}}">{{ch.n}}</span>
+            <span style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+              <span style="font-weight:700;font-size:15px">{{ch.title}}</span>
+              <span style="font-size:12.5px;color:rgba(244,240,234,.68)">{{ch.meta}}</span>
+            </span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ch.tick}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{showAbout}}" hint-placeholder-val="{{ false }}">
+      <p style="margin:0;font-size:15.5px;line-height:1.55;color:rgba(244,240,234,.86);text-wrap:pretty">Todo outono o mar devolve cinzas à vila de Hinode. Rei, que mal sabe nadar, descobre que cada onda carrega uma memória que alguém tentou esquecer.</p>
+      <a href="Recomendacoes.dc.html" style="height:48px;border-radius:16px;border:1px solid {{accent}};color:{{accent}};font-weight:800;font-size:15px;text-decoration:none;display:flex;align-items:center;justify-content:center">Ver títulos parecidos</a>
+    </sc-if>
+  </div>
+
+  <!-- floating action -->
+  <div style="position:absolute;left:16px;right:16px;bottom:20px;display:flex;gap:10px">
+    <a href="Reader.dc.html" style="flex:1;height:56px;border-radius:20px;background:{{accent}};color:#0F0E11;font-weight:800;font-size:16px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 18px 30px -12px {{shadowCol}}">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>
+      Continuar cap. 87
+    </a>
+    <button aria-label="Baixar capítulos" style="width:56px;height:56px;border-radius:20px;border:1px solid rgba(255,255,255,.16);background:rgba(24,22,28,.62);backdrop-filter:blur(24px);color:#F4F0EA;display:grid;place-items:center">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12m0 0l-5-5m5 5l5-5M5 20h14"/></svg>
+    </button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A65A","options":["#F2A65A","#FF6B8B","#7CF0C9","#8FB4FF"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const accent = this.props.accent ?? '#F2A65A';
+    const tilt = S.tilt || null;
+    const tab = S.tab ?? 0;
+    const fav = S.fav ?? true;
+    const read = S.read || { 86: true, 85: true, 84: true, 83: true, 82: true };
+    const rgba = (hex, a) => {
+      const n = parseInt(hex.slice(1), 16);
+      return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+    };
+    const rx = tilt ? tilt.rx : 0, ry = tilt ? tilt.ry : 0;
+    const titles = { 88: 'Maré alta', 87: 'A maré sobe', 86: 'Cinzas na areia', 85: 'O barqueiro', 84: 'Lanternas', 83: 'Sal e silêncio' };
+    const chapters = [88, 87, 86, 85, 84, 83].map((n) => {
+      const isRead = !!read[n];
+      const isCurrent = n === 87;
+      return {
+        n,
+        title: 'Capítulo ' + n + ' · ' + titles[n],
+        meta: isRead ? 'Lido' : (isCurrent ? 'Em andamento · pág. 12 de 31' : 'Novo · há 2 dias'),
+        op: isRead ? 0.55 : 1,
+        bg: isCurrent ? rgba(accent, 0.16) : 'rgba(255,255,255,.06)',
+        border: isCurrent ? rgba(accent, 0.6) : 'rgba(255,255,255,.1)',
+        badgeBg: isCurrent ? accent : 'rgba(255,255,255,.1)',
+        badgeFg: isCurrent ? '#0F0E11' : '#F4F0EA',
+        tick: isRead ? accent : 'rgba(255,255,255,.22)',
+        toggle: () => { const r = Object.assign({}, read); r[n] = !r[n]; this.setState({ read: r }); }
+      };
+    });
+    const tabs = ['Capítulos', 'Sobre'].map((label, i) => ({
+      label,
+      pick: () => this.setState({ tab: i }),
+      bg: tab === i ? accent : 'transparent',
+      fg: tab === i ? '#0F0E11' : '#F4F0EA'
+    }));
+    return {
+      accent, fav, chapters, tabs,
+      accentSoft: rgba(accent, 0.16),
+      shadowCol: rgba(accent, 0.55),
+      atmo: 'radial-gradient(110% 55% at 50% -4%,' + rgba(accent, 0.42) + ',transparent 64%),radial-gradient(80% 40% at 0% 60%,rgba(27,58,75,.9),transparent 70%),#0F0E11',
+      tf: 'rotateX(' + rx.toFixed(1) + 'deg) rotateY(' + ry.toFixed(1) + 'deg) scale(' + (tilt ? 1.04 : 1) + ')',
+      sun: 'translate3d(' + (-ry * 1.4).toFixed(1) + 'px,' + (rx * 1.4).toFixed(1) + 'px,0)',
+      ridge: 'translate3d(' + (ry * 0.9).toFixed(1) + 'px,' + (-rx * 0.6).toFixed(1) + 'px,0)',
+      glare: 'radial-gradient(circle at ' + (tilt ? tilt.gx : 50) + '% ' + (tilt ? tilt.gy : 50) + '%,rgba(255,255,255,' + (tilt ? 0.85 : 0) + '),transparent 55%)',
+      dur: tilt ? '120ms' : '700ms',
+      move: (e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        this.setState({ tilt: { rx: (0.5 - y) * 24, ry: (x - 0.5) * 30, gx: Math.round(x * 100), gy: Math.round(y * 100) } });
+      },
+      leave: () => this.setState({ tilt: null }),
+      toggleFav: () => this.setState({ fav: !fav }),
+      favBg: fav ? rgba(accent, 0.22) : 'rgba(255,255,255,.08)',
+      favFg: fav ? accent : '#F4F0EA',
+      favBorder: fav ? rgba(accent, 0.6) : 'rgba(255,255,255,.14)',
+      favFill: fav ? 'currentColor' : 'none',
+      showChapters: tab === 0,
+      showAbout: tab === 1
+    };
+  }
+}
+</script>
+</body>
+</html>

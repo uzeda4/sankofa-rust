@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Design system</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Shippori+Mincho+B1:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+@keyframes kkshimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sk{background:linear-gradient(90deg,rgba(255,255,255,.06) 0,rgba(255,255,255,.18) 50%,rgba(255,255,255,.06) 100%);background-size:200% 100%;animation:kkshimmer 1.5s linear infinite}
+@media (prefers-reduced-motion:reduce){.sk{animation:none}}
+</style>
+</helmet>
+<div style="width:1330px;height:1260px;box-sizing:border-box;padding:40px;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif;display:flex;flex-direction:column;gap:28px;overflow:hidden">
+
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <span style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72)">Design system · v0</span>
+      <h2 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:40px;letter-spacing:-.02em;line-height:1">Neutro por padrão, cada título dá a cor</h2>
+    </div>
+    <span style="font-size:14px;color:rgba(244,240,234,.72);max-width:420px;text-align:right">Cada capa gera quatro tokens: base, superfície, destaque e véu. O resto do app só consome esses tokens.</span>
+  </div>
+
+  <!-- palettes from covers -->
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+    <sc-for list="{{palettes}}" as="p" hint-placeholder-count="4">
+      <div style="border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;flex-direction:column">
+        <div style="height:92px;display:flex">
+          <div style="flex:1;background:{{p.base}}"></div>
+          <div style="flex:1;background:{{p.surface}}"></div>
+          <div style="flex:1;background:{{p.accent}}"></div>
+          <div style="flex:1;background:{{p.veil}}"></div>
+        </div>
+        <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:16px">{{p.name}}</span>
+          <span style="font-size:13px;color:rgba(244,240,234,.72)">{{p.accent}}</span>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px">
+
+    <!-- type -->
+    <div style="border-radius:22px;padding:20px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#F2A65A;font-weight:700">Tipografia</span>
+      <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:44px;line-height:1;letter-spacing:-.02em">Maré de Cinzas</span>
+      <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:22px">Título de seção · Bricolage 700</span>
+      <span style="font-size:15.5px;line-height:1.5;color:rgba(244,240,234,.86)">Corpo em DM Sans 400/500, 15,5 pt, para sinopses e listas longas.</span>
+      <span style="font-family:'Shippori Mincho B1',serif;font-weight:700;font-size:30px">灰 狐 浪 月 鐘 蓮 <span style="font-family:'DM Sans',system-ui,sans-serif;font-size:13px;font-weight:500;color:rgba(244,240,234,.72)">Shippori Mincho, só detalhes</span></span>
+    </div>
+
+    <!-- depth -->
+    <div style="border-radius:22px;padding:20px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:14px">
+      <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#7CF0C9;font-weight:700">Profundidade (eixo Z)</span>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+        <sc-for list="{{depth}}" as="d" hint-placeholder-count="4">
+          <div style="height:92px;border-radius:18px;padding:12px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-end;background:{{d.bg}};border:1px solid {{d.border}};box-shadow:{{d.shadow}};backdrop-filter:{{d.blur}}">
+            <span style="font-weight:700;font-size:14px">{{d.name}}</span>
+            <span style="font-size:12.5px;color:rgba(244,240,234,.74)">{{d.note}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- components -->
+    <div style="border-radius:22px;padding:20px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:14px">
+      <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#8FB4FF;font-weight:700">Componentes base</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="height:44px;padding:0 18px;border-radius:22px;display:flex;align-items:center;background:#F2A65A;color:#0F0E11;font-weight:700;font-size:14px">Chip ativo</span>
+        <span style="height:44px;padding:0 18px;border-radius:22px;display:flex;align-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);font-weight:700;font-size:14px">Chip</span>
+        <span style="height:24px;min-width:24px;padding:0 8px;box-sizing:border-box;border-radius:12px;display:grid;place-items:center;background:#F2A65A;color:#0F0E11;font-weight:800;font-size:13px;align-self:center">12</span>
+      </div>
+      <div style="display:flex;gap:10px">
+        <span style="flex:1;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:#F2A65A;color:#0F0E11;font-weight:800;font-size:15px">Primário</span>
+        <span style="flex:1;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:rgba(24,22,28,.62);border:1px solid rgba(255,255,255,.16);font-weight:700;font-size:15px">Vidro</span>
+      </div>
+      <div style="height:6px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden"><div style="width:62%;height:100%;background:#F2A65A"></div></div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="width:52px;height:30px;border-radius:15px;background:#F2A65A;position:relative"><span style="position:absolute;right:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#0F0E11"></span></span>
+        <span style="font-size:14.5px">Interruptor e cartão de configuração herdam o mesmo véu da capa</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- motion -->
+  <div style="border-radius:22px;padding:18px 20px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:10px">
+    <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#FF6B8B;font-weight:700">Movimento e equivalente em Compose</span>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 20px">
+      <sc-for list="{{motion}}" as="m" hint-placeholder-count="8">
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style="font-weight:700;font-size:14.5px">{{m.name}}</span>
+          <span style="font-size:13px;line-height:1.4;color:rgba(244,240,234,.74)">{{m.spec}}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- wave 2 components -->
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#F2A65A;font-weight:700">Componentes novos · onda 2</span>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+
+      <div style="border-radius:22px;padding:18px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:12px">
+        <div style="height:128px;position:relative;perspective:600px;overflow:hidden">
+          <div style="position:absolute;left:50%;top:14px;width:68px;height:100px;margin-left:-98px;border-radius:12px;background:linear-gradient(160deg,#3B1F4A,#150B1C);transform:rotateY(34deg) scale(.9);filter:brightness(.7)"></div>
+          <div style="position:absolute;left:50%;top:14px;width:68px;height:100px;margin-left:30px;border-radius:12px;background:linear-gradient(160deg,#0F2B2A,#050F0F);transform:rotateY(-34deg) scale(.9);filter:brightness(.7)"></div>
+          <div style="position:absolute;left:50%;top:6px;width:76px;height:112px;margin-left:-38px;border-radius:14px;background:linear-gradient(160deg,#1B3A4B,#0B1820);box-shadow:0 20px 24px -12px rgba(242,166,90,.7)"><div style="margin:12px;width:34px;height:34px;border-radius:50%;background:#F2A65A"></div></div>
+        </div>
+        <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:17px">Cover flow</span>
+        <span style="font-size:13px;line-height:1.45;color:rgba(244,240,234,.74)">Vizinha: x 82 px, rotateY 36°, z −100 px, brilho 72%. HorizontalPager com graphicsLayer, 600 ms.</span>
+      </div>
+
+      <div style="border-radius:22px;padding:18px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:12px">
+        <div style="height:128px;position:relative;overflow:hidden;border-radius:14px;background:rgba(0,0,0,.35)">
+          <div style="position:absolute;left:14px;right:14px;bottom:0;height:92px;border-radius:22px 22px 0 0;padding:10px 12px;box-sizing:border-box;background:rgba(28,25,33,.9);border:1px solid rgba(255,255,255,.16);display:flex;flex-direction:column;align-items:center;gap:10px">
+            <span style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.28)"></span>
+            <span style="display:flex;gap:6px"><span style="height:28px;padding:0 12px;border-radius:14px;background:#F2A65A;color:#0F0E11;font-size:12.5px;font-weight:800;display:flex;align-items:center">Ação</span><span style="height:28px;padding:0 12px;border-radius:14px;background:rgba(255,255,255,.1);font-size:12.5px;font-weight:700;display:flex;align-items:center">Drama</span></span>
+          </div>
+        </div>
+        <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:17px">Sheet de filtros</span>
+        <span style="font-size:13px;line-height:1.45;color:rgba(244,240,234,.74)">Sobe em 480 ms, scrim a 62%, vidro com blur 30. ModalBottomSheet com Haze.</span>
+      </div>
+
+      <div style="border-radius:22px;padding:18px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:12px">
+        <div style="height:128px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+          <div style="display:flex;flex-direction:column;gap:6px"><div class="sk" style="flex:1;border-radius:12px"></div><div class="sk" style="height:10px;width:70%;border-radius:5px"></div></div>
+          <div style="display:flex;flex-direction:column;gap:6px"><div class="sk" style="flex:1;border-radius:12px"></div><div class="sk" style="height:10px;width:85%;border-radius:5px"></div></div>
+          <div style="display:flex;flex-direction:column;gap:6px"><div class="sk" style="flex:1;border-radius:12px"></div><div class="sk" style="height:10px;width:60%;border-radius:5px"></div></div>
+        </div>
+        <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:17px">Skeleton</span>
+        <span style="font-size:13px;line-height:1.45;color:rgba(244,240,234,.74)">Brilho a cada 1,5 s. Parado quando o sistema pede para reduzir animações.</span>
+      </div>
+
+      <div style="border-radius:22px;padding:18px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:12px">
+        <div style="height:128px;display:flex;flex-direction:column;gap:10px;justify-content:center">
+          <div style="border-radius:16px;padding:10px 12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);display:flex;flex-direction:column;gap:8px">
+            <span style="font-weight:700;font-size:13.5px">Atualizando biblioteca · 4 de 6</span>
+            <span style="height:5px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden"><span style="display:block;width:66%;height:100%;background:#FF6B8B"></span></span>
+          </div>
+          <div style="border-radius:14px;padding:0 10px 0 14px;height:44px;background:rgba(28,25,33,.9);border:1px solid rgba(255,255,255,.16);display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:700">Removido <span style="color:#8FB4FF">Desfazer</span></div>
+        </div>
+        <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:17px">Banner e desfazer</span>
+        <span style="font-size:13px;line-height:1.45;color:rgba(244,240,234,.74)">Progresso da biblioteca no topo. Toast com Desfazer por 4 s. Snackbar customizada.</span>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1330,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      palettes: [
+        { name: 'Maré de Cinzas', base: '#0B1820', surface: '#1B3A4B', accent: '#F2A65A', veil: 'rgba(242,166,90,.18)' },
+        { name: 'Estação Kitsune 9', base: '#150B1C', surface: '#3B1F4A', accent: '#FF6B8B', veil: 'rgba(255,107,139,.18)' },
+        { name: 'Ronin Neon', base: '#050F0F', surface: '#0F2B2A', accent: '#7CF0C9', veil: 'rgba(124,240,201,.18)' },
+        { name: 'Clube do Último Sino', base: '#0A0E24', surface: '#1F2A55', accent: '#8FB4FF', veil: 'rgba(143,180,255,.18)' }
+      ],
+      depth: [
+        { name: 'Z0 · Fundo', note: 'Atmosfera da capa', bg: '#0F0E11', border: 'rgba(255,255,255,.08)', shadow: 'none', blur: 'none' },
+        { name: 'Z1 · Cartão', note: 'Superfície elevada', bg: 'rgba(255,255,255,.07)', border: 'rgba(255,255,255,.12)', shadow: '0 10px 18px -12px rgba(0,0,0,.7)', blur: 'none' },
+        { name: 'Z2 · Vidro', note: 'Barras e dock', bg: 'rgba(24,22,28,.62)', border: 'rgba(255,255,255,.16)', shadow: '0 20px 40px -12px rgba(0,0,0,.6)', blur: 'blur(24px) saturate(1.5)' },
+        { name: 'Z3 · Foco', note: 'Capa inclinada', bg: 'linear-gradient(160deg,#1B3A4B,#0B1820)', border: 'rgba(242,166,90,.5)', shadow: '0 26px 34px -14px rgba(242,166,90,.6)', blur: 'none' }
+      ],
+      motion: [
+        { name: 'Tilt da capa', spec: '±11°, entrada 120 ms, saída 600 ms. graphicsLayer rotationX/Y + cameraDistance.' },
+        { name: 'Parallax em camadas', spec: 'Sol, relevo e título deslocam em sentidos opostos. Offset por camada.' },
+        { name: 'Capa → detalhes', spec: 'Elemento compartilhado 400 ms. SharedTransitionLayout.' },
+        { name: 'Dock', spec: 'Item ativo sobe 3 px e escala 1,04. spring(damping 0.7).' },
+        { name: 'Vidro do reader', spec: 'Barras somem com 350 ms. Haze / RenderEffect blur.' },
+        { name: 'Virada de capítulo', spec: 'Cartão em rotateY −10°. Fallback: fade simples.' },
+        { name: 'Tinta da interface', spec: 'Atmosfera troca em 700 ms ao focar outra capa. Palette API + animateColorAsState.' },
+        { name: 'Fallback', spec: 'API < 33, pouca RAM, economia de bateria ou reduzir animações: sem shader nem tilt.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

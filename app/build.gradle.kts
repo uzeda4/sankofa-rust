@@ -26,10 +26,14 @@ android {
     namespace = "eu.kanade.tachiyomi"
 
     defaultConfig {
-        applicationId = "app.komikku"
+        // KMK -->
+        // Fork identity (provisional). applicationId only: `namespace` stays eu.kanade.tachiyomi on purpose
+        // so extensions and upstream cherry-picks keep working.
+        applicationId = "app.komikkuredesign"
 
-        versionCode = 82
-        versionName = "1.14.1"
+        versionCode = 1
+        versionName = "0.1.0"
+        // KMK <--
 
         buildConfigField("String", "COMMIT_COUNT", "\"${getCommitCount()}\"")
         buildConfigField("String", "COMMIT_SHA", "\"${getGitSha()}\"")

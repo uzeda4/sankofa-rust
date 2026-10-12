@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Backup</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+.scroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <div style="position:absolute;inset:0;background:radial-gradient(120% 50% at 50% -8%,rgba(124,240,201,.3),transparent 62%),radial-gradient(90% 45% at 100% 55%,rgba(15,43,42,.9),transparent 70%),#0F0E11"></div>
+
+  <div class="scroll" style="position:absolute;inset:0;overflow-y:auto;padding:20px 16px 40px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="Mais.dc.html" aria-label="Voltar" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);backdrop-filter:blur(14px);color:#F4F0EA;display:grid;place-items:center;flex:none">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+      <h1 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:30px;line-height:1.05;letter-spacing:-.01em">Backup</h1>
+    </div>
+
+    <!-- status card -->
+    <div style="border-radius:26px;padding:20px;display:flex;flex-direction:column;gap:14px;background:linear-gradient(135deg,rgba(124,240,201,.22),rgba(15,43,42,.7));border:1px solid rgba(124,240,201,.4);backdrop-filter:blur(18px)">
+      <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#7CF0C9;font-weight:700">{{eyebrow}}</span>
+      <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:28px;line-height:1.05">{{headline}}</span>
+      <span style="font-size:14px;color:rgba(244,240,234,.8)">{{sub}}</span>
+      <sc-if value="{{running}}" hint-placeholder-val="{{ false }}">
+        <div style="height:8px;border-radius:4px;background:rgba(255,255,255,.18);overflow:hidden"><div style="width:62%;height:100%;border-radius:4px;background:#7CF0C9"></div></div>
+      </sc-if>
+      <button onClick="{{run}}" style="height:52px;border-radius:18px;border:0;background:{{btnBg}};color:{{btnFg}};font-weight:800;font-size:15.5px">{{btnLabel}}</button>
+    </div>
+
+    <!-- schedule -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">Backup automático</span>
+      <div style="display:flex;padding:4px;gap:4px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)">
+        <sc-for list="{{schedule}}" as="s" hint-placeholder-count="3">
+          <button onClick="{{s.pick}}" style="flex:1;height:44px;border-radius:14px;border:0;background:{{s.bg}};color:{{s.fg}};font-weight:700;font-size:14px;transition:all 300ms ease">{{s.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- includes -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">O que incluir</span>
+      <sc-for list="{{includes}}" as="t" hint-placeholder-count="4">
+        <button onClick="{{t.toggle}}" role="switch" aria-checked="{{t.on}}" style="min-height:60px;padding:8px 14px;border-radius:18px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#F4F0EA;display:flex;align-items:center;gap:12px;text-align:left">
+          <span style="flex:1;font-weight:700;font-size:15.5px">{{t.label}}</span>
+          <span style="width:52px;height:30px;border-radius:15px;background:{{t.bg}};position:relative;transition:background 250ms ease"><span style="position:absolute;top:3px;left:{{t.left}}px;width:24px;height:24px;border-radius:50%;background:{{t.knob}};transition:left 250ms cubic-bezier(.2,.8,.2,1)"></span></span>
+        </button>
+      </sc-for>
+    </div>
+
+    <button style="min-height:60px;padding:8px 16px;border-radius:18px;border:1px dashed rgba(255,255,255,.3);background:transparent;color:#F4F0EA;font-weight:700;font-size:15.5px;display:flex;align-items:center;justify-content:center;gap:10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V8m0 0l-5 5m5-5l5 5M5 4h14"/></svg>
+      Restaurar de um arquivo
+    </button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const phase = S.phase ?? 0;
+    const sch = S.sch ?? 1;
+    const inc = S.inc || { 0: true, 1: true, 2: true, 3: true };
+    const schedule = ['Desligado', 'Diário', 'Semanal'].map((label, i) => ({
+      label, pick: () => this.setState({ sch: i }),
+      bg: sch === i ? '#7CF0C9' : 'transparent', fg: sch === i ? '#0F0E11' : '#F4F0EA'
+    }));
+    const includes = ['Biblioteca e categorias', 'Histórico de leitura', 'Trackers', 'Configurações e aparência'].map((label, i) => ({
+      label, on: !!inc[i],
+      bg: inc[i] ? '#7CF0C9' : 'rgba(255,255,255,.18)',
+      left: inc[i] ? 25 : 3,
+      knob: inc[i] ? '#0F0E11' : '#F4F0EA',
+      toggle: () => { const n = Object.assign({}, inc); n[i] = !n[i]; this.setState({ inc: n }); }
+    }));
+    return {
+      schedule, includes,
+      running: phase === 1,
+      eyebrow: phase === 1 ? 'Em andamento' : (phase === 2 ? 'Concluído' : 'Último backup'),
+      headline: phase === 1 ? 'Criando backup…' : (phase === 2 ? 'Backup salvo agora' : 'Há 2 dias · 18 MB'),
+      sub: phase === 1 ? 'Reunindo biblioteca, histórico e trackers' : 'Salvo na pasta Documentos/Backups do aparelho.',
+      btnLabel: phase === 1 ? 'Cancelar' : 'Criar backup agora',
+      btnBg: phase === 1 ? 'rgba(255,255,255,.14)' : '#7CF0C9',
+      btnFg: phase === 1 ? '#F4F0EA' : '#0F0E11',
+      run: () => this.setState({ phase: phase === 1 ? 0 : (phase === 0 ? 1 : 1) })
+    };
+  }
+}
+</script>
+</body>
+</html>

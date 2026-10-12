@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Primeiros passos</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Shippori+Mincho+B1:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <div style="position:absolute;inset:0;background:{{atmo}};transition:background 700ms ease"></div>
+
+  <div style="position:absolute;inset:0;padding:28px 24px 28px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px">
+
+    <div style="display:flex;justify-content:flex-end;height:44px">
+      <a href="Main.dc.html" style="height:44px;padding:0 16px;border-radius:22px;display:flex;align-items:center;color:rgba(244,240,234,.82);font-weight:700;font-size:14.5px;text-decoration:none">Pular</a>
+    </div>
+
+    <!-- stage -->
+    <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;perspective:900px">
+
+      <sc-if value="{{s0}}" hint-placeholder-val="{{ true }}">
+        <div style="position:relative;width:300px;height:320px">
+          <div style="position:absolute;left:0;top:40px;width:130px;height:195px;border-radius:20px;background:linear-gradient(160deg,#3B1F4A,#150B1C);transform:translateZ(-60px) rotateY(32deg);box-shadow:0 24px 30px -16px #FF6B8B"><div style="margin:14px;width:56px;height:56px;border-radius:50%;background:#FF6B8B"></div></div>
+          <div style="position:absolute;right:0;top:40px;width:130px;height:195px;border-radius:20px;background:linear-gradient(160deg,#0F2B2A,#050F0F);transform:translateZ(-60px) rotateY(-32deg);box-shadow:0 24px 30px -16px #7CF0C9"><div style="margin:14px;width:56px;height:56px;border-radius:50%;background:#7CF0C9"></div></div>
+          <div style="position:absolute;left:50%;top:0;margin-left:-85px;width:170px;height:255px;border-radius:24px;overflow:hidden;background:linear-gradient(160deg,#1B3A4B,#0B1820);box-shadow:0 34px 40px -18px #F2A65A">
+            <div style="position:absolute;left:18%;top:12%;width:62%;aspect-ratio:1;border-radius:50%;background:#F2A65A"></div>
+            <div style="position:absolute;inset:auto 0 0 0;height:48%;background:#1B3A4B;clip-path:polygon(0 55%,18% 30%,36% 52%,58% 18%,80% 46%,100% 28%,100% 100%,0 100%)"></div>
+            <div style="position:absolute;right:10px;top:10px;font-family:'Shippori Mincho B1',serif;font-weight:700;font-size:30px;line-height:1;writing-mode:vertical-rl">灰</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{s1}}" hint-placeholder-val="{{ false }}">
+        <div style="width:100%;display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+          <sc-for list="{{sources}}" as="s" hint-placeholder-count="6">
+            <button onClick="{{s.toggle}}" aria-pressed="{{s.on}}" style="min-height:56px;padding:0 18px;border-radius:28px;border:1px solid {{s.border}};background:{{s.bg}};color:{{s.fg}};font-weight:700;font-size:15.5px;display:flex;align-items:center;gap:10px;transition:all 250ms ease">
+              <span style="width:28px;height:28px;border-radius:10px;display:grid;place-items:center;background:{{s.soft}};color:{{s.color}};font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:15px">{{s.mono}}</span>
+              {{s.name}}
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{s2}}" hint-placeholder-val="{{ false }}">
+        <div style="width:100%;display:flex;flex-direction:column;gap:14px;align-items:center">
+          <div style="width:120px;height:180px;border-radius:20px;overflow:hidden;position:relative;background:linear-gradient(160deg,#1B3A4B,#0B1820);transform:{{tf}};transition:transform 600ms cubic-bezier(.2,.8,.2,1);box-shadow:0 30px 36px -16px #F2A65A">
+            <div style="position:absolute;left:18%;top:12%;width:62%;aspect-ratio:1;border-radius:50%;background:#F2A65A"></div>
+            <div style="position:absolute;inset:auto 0 0 0;height:48%;background:#1B3A4B;clip-path:polygon(0 55%,18% 30%,36% 52%,58% 18%,80% 46%,100% 28%,100% 100%,0 100%)"></div>
+          </div>
+          <button onClick="{{toggleReduce}}" role="switch" aria-checked="{{reduce}}" style="width:100%;min-height:64px;padding:8px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:#F4F0EA;display:flex;align-items:center;gap:12px;text-align:left">
+            <span style="display:flex;flex-direction:column;gap:1px;flex:1">
+              <span style="font-weight:700;font-size:15.5px">Reduzir movimento</span>
+              <span style="font-size:13px;color:rgba(244,240,234,.74)">Sem inclinação 3D nem parallax</span>
+            </span>
+            <span style="width:52px;height:30px;border-radius:15px;background:{{swBg}};position:relative;transition:background 250ms ease"><span style="position:absolute;top:3px;left:{{swLeft}}px;width:24px;height:24px;border-radius:50%;background:{{swKnob}};transition:left 250ms cubic-bezier(.2,.8,.2,1)"></span></span>
+          </button>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- copy -->
+    <div style="display:flex;flex-direction:column;gap:8px;min-height:130px">
+      <h1 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:32px;line-height:1.05;letter-spacing:-.02em;text-wrap:balance">{{title}}</h1>
+      <span style="font-size:16px;line-height:1.5;color:rgba(244,240,234,.82);text-wrap:pretty">{{body}}</span>
+    </div>
+
+    <!-- footer -->
+    <div style="display:flex;align-items:center;gap:16px">
+      <div style="display:flex;gap:8px;flex:1" aria-label="Passo {{stepNum}} de 3">
+        <sc-for list="{{dots}}" as="d" hint-placeholder-count="3">
+          <span style="width:{{d.w}}px;height:8px;border-radius:4px;background:{{d.bg}};transition:all 300ms ease"></span>
+        </sc-for>
+      </div>
+      <sc-if value="{{notLast}}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{next}}" style="height:56px;padding:0 28px;border-radius:20px;border:0;background:{{accent}};color:#0F0E11;font-weight:800;font-size:16px">Continuar</button>
+      </sc-if>
+      <sc-if value="{{isLast}}" hint-placeholder-val="{{ false }}">
+        <a href="Main.dc.html" style="height:56px;padding:0 28px;border-radius:20px;background:{{accent}};color:#0F0E11;font-weight:800;font-size:16px;text-decoration:none;display:flex;align-items:center">Começar a ler</a>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const step = S.step ?? 0;
+    const picked = S.picked || { 0: true, 2: true };
+    const reduce = !!S.reduce;
+    const rgba = (hex, a) => {
+      const n = parseInt(hex.slice(1), 16);
+      return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+    };
+    const accents = ['#F2A65A', '#7CF0C9', '#FF6B8B'];
+    const accent = accents[step];
+    const copy = [
+      { t: 'Sua estante ganha a cor de cada capa', b: 'A interface se tinge com o título em foco. Leitura mais imersiva, sem perder o que você já conhece.' },
+      { t: 'Escolha de onde ler', b: 'Marque as fontes que quer ver primeiro. Você pode mudar isso depois em Explorar.' },
+      { t: 'Movimento do seu jeito', b: 'As capas inclinam e se movem em 3D. Se preferir uma tela mais calma, desligue aqui.' }
+    ][step];
+    const defs = [
+      { name: 'Aurora Scans', color: '#F2A65A' }, { name: 'Sakura Leitura', color: '#FF6B8B' },
+      { name: 'Ponte Leste', color: '#7CF0C9' }, { name: 'Tinta Aberta', color: '#F4D58D' },
+      { name: 'Hoshi Reader', color: '#8FB4FF' }, { name: 'Mercado de Papel', color: '#FF5A4E' }
+    ];
+    const sources = defs.map((d, i) => {
+      const on = !!picked[i];
+      return {
+        name: d.name, color: d.color, mono: d.name.charAt(0), soft: rgba(d.color, 0.2), on,
+        bg: on ? rgba(d.color, 0.18) : 'rgba(255,255,255,.07)',
+        fg: '#F4F0EA',
+        border: on ? d.color : 'rgba(255,255,255,.16)',
+        toggle: () => { const p = Object.assign({}, picked); p[i] = !p[i]; this.setState({ picked: p }); }
+      };
+    });
+    return {
+      accent, sources, reduce,
+      title: copy.t, body: copy.b,
+      stepNum: step + 1,
+      s0: step === 0, s1: step === 1, s2: step === 2,
+      notLast: step < 2, isLast: step === 2,
+      dots: [0, 1, 2].map((i) => ({ w: i === step ? 28 : 8, bg: i === step ? accent : 'rgba(255,255,255,.28)' })),
+      atmo: 'radial-gradient(120% 55% at 50% 10%,' + rgba(accent, 0.38) + ',transparent 62%),radial-gradient(90% 45% at 100% 60%,rgba(27,58,75,.8),transparent 70%),#0F0E11',
+      tf: reduce ? 'rotateY(0deg) rotateX(0deg)' : 'rotateY(-26deg) rotateX(8deg)',
+      swBg: reduce ? accent : 'rgba(255,255,255,.18)',
+      swLeft: reduce ? 25 : 3,
+      swKnob: reduce ? '#0F0E11' : '#F4F0EA',
+      toggleReduce: () => this.setState({ reduce: !reduce }),
+      next: () => this.setState({ step: Math.min(2, step + 1) })
+    };
+  }
+}
+</script>
+</body>
+</html>

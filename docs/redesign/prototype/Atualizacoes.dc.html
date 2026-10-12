@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Atualizações</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Shippori+Mincho+B1:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+.scroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <div style="position:absolute;inset:0;background:radial-gradient(120% 50% at 85% -6%,rgba(255,107,139,.3),transparent 62%),radial-gradient(90% 45% at 0% 42%,rgba(27,58,75,.85),transparent 70%),#0F0E11"></div>
+
+  <div class="scroll" style="position:absolute;inset:0;overflow-y:auto;padding:28px 16px 130px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72)">Atualizações</span>
+        <h1 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:40px;line-height:1;letter-spacing:-.02em">Novidades</h1>
+      </div>
+      <button onClick="{{markAll}}" aria-label="Marcar tudo como lido" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#F4F0EA;display:grid;place-items:center;backdrop-filter:blur(14px)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12.5l4.5 4.5L15 8.5M10 16l1 1L21 7.5"/></svg>
+      </button>
+    </div>
+
+    <!-- library update banner -->
+    <div style="border-radius:22px;padding:14px 14px 14px 16px;display:flex;flex-direction:column;gap:10px;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px)">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="display:flex;flex-direction:column;gap:1px;flex:1;min-width:0">
+          <span style="font-weight:700;font-size:15.5px">{{bannerTitle}}</span>
+          <span style="font-size:13px;color:rgba(244,240,234,.72)">{{bannerSub}}</span>
+        </span>
+        <button onClick="{{toggleUpd}}" style="height:44px;padding:0 16px;border-radius:14px;border:0;background:{{bannerBtnBg}};color:{{bannerBtnFg}};font-weight:800;font-size:14px">{{bannerBtn}}</button>
+      </div>
+      <sc-if value="{{updating}}" hint-placeholder-val="{{ true }}">
+        <div style="height:6px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden"><div style="width:66%;height:100%;border-radius:3px;background:#FF6B8B"></div></div>
+      </sc-if>
+    </div>
+
+    <sc-for list="{{sections}}" as="sec" hint-placeholder-count="2">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">{{sec.label}}</span>
+        <sc-for list="{{sec.groups}}" as="g" hint-placeholder-count="2">
+          <div style="border-radius:24px;overflow:hidden;background:rgba(255,255,255,.06);border:1px solid {{g.line}};transition:border-color 300ms ease">
+            <button onClick="{{g.toggle}}" aria-expanded="{{g.open}}" style="width:100%;border:0;background:transparent;color:#F4F0EA;padding:12px;display:flex;align-items:center;gap:14px;text-align:left">
+              <span style="position:relative;width:56px;height:84px;flex:none;border-radius:12px;overflow:hidden;background:linear-gradient(160deg,{{g.c1}},{{g.c2}});box-shadow:0 12px 18px -12px {{g.accent}}">
+                <span style="position:absolute;left:{{g.sx}}%;top:{{g.sy}}%;width:62%;aspect-ratio:1;border-radius:50%;background:{{g.accent}}"></span>
+                <span style="position:absolute;inset:auto 0 0 0;height:48%;background:{{g.c1}};clip-path:{{g.clip}}"></span>
+                <span style="position:absolute;right:5px;top:5px;font-family:'Shippori Mincho B1',serif;font-weight:700;font-size:15px;line-height:1;writing-mode:vertical-rl">{{g.kanji}}</span>
+              </span>
+              <span style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0">
+                <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:18px;line-height:1.1">{{g.title}}</span>
+                <span style="font-size:13.5px;color:rgba(244,240,234,.74)">{{g.summary}}</span>
+              </span>
+              <span style="min-width:28px;height:28px;padding:0 8px;box-sizing:border-box;border-radius:14px;display:grid;place-items:center;background:{{g.badgeBg}};color:{{g.badgeFg}};font-weight:800;font-size:13px">{{g.unread}}</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform:{{g.chev}};transition:transform 300ms ease" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <sc-if value="{{g.open}}" hint-placeholder-val="{{ false }}">
+              <div style="padding:0 12px 12px;display:flex;flex-direction:column;gap:6px">
+                <sc-for list="{{g.chapters}}" as="ch" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:6px;min-height:56px;padding:6px 6px 6px 14px;border-radius:16px;background:rgba(255,255,255,.06);opacity:{{ch.op}};transition:opacity 300ms ease">
+                    <button onClick="{{ch.read}}" style="flex:1;min-width:0;min-height:44px;border:0;background:transparent;color:#F4F0EA;text-align:left;display:flex;flex-direction:column;justify-content:center;gap:1px;padding:0">
+                      <span style="font-weight:700;font-size:15px">Cap. {{ch.n}} · {{ch.title}}</span>
+                      <span style="font-size:12.5px;color:rgba(244,240,234,.7)">{{ch.meta}}</span>
+                    </button>
+                    <button onClick="{{ch.dl}}" aria-label="{{ch.dlLabel}}" style="width:44px;height:44px;border-radius:14px;border:1px solid {{ch.dlBorder}};background:{{ch.dlBg}};color:{{ch.dlFg}};display:grid;place-items:center;transition:all 300ms ease">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ch.dlIcon}}"/></svg>
+                    </button>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- dock -->
+  <nav aria-label="Navegação principal" style="position:absolute;left:16px;right:16px;bottom:18px;height:68px;border-radius:26px;padding:6px;box-sizing:border-box;display:flex;gap:4px;background:rgba(24,22,28,.62);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(24px) saturate(1.5);box-shadow:0 20px 40px -12px rgba(0,0,0,.6)">
+    <sc-for list="{{dock}}" as="n" hint-placeholder-count="5">
+      <a href="{{n.href}}" aria-label="{{n.label}}" style="flex:1;min-width:0;border-radius:20px;background:{{n.bg}};color:{{n.fg}};text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transform:{{n.tf}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
+        <span style="font-size:11px;font-weight:700">{{n.label}}</span>
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const updating = S.upd ?? true;
+    const open = S.open || { 0: true };
+    const read = S.read || {};
+    const dl = S.dl || {};
+    const rgba = (hex, a) => {
+      const n = parseInt(hex.slice(1), 16);
+      return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+    };
+    const raw = [
+      { day: 'Hoje', title: 'Maré de Cinzas', kanji: '灰', c1: '#1B3A4B', c2: '#0B1820', accent: '#F2A65A', sx: 18, sy: 12, clip: 'polygon(0 55%,18% 30%,36% 52%,58% 18%,80% 46%,100% 28%,100% 100%,0 100%)',
+        chapters: [[90, 'Porto vazio', 'há 1 h'], [89, 'Sal e fogo', 'há 5 h'], [88, 'Maré alta', 'há 9 h']] },
+      { day: 'Hoje', title: 'Ronin Neon', kanji: '浪', c1: '#0F2B2A', c2: '#050F0F', accent: '#7CF0C9', sx: 8, sy: 28, clip: 'polygon(0 62%,30% 40%,52% 58%,100% 22%,100% 100%,0 100%)',
+        chapters: [[129, 'Neon e chuva', 'há 3 h']] },
+      { day: 'Ontem', title: 'Lótus de Ferro', kanji: '蓮', c1: '#3A1414', c2: '#150606', accent: '#FF5A4E', sx: 28, sy: 30, clip: 'polygon(0 58%,35% 34%,60% 56%,82% 24%,100% 44%,100% 100%,0 100%)',
+        chapters: [[205, 'Pétalas de aço', '18:40'], [204, 'O jardim fechado', '18:40']] },
+      { day: 'Ontem', title: 'Café Lua de Papel', kanji: '月', c1: '#4A3A2A', c2: '#1E1710', accent: '#F4D58D', sx: 34, sy: 8, clip: 'polygon(0 48%,40% 62%,70% 30%,100% 50%,100% 100%,0 100%)',
+        chapters: [[20, 'Chá de lua cheia', '09:15']] }
+    ];
+    const groups = raw.map((d, gi) => {
+      const chs = d.chapters.map((c) => {
+        const key = gi + '-' + c[0];
+        const isRead = !!read[key], isDl = !!dl[key];
+        return {
+          n: c[0], title: c[1], meta: (isRead ? 'Lido' : 'Novo') + ' · ' + c[2] + (isDl ? ' · baixado' : ''),
+          op: isRead ? 0.5 : 1,
+          dlIcon: isDl ? 'M5 12.5l4.5 4.5L19 7.5' : 'M12 4v12m0 0l-5-5m5 5l5-5M5 20h14',
+          dlLabel: isDl ? 'Baixado' : 'Baixar capítulo',
+          dlBg: isDl ? rgba(d.accent, 0.2) : 'transparent',
+          dlFg: isDl ? d.accent : '#F4F0EA',
+          dlBorder: isDl ? rgba(d.accent, 0.6) : 'rgba(255,255,255,.18)',
+          read: () => { const r = Object.assign({}, read); r[key] = !r[key]; this.setState({ read: r }); },
+          dl: () => { const x = Object.assign({}, dl); x[key] = !x[key]; this.setState({ dl: x }); }
+        };
+      });
+      const unread = d.chapters.filter((c) => !read[gi + '-' + c[0]]).length;
+      const isOpen = !!open[gi];
+      return Object.assign({}, d, {
+        chapters: chs,
+        unread,
+        summary: unread === 0 ? 'Tudo lido' : unread + (unread === 1 ? ' capítulo novo' : ' capítulos novos'),
+        open: isOpen,
+        chev: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+        line: isOpen ? rgba(d.accent, 0.5) : 'rgba(255,255,255,.1)',
+        badgeBg: unread === 0 ? 'rgba(255,255,255,.1)' : d.accent,
+        badgeFg: unread === 0 ? '#F4F0EA' : '#0F0E11',
+        toggle: () => { const o = Object.assign({}, open); o[gi] = !o[gi]; this.setState({ open: o }); }
+      });
+    });
+    const sections = ['Hoje', 'Ontem'].map((label) => ({ label, groups: groups.filter((g) => g.day === label) }));
+
+    const nav = [
+      { label: 'Estante', d: 'M4 4h5v16H4zM10 4h5v16h-5zM16.3 5.2l4.4 1.2-3.9 14-4.4-1.2z', href: 'Main.dc.html' },
+      { label: 'Novos', d: 'M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5', href: 'Atualizacoes.dc.html' },
+      { label: 'Histórico', d: 'M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', href: 'Historico.dc.html' },
+      { label: 'Explorar', d: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM15.5 8.5l-2 5-5 2 2-5z', href: 'Explorar.dc.html' },
+      { label: 'Mais', d: 'M5 12h.01M12 12h.01M19 12h.01', href: 'Mais.dc.html' }
+    ];
+    const dock = nav.map((n, i) => ({
+      label: n.label, d: n.d, href: n.href,
+      bg: i === 1 ? 'rgba(255,107,139,.22)' : 'transparent',
+      fg: i === 1 ? '#FF6B8B' : 'rgba(244,240,234,.78)',
+      tf: i === 1 ? 'translateY(-3px) scale(1.04)' : 'translateY(0) scale(1)'
+    }));
+    return {
+      sections, dock, updating,
+      bannerTitle: updating ? 'Atualizando biblioteca · 4 de 6' : 'Biblioteca em dia',
+      bannerSub: updating ? 'Buscando novos capítulos nas fontes' : 'Última checagem há 2 min',
+      bannerBtn: updating ? 'Parar' : 'Atualizar',
+      bannerBtnBg: updating ? 'rgba(255,255,255,.12)' : '#FF6B8B',
+      bannerBtnFg: updating ? '#F4F0EA' : '#0F0E11',
+      toggleUpd: () => this.setState({ upd: !updating }),
+      markAll: () => {
+        const r = {};
+        raw.forEach((d, gi) => d.chapters.forEach((c) => { r[gi + '-' + c[0]] = true; }));
+        this.setState({ read: r });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

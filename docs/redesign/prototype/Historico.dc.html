@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Histórico</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Shippori+Mincho+B1:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+.scroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <div style="position:absolute;inset:0;background:radial-gradient(120% 50% at 10% -6%,rgba(143,180,255,.32),transparent 62%),radial-gradient(90% 45% at 100% 48%,rgba(31,42,85,.85),transparent 70%),#0F0E11"></div>
+
+  <div class="scroll" style="position:absolute;inset:0;overflow-y:auto;padding:28px 16px 130px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72)">Onde você parou</span>
+        <h1 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:40px;line-height:1;letter-spacing:-.02em">Histórico</h1>
+      </div>
+      <button aria-label="Buscar no histórico" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#F4F0EA;display:grid;place-items:center;backdrop-filter:blur(14px)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-4.3-4.3"/></svg>
+      </button>
+    </div>
+
+    <sc-for list="{{sections}}" as="sec" hint-placeholder-count="2">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">{{sec.label}}</span>
+        <sc-for list="{{sec.items}}" as="e" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 8px 10px 10px;border-radius:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);transform:{{e.tf}};opacity:{{e.op}};transition:all 350ms cubic-bezier(.2,.8,.2,1)">
+            <span style="position:relative;width:60px;height:90px;flex:none;border-radius:14px;overflow:hidden;background:linear-gradient(160deg,{{e.c1}},{{e.c2}});box-shadow:0 12px 18px -12px {{e.accent}}">
+              <span style="position:absolute;left:{{e.sx}}%;top:{{e.sy}}%;width:62%;aspect-ratio:1;border-radius:50%;background:{{e.accent}}"></span>
+              <span style="position:absolute;inset:auto 0 0 0;height:48%;background:{{e.c1}};clip-path:{{e.clip}}"></span>
+              <span style="position:absolute;right:5px;top:5px;font-family:'Shippori Mincho B1',serif;font-weight:700;font-size:16px;line-height:1;writing-mode:vertical-rl">{{e.kanji}}</span>
+            </span>
+            <span style="display:flex;flex-direction:column;gap:5px;flex:1;min-width:0">
+              <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:17px;line-height:1.1">{{e.title}}</span>
+              <span style="font-size:13px;color:rgba(244,240,234,.74)">Cap. {{e.ch}} · pág. {{e.page}} de {{e.total}} · {{e.time}}</span>
+              <span style="height:5px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden"><span style="display:block;width:{{e.pct}}%;height:100%;border-radius:3px;background:{{e.accent}}"></span></span>
+            </span>
+            <span style="display:flex;flex-direction:column;gap:4px">
+              <a href="Reader.dc.html" aria-label="Continuar {{e.title}}" style="width:44px;height:44px;border-radius:14px;background:{{e.accent}};color:#0F0E11;display:grid;place-items:center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>
+              </a>
+              <button onClick="{{e.remove}}" aria-label="Remover {{e.title}} do histórico" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:transparent;color:#F4F0EA;display:grid;place-items:center">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+              </button>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-for>
+
+    <sc-if value="{{empty}}" hint-placeholder-val="{{ false }}">
+      <div style="padding:32px 20px;border-radius:22px;border:1px dashed rgba(255,255,255,.22);text-align:center;display:flex;flex-direction:column;gap:6px">
+        <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:18px">Histórico vazio</span>
+        <span style="font-size:14px;color:rgba(244,240,234,.74)">O que você ler aparece aqui.</span>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- undo toast -->
+  <div style="position:absolute;left:16px;right:16px;bottom:100px;height:56px;border-radius:20px;padding:0 8px 0 18px;display:flex;align-items:center;gap:12px;background:rgba(28,25,33,.9);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(24px);box-shadow:0 20px 36px -12px rgba(0,0,0,.7);transform:{{toastTf}};opacity:{{toastOp}};visibility:{{toastVis}};transition:all 400ms cubic-bezier(.2,.8,.2,1)">
+    <span style="flex:1;font-weight:700;font-size:14.5px">Removido do histórico</span>
+    <button onClick="{{undo}}" style="height:44px;padding:0 14px;border-radius:14px;border:0;background:transparent;color:#8FB4FF;font-weight:800;font-size:14.5px">Desfazer</button>
+  </div>
+
+  <!-- dock -->
+  <nav aria-label="Navegação principal" style="position:absolute;left:16px;right:16px;bottom:18px;height:68px;border-radius:26px;padding:6px;box-sizing:border-box;display:flex;gap:4px;background:rgba(24,22,28,.62);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(24px) saturate(1.5);box-shadow:0 20px 40px -12px rgba(0,0,0,.6)">
+    <sc-for list="{{dock}}" as="n" hint-placeholder-count="5">
+      <a href="{{n.href}}" aria-label="{{n.label}}" style="flex:1;min-width:0;border-radius:20px;background:{{n.bg}};color:{{n.fg}};text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transform:{{n.tf}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
+        <span style="font-size:11px;font-weight:700">{{n.label}}</span>
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const removed = S.removed || {};
+    const last = S.last ?? null;
+    const raw = [
+      { day: 'Hoje', title: 'Maré de Cinzas', ch: 87, page: 12, total: 31, time: '14:32', kanji: '灰', c1: '#1B3A4B', c2: '#0B1820', accent: '#F2A65A', sx: 18, sy: 12, clip: 'polygon(0 55%,18% 30%,36% 52%,58% 18%,80% 46%,100% 28%,100% 100%,0 100%)' },
+      { day: 'Hoje', title: 'Ronin Neon', ch: 128, page: 4, total: 36, time: '09:10', kanji: '浪', c1: '#0F2B2A', c2: '#050F0F', accent: '#7CF0C9', sx: 8, sy: 28, clip: 'polygon(0 62%,30% 40%,52% 58%,100% 22%,100% 100%,0 100%)' },
+      { day: 'Ontem', title: 'Clube do Último Sino', ch: 64, page: 28, total: 30, time: '22:48', kanji: '鐘', c1: '#1F2A55', c2: '#0A0E24', accent: '#8FB4FF', sx: 14, sy: 22, clip: 'polygon(0 35%,22% 52%,48% 30%,70% 58%,100% 40%,100% 100%,0 100%)' },
+      { day: 'Ontem', title: 'Estação Kitsune 9', ch: 42, page: 18, total: 24, time: '20:05', kanji: '狐', c1: '#3B1F4A', c2: '#150B1C', accent: '#FF6B8B', sx: 30, sy: 20, clip: 'polygon(0 40%,25% 60%,50% 25%,75% 55%,100% 35%,100% 100%,0 100%)' },
+      { day: 'Esta semana', title: 'Café Lua de Papel', ch: 19, page: 10, total: 22, time: 'Seg', kanji: '月', c1: '#4A3A2A', c2: '#1E1710', accent: '#F4D58D', sx: 34, sy: 8, clip: 'polygon(0 48%,40% 62%,70% 30%,100% 50%,100% 100%,0 100%)' }
+    ].map((d, i) => Object.assign({}, d, {
+      id: i,
+      pct: Math.round(d.page / d.total * 100),
+      tf: removed[i] ? 'translateX(60px) scale(.96)' : 'translateX(0) scale(1)',
+      op: removed[i] ? 0 : 1,
+      remove: () => { const r = Object.assign({}, removed); r[i] = true; this.setState({ removed: r, last: i }); }
+    }));
+    const visible = raw.filter((d) => !removed[d.id]);
+    const sections = ['Hoje', 'Ontem', 'Esta semana']
+      .map((label) => ({ label, items: visible.filter((d) => d.day === label) }))
+      .filter((s) => s.items.length > 0);
+    const nav = [
+      { label: 'Estante', d: 'M4 4h5v16H4zM10 4h5v16h-5zM16.3 5.2l4.4 1.2-3.9 14-4.4-1.2z', href: 'Main.dc.html' },
+      { label: 'Novos', d: 'M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5', href: 'Atualizacoes.dc.html' },
+      { label: 'Histórico', d: 'M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', href: 'Historico.dc.html' },
+      { label: 'Explorar', d: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM15.5 8.5l-2 5-5 2 2-5z', href: 'Explorar.dc.html' },
+      { label: 'Mais', d: 'M5 12h.01M12 12h.01M19 12h.01', href: 'Mais.dc.html' }
+    ];
+    const dock = nav.map((n, i) => ({
+      label: n.label, d: n.d, href: n.href,
+      bg: i === 2 ? 'rgba(143,180,255,.22)' : 'transparent',
+      fg: i === 2 ? '#8FB4FF' : 'rgba(244,240,234,.78)',
+      tf: i === 2 ? 'translateY(-3px) scale(1.04)' : 'translateY(0) scale(1)'
+    }));
+    const showToast = last !== null && !!removed[last];
+    return {
+      sections, dock,
+      empty: visible.length === 0,
+      toastTf: showToast ? 'translateY(0)' : 'translateY(20px)',
+      toastOp: showToast ? 1 : 0,
+      toastVis: showToast ? 'visible' : 'hidden',
+      undo: () => {
+        const r = Object.assign({}, removed);
+        if (last !== null) r[last] = false;
+        this.setState({ removed: r, last: null });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

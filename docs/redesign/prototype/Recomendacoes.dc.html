@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Recomendações</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Shippori+Mincho+B1:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+.scroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <div style="position:absolute;inset:0;background:radial-gradient(120% 50% at 90% -6%,rgba(255,107,139,.3),transparent 62%),radial-gradient(90% 45% at 0% 50%,rgba(59,31,74,.85),transparent 70%),#0F0E11"></div>
+
+  <div class="scroll" style="position:absolute;inset:0;overflow-y:auto;padding:20px 16px 40px;box-sizing:border-box;display:flex;flex-direction:column;gap:22px">
+
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="Detalhes.dc.html" aria-label="Voltar" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);backdrop-filter:blur(14px);color:#F4F0EA;display:grid;place-items:center;flex:none">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+      <div style="display:flex;flex-direction:column">
+        <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72)">Porque você leu</span>
+        <h1 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:28px;line-height:1.05">Maré de Cinzas</h1>
+      </div>
+    </div>
+
+    <sc-for list="{{rails}}" as="r" hint-placeholder-count="2">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:20px">{{r.title}}</span>
+        <div class="scroll" style="display:flex;gap:14px;overflow-x:auto;margin:0 -16px;padding:4px 16px 10px">
+          <sc-for list="{{r.items}}" as="m" hint-placeholder-count="4">
+            <div style="flex:none;width:136px;display:flex;flex-direction:column;gap:8px">
+              <div style="position:relative;width:136px;height:204px;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,{{m.c1}},{{m.c2}});box-shadow:0 18px 24px -14px {{m.accent}}">
+                <div style="position:absolute;left:{{m.sx}}%;top:{{m.sy}}%;width:62%;aspect-ratio:1;border-radius:50%;background:{{m.accent}}"></div>
+                <div style="position:absolute;inset:auto 0 0 0;height:48%;background:{{m.c1}};clip-path:{{m.clip}}"></div>
+                <div style="position:absolute;right:9px;top:9px;font-family:'Shippori Mincho B1',serif;font-weight:700;font-size:22px;line-height:1;writing-mode:vertical-rl">{{m.kanji}}</div>
+                <div style="position:absolute;left:8px;bottom:8px;height:26px;padding:0 10px;border-radius:13px;display:flex;align-items:center;background:rgba(15,14,17,.8);border:1px solid {{m.accent}};color:{{m.accent}};font-size:12.5px;font-weight:800">{{m.sim}}% parecido</div>
+              </div>
+              <span style="font-weight:700;font-size:14.5px;line-height:1.2">{{m.title}}</span>
+              <button onClick="{{m.toggle}}" style="height:44px;border-radius:14px;border:1px solid {{m.border}};background:{{m.bg}};color:{{m.fg}};font-weight:800;font-size:13.5px;transition:all 250ms ease">{{m.label}}</button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const added = S.added || {};
+    const rgba = (hex, a) => {
+      const n = parseInt(hex.slice(1), 16);
+      return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+    };
+    const pool = [
+      { id: 'a', title: 'Estação Kitsune 9', kanji: '狐', c1: '#3B1F4A', c2: '#150B1C', accent: '#FF6B8B', sx: 30, sy: 20, clip: 'polygon(0 40%,25% 60%,50% 25%,75% 55%,100% 35%,100% 100%,0 100%)' },
+      { id: 'b', title: 'Ronin Neon', kanji: '浪', c1: '#0F2B2A', c2: '#050F0F', accent: '#7CF0C9', sx: 8, sy: 28, clip: 'polygon(0 62%,30% 40%,52% 58%,100% 22%,100% 100%,0 100%)' },
+      { id: 'c', title: 'Café Lua de Papel', kanji: '月', c1: '#4A3A2A', c2: '#1E1710', accent: '#F4D58D', sx: 34, sy: 8, clip: 'polygon(0 48%,40% 62%,70% 30%,100% 50%,100% 100%,0 100%)' },
+      { id: 'd', title: 'Clube do Último Sino', kanji: '鐘', c1: '#1F2A55', c2: '#0A0E24', accent: '#8FB4FF', sx: 14, sy: 22, clip: 'polygon(0 35%,22% 52%,48% 30%,70% 58%,100% 40%,100% 100%,0 100%)' },
+      { id: 'e', title: 'Lótus de Ferro', kanji: '蓮', c1: '#3A1414', c2: '#150606', accent: '#FF5A4E', sx: 28, sy: 30, clip: 'polygon(0 58%,35% 34%,60% 56%,82% 24%,100% 44%,100% 100%,0 100%)' }
+    ];
+    const mk = (list, sims, prefix) => list.map((m, i) => {
+      const key = prefix + m.id;
+      const on = !!added[key];
+      return Object.assign({}, m, {
+        sim: sims[i],
+        label: on ? 'Na estante' : 'Adicionar',
+        bg: on ? rgba(m.accent, 0.2) : m.accent,
+        fg: on ? m.accent : '#0F0E11',
+        border: on ? rgba(m.accent, 0.6) : m.accent,
+        toggle: () => { const a = Object.assign({}, added); a[key] = !a[key]; this.setState({ added: a }); }
+      });
+    });
+    const rails = [
+      { title: 'Mesmo clima e autoria', items: mk([pool[3], pool[0], pool[2]], [92, 81, 74], 'r1') },
+      { title: 'Leitores também gostaram', items: mk([pool[1], pool[4], pool[0], pool[3]], [88, 79, 71, 66], 'r2') }
+    ];
+    return { rails };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Aparência</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Shippori+Mincho+B1:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+.scroll::-webkit-scrollbar{display:none}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:rgba(255,255,255,.2)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;background:#F2A65A;border:3px solid #0F0E11;box-shadow:0 0 0 2px #F2A65A}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <div style="position:absolute;inset:0;background:{{atmo}};transition:background 600ms ease"></div>
+
+  <div class="scroll" style="position:absolute;inset:0;overflow-y:auto;padding:20px 16px 40px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="Mais.dc.html" aria-label="Voltar" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);backdrop-filter:blur(14px);color:#F4F0EA;display:grid;place-items:center;flex:none">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+      <h1 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:30px;line-height:1.05;letter-spacing:-.01em">Aparência</h1>
+    </div>
+
+    <!-- live preview -->
+    <div style="height:210px;border-radius:26px;display:flex;align-items:center;justify-content:center;gap:22px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);perspective:700px;overflow:hidden">
+      <div style="width:104px;height:156px;border-radius:16px;position:relative;overflow:hidden;background:linear-gradient(160deg,#1B3A4B,#0B1820);transform:{{pvTf}};transition:transform 500ms cubic-bezier(.2,.8,.2,1);box-shadow:0 26px 30px -14px {{accent}}">
+        <div style="position:absolute;left:18%;top:12%;width:62%;aspect-ratio:1;border-radius:50%;background:{{accent}};transform:{{pvSun}};transition:transform 500ms ease"></div>
+        <div style="position:absolute;inset:auto 0 0 0;height:48%;background:#1B3A4B;clip-path:polygon(0 55%,18% 30%,36% 52%,58% 18%,80% 46%,100% 28%,100% 100%,0 100%)"></div>
+        <div style="position:absolute;right:8px;top:8px;font-family:'Shippori Mincho B1',serif;font-weight:700;font-size:20px;line-height:1;writing-mode:vertical-rl">灰</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;max-width:140px">
+        <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:20px;line-height:1.05">Maré de Cinzas</span>
+        <span style="height:30px;width:fit-content;padding:0 12px;border-radius:15px;display:flex;align-items:center;font-size:13px;font-weight:800;background:{{accent}};color:#0F0E11">{{themeLabel}}</span>
+      </div>
+    </div>
+
+    <!-- theme source -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">Cor da interface</span>
+      <div style="display:flex;padding:4px;gap:4px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)">
+        <sc-for list="{{themes}}" as="t" hint-placeholder-count="3">
+          <button onClick="{{t.pick}}" style="flex:1;height:44px;border-radius:14px;border:0;background:{{t.bg}};color:{{t.fg}};font-weight:700;font-size:14px;transition:all 300ms ease">{{t.label}}</button>
+        </sc-for>
+      </div>
+      <sc-if value="{{showSwatches}}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:10px;padding-top:4px">
+          <sc-for list="{{swatches}}" as="s" hint-placeholder-count="5">
+            <button onClick="{{s.pick}}" aria-label="Cor {{s.name}}" aria-pressed="{{s.on}}" style="width:48px;height:48px;border-radius:16px;border:3px solid {{s.ring}};background:{{s.color}};padding:0;transition:all 250ms ease"></button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- mode -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">Modo</span>
+      <div style="display:flex;padding:4px;gap:4px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)">
+        <sc-for list="{{modes}}" as="m" hint-placeholder-count="3">
+          <button onClick="{{m.pick}}" style="flex:1;height:44px;border-radius:14px;border:0;background:{{m.bg}};color:{{m.fg}};font-weight:700;font-size:14px;transition:all 300ms ease">{{m.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- intensity -->
+    <div style="display:flex;flex-direction:column;gap:2px;padding:12px 14px;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)">
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:15.5px">
+        <label for="inten">Intensidade do 3D</label>
+        <span style="color:{{accent}}">{{intensity}}%</span>
+      </div>
+      <input id="inten" type="range" min="0" max="100" step="5" value="{{intensity}}" onChange="{{setIntensity}}">
+    </div>
+
+    <!-- switches -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{switches}}" as="t" hint-placeholder-count="3">
+        <button onClick="{{t.toggle}}" role="switch" aria-checked="{{t.on}}" style="min-height:64px;padding:8px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#F4F0EA;display:flex;align-items:center;gap:12px;text-align:left">
+          <span style="display:flex;flex-direction:column;gap:1px;flex:1">
+            <span style="font-weight:700;font-size:15.5px">{{t.label}}</span>
+            <span style="font-size:13px;color:rgba(244,240,234,.72)">{{t.hint}}</span>
+          </span>
+          <span style="width:52px;height:30px;border-radius:15px;background:{{t.bg}};position:relative;transition:background 250ms ease"><span style="position:absolute;top:3px;left:{{t.left}}px;width:24px;height:24px;border-radius:50%;background:{{t.knob}};transition:left 250ms cubic-bezier(.2,.8,.2,1)"></span></span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const theme = S.theme ?? 0;
+    const mode = S.mode ?? 1;
+    const intensity = S.intensity ?? 60;
+    const sw = S.sw ?? 0;
+    const flags = S.flags || { 0: true, 1: true, 2: false };
+    const rgba = (hex, a) => {
+      const n = parseInt(hex.slice(1), 16);
+      return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+    };
+    const colors = [
+      { name: 'Âmbar', c: '#F2A65A' }, { name: 'Rosa', c: '#FF6B8B' }, { name: 'Menta', c: '#7CF0C9' },
+      { name: 'Azul', c: '#8FB4FF' }, { name: 'Dourado', c: '#F4D58D' }
+    ];
+    const accent = theme === 1 ? colors[sw].c : (theme === 2 ? '#C9C4BB' : '#F2A65A');
+    const reduce = !!flags[2];
+    const k = reduce ? 0 : intensity / 100;
+    const themes = ['Capa', 'Fixa', 'Sistema'].map((label, i) => ({
+      label, pick: () => this.setState({ theme: i }),
+      bg: theme === i ? accent : 'transparent', fg: theme === i ? '#0F0E11' : '#F4F0EA'
+    }));
+    const modes = ['Claro', 'Escuro', 'AMOLED'].map((label, i) => ({
+      label, pick: () => this.setState({ mode: i }),
+      bg: mode === i ? accent : 'transparent', fg: mode === i ? '#0F0E11' : '#F4F0EA'
+    }));
+    const swatches = colors.map((c, i) => ({
+      name: c.name, color: c.c, on: sw === i,
+      ring: sw === i ? '#F4F0EA' : 'transparent',
+      pick: () => this.setState({ sw: i })
+    }));
+    const defs = [
+      { label: 'Parallax por giroscópio', hint: 'Capas se movem com o aparelho' },
+      { label: 'Brilho nas capas', hint: 'Reflexo ao inclinar' },
+      { label: 'Reduzir movimento', hint: 'Desliga 3D, shaders e parallax' }
+    ];
+    const switches = defs.map((t, i) => ({
+      label: t.label, hint: t.hint, on: !!flags[i],
+      bg: flags[i] ? accent : 'rgba(255,255,255,.18)',
+      left: flags[i] ? 25 : 3,
+      knob: flags[i] ? '#0F0E11' : '#F4F0EA',
+      toggle: () => { const f = Object.assign({}, flags); f[i] = !f[i]; this.setState({ flags: f }); }
+    }));
+    return {
+      accent, themes, modes, swatches, switches, intensity,
+      showSwatches: theme === 1,
+      themeLabel: theme === 0 ? 'Tinta da capa' : (theme === 1 ? 'Cor fixa' : 'Cor do sistema'),
+      atmo: 'radial-gradient(120% 50% at 50% -8%,' + rgba(accent, mode === 0 ? 0.2 : 0.34) + ',transparent 62%),radial-gradient(90% 45% at 100% 55%,rgba(27,58,75,.8),transparent 70%),' + (mode === 2 ? '#000' : '#0F0E11'),
+      pvTf: 'rotateY(' + (-24 * k).toFixed(1) + 'deg) rotateX(' + (8 * k).toFixed(1) + 'deg)',
+      pvSun: 'translate3d(' + (12 * k).toFixed(1) + 'px,' + (-6 * k).toFixed(1) + 'px,0)',
+      setIntensity: (e) => this.setState({ intensity: parseInt(e.target.value, 10) || 0 })
+    };
+  }
+}
+</script>
+</body>
+</html>

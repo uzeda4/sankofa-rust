@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Biblioteca</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Shippori+Mincho+B1:wght@700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0F0E11}
+button{font-family:inherit;cursor:pointer}
+.scroll::-webkit-scrollbar{display:none}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0F0E11;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <!-- tinted atmosphere: follows the focused cover -->
+  <div style="position:absolute;inset:0;background:{{atmo}};transition:background 700ms ease"></div>
+  <div style="position:absolute;inset:0;opacity:.22;mix-blend-mode:overlay;background:radial-gradient(circle,rgba(255,255,255,.55) 0.8px,transparent 1.1px) 0 0/6px 6px;-webkit-mask-image:linear-gradient(180deg,#000,transparent 55%);mask-image:linear-gradient(180deg,#000,transparent 55%)"></div>
+
+  <div class="scroll" style="position:absolute;inset:0;overflow-y:auto;padding:28px 16px 130px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px">
+
+    <!-- header -->
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72)">Sua estante</span>
+        <h1 style="margin:0;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:40px;line-height:1;letter-spacing:-.02em">Biblioteca</h1>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button aria-label="Buscar" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#F4F0EA;display:grid;place-items:center;backdrop-filter:blur(14px)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-4.3-4.3"/></svg>
+        </button>
+        <button aria-label="Filtrar" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#F4F0EA;display:grid;place-items:center;backdrop-filter:blur(14px)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- categories -->
+    <div class="scroll" style="display:flex;gap:8px;overflow-x:auto;margin:0 -16px;padding:0 16px">
+      <sc-for list="{{cats}}" as="k" hint-placeholder-count="4">
+        <button onClick="{{k.pick}}" style="flex:none;height:44px;padding:0 18px;border-radius:22px;border:1px solid {{k.border}};background:{{k.bg}};color:{{k.fg}};font-size:14px;font-weight:700;transition:all 300ms ease">{{k.label}}</button>
+      </sc-for>
+    </div>
+
+    <!-- continue reading hero -->
+    <div style="position:relative;border-radius:26px;padding:14px;display:flex;gap:16px;align-items:center;border:1px solid rgba(255,255,255,.14);background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.04));backdrop-filter:blur(20px);box-shadow:0 24px 48px -24px {{heroShadow}}">
+      <div style="width:104px;height:156px;flex:none;perspective:600px">
+        <div style="position:relative;width:100%;height:100%;border-radius:14px;overflow:hidden;transform-style:preserve-3d;transform:{{heroTf}};transition:transform 500ms cubic-bezier(.2,.8,.2,1);background:linear-gradient(160deg,{{hero.c1}},{{hero.c2}});box-shadow:0 18px 30px -12px {{hero.accent}}">
+          <div style="position:absolute;left:{{hero.sx}}%;top:{{hero.sy}}%;width:58%;aspect-ratio:1;border-radius:50%;background:{{hero.accent}};transform:{{heroSun}};transition:transform 500ms ease"></div>
+          <div style="position:absolute;inset:auto 0 0 0;height:46%;background:{{hero.c1}};clip-path:{{hero.clip}};opacity:.92"></div>
+          <div style="position:absolute;right:8px;top:8px;font-family:'Shippori Mincho B1',serif;font-weight:700;font-size:20px;line-height:1;writing-mode:vertical-rl;color:#F4F0EA">{{hero.kanji}}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1">
+        <span style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:{{hero.accent}};font-weight:700">Continuar lendo</span>
+        <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:22px;line-height:1.08">{{hero.title}}</span>
+        <span style="font-size:13px;color:rgba(244,240,234,.72)">Capítulo {{hero.ch}} · página 12 de 31</span>
+        <div style="height:6px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden"><div style="width:{{hero.pct}}%;height:100%;border-radius:3px;background:{{hero.accent}};transition:width 500ms ease"></div></div>
+        <a href="Reader.dc.html" style="margin-top:2px;height:44px;border-radius:14px;background:{{hero.accent}};color:#0F0E11;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 20px -10px {{hero.accent}}">Ler agora</a>
+      </div>
+    </div>
+
+    <!-- grid with 3D tilt covers -->
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 12px">
+      <sc-for list="{{covers}}" as="c" hint-placeholder-count="6">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div onMouseMove="{{c.move}}" onMouseLeave="{{c.leave}}" onClick="{{c.focusIt}}" style="perspective:700px;cursor:pointer">
+            <div style="position:relative;aspect-ratio:2/3;border-radius:18px;overflow:hidden;transform-style:preserve-3d;transform:{{c.tf}};transition:transform {{c.dur}} cubic-bezier(.2,.8,.2,1),box-shadow 300ms ease;background:linear-gradient(160deg,{{c.c1}},{{c.c2}});box-shadow:{{c.shadow}}">
+              <div style="position:absolute;left:{{c.sx}}%;top:{{c.sy}}%;width:62%;aspect-ratio:1;border-radius:50%;background:{{c.accent}};transform:{{c.sun}};transition:transform {{c.dur}} ease"></div>
+              <div style="position:absolute;inset:0;opacity:.28;background:radial-gradient(circle,rgba(0,0,0,.6) 1.1px,transparent 1.5px) 0 0/7px 7px;-webkit-mask-image:linear-gradient(200deg,#000,transparent 60%);mask-image:linear-gradient(200deg,#000,transparent 60%)"></div>
+              <div style="position:absolute;inset:auto 0 0 0;height:48%;background:{{c.c1}};clip-path:{{c.clip}};transform:{{c.ridge}};transition:transform {{c.dur}} ease"></div>
+              <div style="position:absolute;right:10px;top:10px;font-family:'Shippori Mincho B1',serif;font-weight:700;font-size:26px;line-height:1;writing-mode:vertical-rl;color:#F4F0EA;text-shadow:0 2px 10px rgba(0,0,0,.45)">{{c.kanji}}</div>
+              <div style="position:absolute;inset:0;background:{{c.glare}};mix-blend-mode:soft-light;pointer-events:none"></div>
+              <sc-if value="{{c.unread}}" hint-placeholder-val="{{ true }}">
+                <div style="position:absolute;left:8px;top:8px;height:24px;min-width:24px;padding:0 8px;box-sizing:border-box;border-radius:12px;background:{{c.accent}};color:#0F0E11;font-weight:800;font-size:13px;display:grid;place-items:center">{{c.unread}}</div>
+              </sc-if>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px;padding:0 2px">
+            <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:16px;line-height:1.15">{{c.title}}</span>
+            <span style="font-size:13px;color:rgba(244,240,234,.68)">{{c.sub}}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- floating glass dock -->
+  <nav aria-label="Navegação principal" style="position:absolute;left:16px;right:16px;bottom:18px;height:68px;border-radius:26px;padding:6px;box-sizing:border-box;display:flex;gap:4px;background:rgba(24,22,28,.62);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(24px) saturate(1.5);box-shadow:0 20px 40px -12px rgba(0,0,0,.6)">
+    <sc-for list="{{dock}}" as="n" hint-placeholder-count="5">
+      <a href="{{n.href}}" aria-label="{{n.label}}" style="flex:1;min-width:0;border-radius:20px;background:{{n.bg}};color:{{n.fg}};text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transition:all 300ms cubic-bezier(.2,.8,.2,1);transform:{{n.tf}}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{n.d}}"/></svg>
+        <span style="font-size:11px;font-weight:700">{{n.label}}</span>
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const focus = S.focus ?? 0;
+    const tilt = S.tilt || null;
+    const cat = S.cat ?? 0;
+    const tab = S.tab ?? 0;
+
+    const data = [
+      { title: 'Maré de Cinzas', sub: 'Cap. 87 · 3 novos', unread: 3, kanji: '灰', c1: '#1B3A4B', c2: '#0B1820', accent: '#F2A65A', sx: 18, sy: 12, clip: 'polygon(0 55%,18% 30%,36% 52%,58% 18%,80% 46%,100% 28%,100% 100%,0 100%)', ch: 87, pct: 38 },
+      { title: 'Estação Kitsune 9', sub: 'Cap. 42 · em dia', unread: 0, kanji: '狐', c1: '#3B1F4A', c2: '#150B1C', accent: '#FF6B8B', sx: 30, sy: 20, clip: 'polygon(0 40%,25% 60%,50% 25%,75% 55%,100% 35%,100% 100%,0 100%)', ch: 42, pct: 71 },
+      { title: 'Ronin Neon', sub: 'Cap. 128 · 12 novos', unread: 12, kanji: '浪', c1: '#0F2B2A', c2: '#050F0F', accent: '#7CF0C9', sx: 8, sy: 28, clip: 'polygon(0 62%,30% 40%,52% 58%,100% 22%,100% 100%,0 100%)', ch: 128, pct: 12 },
+      { title: 'Café Lua de Papel', sub: 'Cap. 19 · 1 novo', unread: 1, kanji: '月', c1: '#4A3A2A', c2: '#1E1710', accent: '#F4D58D', sx: 34, sy: 8, clip: 'polygon(0 48%,40% 62%,70% 30%,100% 50%,100% 100%,0 100%)', ch: 19, pct: 55 },
+      { title: 'Clube do Último Sino', sub: 'Cap. 64 · em dia', unread: 0, kanji: '鐘', c1: '#1F2A55', c2: '#0A0E24', accent: '#8FB4FF', sx: 14, sy: 22, clip: 'polygon(0 35%,22% 52%,48% 30%,70% 58%,100% 40%,100% 100%,0 100%)', ch: 64, pct: 90 },
+      { title: 'Lótus de Ferro', sub: 'Cap. 203 · 5 novos', unread: 5, kanji: '蓮', c1: '#3A1414', c2: '#150606', accent: '#FF5A4E', sx: 28, sy: 30, clip: 'polygon(0 58%,35% 34%,60% 56%,82% 24%,100% 44%,100% 100%,0 100%)', ch: 203, pct: 24 }
+    ];
+    const rgba = (hex, a) => {
+      const n = parseInt(hex.slice(1), 16);
+      return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+    };
+
+    const covers = data.map((d, i) => {
+      const active = tilt && tilt.id === i;
+      const rx = active ? tilt.rx : 0, ry = active ? tilt.ry : 0;
+      const gx = active ? tilt.gx : 50, gy = active ? tilt.gy : 50;
+      const isFocus = focus === i;
+      return Object.assign({}, d, {
+        tf: 'rotateX(' + rx.toFixed(1) + 'deg) rotateY(' + ry.toFixed(1) + 'deg) scale(' + (active ? 1.05 : 1) + ')',
+        sun: 'translate3d(' + (-ry * 0.9).toFixed(1) + 'px,' + (rx * 0.9).toFixed(1) + 'px,0)',
+        ridge: 'translate3d(' + (ry * 0.6).toFixed(1) + 'px,' + (-rx * 0.4).toFixed(1) + 'px,0)',
+        glare: 'radial-gradient(circle at ' + gx + '% ' + gy + '%, rgba(255,255,255,' + (active ? 0.9 : 0) + '), transparent 55%)',
+        dur: active ? '120ms' : '600ms',
+        shadow: active ? '0 26px 34px -14px ' + rgba(d.accent, 0.6) : (isFocus ? '0 16px 26px -14px ' + rgba(d.accent, 0.5) : '0 10px 18px -12px rgba(0,0,0,.7)'),
+        move: (e) => {
+          const r = e.currentTarget.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+          this.setState({ tilt: { id: i, rx: (0.5 - y) * 22, ry: (x - 0.5) * 22, gx: Math.round(x * 100), gy: Math.round(y * 100) }, focus: i });
+        },
+        leave: () => this.setState({ tilt: null }),
+        focusIt: () => this.setState({ focus: i })
+      });
+    });
+
+    const hero = data[focus];
+    const catLabels = ['Todos', 'Lendo', 'Em dia', 'Para ler'];
+    const cats = catLabels.map((label, i) => ({
+      label,
+      pick: () => this.setState({ cat: i }),
+      bg: cat === i ? hero.accent : 'rgba(255,255,255,.08)',
+      fg: cat === i ? '#0F0E11' : '#F4F0EA',
+      border: cat === i ? hero.accent : 'rgba(255,255,255,.14)'
+    }));
+
+    const nav = [
+      { label: 'Estante', d: 'M4 4h5v16H4zM10 4h5v16h-5zM16.3 5.2l4.4 1.2-3.9 14-4.4-1.2z', href: 'Main.dc.html' },
+      { label: 'Novos', d: 'M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5', href: 'Atualizacoes.dc.html' },
+      { label: 'Histórico', d: 'M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', href: 'Historico.dc.html' },
+      { label: 'Explorar', d: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM15.5 8.5l-2 5-5 2 2-5z', href: 'Explorar.dc.html' },
+      { label: 'Mais', d: 'M5 12h.01M12 12h.01M19 12h.01', href: 'Mais.dc.html' }
+    ];
+    const dock = nav.map((n, i) => ({
+      label: n.label, d: n.d, href: n.href,
+      bg: tab === i ? rgba(hero.accent, 0.22) : 'transparent',
+      fg: tab === i ? hero.accent : 'rgba(244,240,234,.78)',
+      tf: tab === i ? 'translateY(-3px) scale(1.04)' : 'translateY(0) scale(1)'
+    }));
+
+    return {
+      atmo: 'radial-gradient(120% 60% at 20% -5%,' + rgba(hero.accent, 0.38) + ',transparent 62%),radial-gradient(90% 50% at 100% 40%,' + rgba(hero.c1, 0.9) + ',transparent 70%),#0F0E11',
+      hero, covers, cats, dock,
+      heroShadow: rgba(hero.accent, 0.45),
+      heroTf: 'rotateY(-14deg) rotateX(4deg)',
+      heroSun: 'translate3d(6px,-4px,0)'
+    };
+  }
+}
+</script>
+</body>
+</html>

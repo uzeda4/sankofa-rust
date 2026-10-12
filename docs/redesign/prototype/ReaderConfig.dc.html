@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Configurações do reader</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0A0C}
+button{font-family:inherit;cursor:pointer}
+.scroll::-webkit-scrollbar{display:none}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:rgba(255,255,255,.2)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;margin-top:-9px;border-radius:50%;background:#F2A65A;border:3px solid #0F0E11;box-shadow:0 0 0 2px #F2A65A}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:#0A0A0C;color:#F4F0EA;font-family:'DM Sans',system-ui,sans-serif">
+
+  <!-- dimmed manga page behind -->
+  <div style="position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;padding-top:40px;opacity:.5;filter:brightness({{bright}})">
+    <div style="width:350px;height:520px;background:{{pageBg}};border-radius:6px;padding:12px;box-sizing:border-box;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:10px">
+      <div style="grid-column:1 / 5;border:3px solid #141414;background:radial-gradient(circle at 70% 40%,#151515 0 20%,transparent 21%),repeating-linear-gradient(100deg,#CFC8B8 0 2px,#F1ECE2 2px 11px)"></div>
+      <div style="grid-column:5 / 7;border:3px solid #141414;background:radial-gradient(circle at 32% 62%,#F1ECE2 0 15%,transparent 16%),#151515"></div>
+      <div style="grid-column:1 / 7;grid-row:2;border:3px solid #141414;background:linear-gradient(180deg,#F1ECE2 0 54%,#1c1c1c 54%)"></div>
+      <div style="grid-column:1 / 3;grid-row:3;border:3px solid #141414;background:radial-gradient(circle,#2a2a2a 1.4px,transparent 1.9px) 0 0/7px 7px,#E6DFD0"></div>
+      <div style="grid-column:3 / 7;grid-row:3;border:3px solid #141414;background:repeating-linear-gradient(100deg,#CFC8B8 0 2px,#F1ECE2 2px 11px)"></div>
+    </div>
+  </div>
+  <div style="position:absolute;inset:0;background:rgba(5,5,7,.5)"></div>
+
+  <!-- sheet -->
+  <div role="dialog" aria-label="Configurações do reader" style="position:absolute;left:0;right:0;bottom:0;top:150px;border-radius:32px 32px 0 0;display:flex;flex-direction:column;background:rgba(28,25,33,.9);backdrop-filter:blur(30px) saturate(1.5);border-top:1px solid rgba(255,255,255,.16)">
+    <div style="padding:12px 20px 0;display:flex;flex-direction:column;gap:14px">
+      <span style="width:44px;height:5px;border-radius:3px;background:rgba(255,255,255,.28);align-self:center"></span>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span style="font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:24px">Reader</span>
+        <a href="Reader.dc.html" aria-label="Fechar" style="width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.16);color:#F4F0EA;display:grid;place-items:center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </a>
+      </div>
+      <div style="display:flex;padding:4px;gap:4px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="3">
+          <button onClick="{{t.pick}}" style="flex:1;height:44px;border-radius:14px;border:0;background:{{t.bg}};color:{{t.fg}};font-weight:700;font-size:14px;transition:all 300ms ease">{{t.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div class="scroll" style="flex:1;overflow-y:auto;padding:16px 20px 28px;display:flex;flex-direction:column;gap:16px">
+
+      <!-- LEITURA -->
+      <sc-if value="{{tab0}}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <sc-for list="{{reading}}" as="g" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">{{g.title}}</span>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <sc-for list="{{g.options}}" as="o" hint-placeholder-count="3">
+                  <button onClick="{{o.pick}}" aria-pressed="{{o.on}}" style="height:44px;padding:0 16px;border-radius:22px;border:1px solid {{o.border}};background:{{o.bg}};color:{{o.fg}};font-weight:700;font-size:14px;transition:all 250ms ease">{{o.label}}</button>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- TELA -->
+      <sc-if value="{{tab1}}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="padding:12px 14px;border-radius:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)">
+            <div style="display:flex;justify-content:space-between;font-weight:700;font-size:15.5px">
+              <label for="br">Brilho do reader</label><span style="color:#F2A65A">{{brightPct}}%</span>
+            </div>
+            <input id="br" type="range" min="20" max="100" step="5" value="{{brightPct}}" onChange="{{setBright}}">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">Cor de fundo</span>
+            <div style="display:flex;gap:10px">
+              <sc-for list="{{bgs}}" as="b" hint-placeholder-count="4">
+                <button onClick="{{b.pick}}" aria-pressed="{{b.on}}" style="flex:1;min-height:64px;border-radius:18px;border:2px solid {{b.ring}};background:{{b.color}};color:{{b.text}};font-weight:700;font-size:13.5px;transition:all 250ms ease">{{b.label}}</button>
+              </sc-for>
+            </div>
+          </div>
+          <sc-for list="{{screenSw}}" as="t" hint-placeholder-count="2">
+            <button onClick="{{t.toggle}}" role="switch" aria-checked="{{t.on}}" style="min-height:60px;padding:8px 14px;border-radius:18px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#F4F0EA;display:flex;align-items:center;gap:12px;text-align:left">
+              <span style="flex:1;font-weight:700;font-size:15.5px">{{t.label}}</span>
+              <span style="width:52px;height:30px;border-radius:15px;background:{{t.bg}};position:relative;transition:background 250ms ease"><span style="position:absolute;top:3px;left:{{t.left}}px;width:24px;height:24px;border-radius:50%;background:{{t.knob}};transition:left 250ms cubic-bezier(.2,.8,.2,1)"></span></span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- GERAL -->
+      <sc-if value="{{tab2}}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <span style="font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,240,234,.72);font-weight:700">Zonas de toque</span>
+          <div style="display:flex;justify-content:center;perspective:800px">
+            <div style="width:150px;height:220px;border-radius:18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:hidden;border:1px solid rgba(255,255,255,.2);transform:rotateY(-18deg) rotateX(6deg);box-shadow:0 26px 30px -16px rgba(242,166,90,.5)">
+              <sc-for list="{{zones}}" as="z" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;font-weight:800;background:{{z.bg}};color:#0F0E11;padding:4px">{{z.label}}</div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex;padding:4px;gap:4px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1)">
+            <sc-for list="{{zoneModes}}" as="m" hint-placeholder-count="3">
+              <button onClick="{{m.pick}}" style="flex:1;height:44px;border-radius:14px;border:0;background:{{m.bg}};color:{{m.fg}};font-weight:700;font-size:14px;transition:all 300ms ease">{{m.label}}</button>
+            </sc-for>
+          </div>
+          <sc-for list="{{generalSw}}" as="t" hint-placeholder-count="2">
+            <button onClick="{{t.toggle}}" role="switch" aria-checked="{{t.on}}" style="min-height:60px;padding:8px 14px;border-radius:18px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);color:#F4F0EA;display:flex;align-items:center;gap:12px;text-align:left">
+              <span style="flex:1;font-weight:700;font-size:15.5px">{{t.label}}</span>
+              <span style="width:52px;height:30px;border-radius:15px;background:{{t.bg}};position:relative;transition:background 250ms ease"><span style="position:absolute;top:3px;left:{{t.left}}px;width:24px;height:24px;border-radius:50%;background:{{t.knob}};transition:left 250ms cubic-bezier(.2,.8,.2,1)"></span></span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const S = this.state || {};
+    const tab = S.tab ?? 0;
+    const sel = S.sel || { mode: 0, dir: 1, scale: 0 };
+    const bright = S.bright ?? 80;
+    const bgIdx = S.bg ?? 0;
+    const flags = S.flags || { s0: true, s1: false, g0: true, g1: true };
+    const zoneMode = S.zone ?? 0;
+    const tabs = ['Leitura', 'Tela', 'Geral'].map((label, i) => ({
+      label, pick: () => this.setState({ tab: i }),
+      bg: tab === i ? '#F2A65A' : 'transparent', fg: tab === i ? '#0F0E11' : '#F4F0EA'
+    }));
+    const defs = [
+      { key: 'mode', title: 'Modo de leitura', opts: ['Paginado', 'Webtoon', 'Página dupla'] },
+      { key: 'dir', title: 'Direção', opts: ['Esquerda para direita', 'Direita para esquerda', 'Vertical'] },
+      { key: 'scale', title: 'Escala da imagem', opts: ['Ajustar à tela', 'Largura', 'Altura', 'Tamanho original'] }
+    ];
+    const reading = defs.map((d) => ({
+      title: d.title,
+      options: d.opts.map((label, i) => {
+        const on = sel[d.key] === i;
+        return {
+          label, on,
+          bg: on ? '#F2A65A' : 'rgba(255,255,255,.08)',
+          fg: on ? '#0F0E11' : '#F4F0EA',
+          border: on ? '#F2A65A' : 'rgba(255,255,255,.16)',
+          pick: () => { const n = Object.assign({}, sel); n[d.key] = i; this.setState({ sel: n }); }
+        };
+      })
+    }));
+    const bgDefs = [
+      { label: 'Preto', color: '#000000', text: '#F4F0EA' },
+      { label: 'Cinza', color: '#3A3A3F', text: '#F4F0EA' },
+      { label: 'Branco', color: '#F1ECE2', text: '#141414' },
+      { label: 'Capa', color: '#1B3A4B', text: '#F4F0EA' }
+    ];
+    const bgs = bgDefs.map((b, i) => ({
+      label: b.label, color: b.color, text: b.text, on: bgIdx === i,
+      ring: bgIdx === i ? '#F2A65A' : 'rgba(255,255,255,.16)',
+      pick: () => this.setState({ bg: i })
+    }));
+    const sw = (keys, labels) => keys.map((k, i) => ({
+      label: labels[i], on: !!flags[k],
+      bg: flags[k] ? '#F2A65A' : 'rgba(255,255,255,.18)',
+      left: flags[k] ? 25 : 3,
+      knob: flags[k] ? '#0F0E11' : '#F4F0EA',
+      toggle: () => { const f = Object.assign({}, flags); f[k] = !f[k]; this.setState({ flags: f }); }
+    }));
+    const zoneLabels = [
+      ['Voltar', 'Menu', 'Avançar'],
+      ['Menu', 'Avançar', 'Avançar'],
+      ['Voltar', 'Voltar', 'Avançar']
+    ][zoneMode];
+    const zoneColors = { 'Voltar': '#8FB4FF', 'Menu': '#F4F0EA', 'Avançar': '#F2A65A' };
+    const zones = zoneLabels.map((label) => ({ label, bg: zoneColors[label] }));
+    const zoneModes = ['Padrão', 'Em L', 'Canhoto'].map((label, i) => ({
+      label, pick: () => this.setState({ zone: i }),
+      bg: zoneMode === i ? '#F2A65A' : 'transparent', fg: zoneMode === i ? '#0F0E11' : '#F4F0EA'
+    }));
+    return {
+      tabs, reading, bgs, zones, zoneModes,
+      tab0: tab === 0, tab1: tab === 1, tab2: tab === 2,
+      brightPct: bright,
+      bright: (bright / 100).toFixed(2),
+      pageBg: ['#000000', '#3A3A3F', '#F1ECE2', '#1B3A4B'][bgIdx],
+      setBright: (e) => this.setState({ bright: parseInt(e.target.value, 10) || 20 }),
+      screenSw: sw(['s0', 's1'], ['Manter a tela ligada', 'Modo imersivo (esconder barras do sistema)']),
+      generalSw: sw(['g0', 'g1'], ['Mostrar número da página', 'Trocar de página com as teclas de volume'])
+    };
+  }
+}
+</script>
+</body>
+</html>
