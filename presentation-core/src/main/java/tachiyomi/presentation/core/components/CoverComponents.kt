@@ -1,6 +1,11 @@
 package tachiyomi.presentation.core.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -18,16 +23,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.hazeEffect
 import tachiyomi.presentation.core.theme.LocalCoverPalette
+import tachiyomi.presentation.core.theme.LocalMotionPolicy
 
 // Redesign building blocks. Colors come from LocalCoverPalette (see docs/redesign/HANDOFF.md, section 3), so
 // everything follows the cover that is in focus. Fonts stay on the Material typography until the redesign
@@ -137,21 +152,71 @@ fun CoverProgress(
 }
 
 /**
- * Surface for dock, reader bars and sheets (depth level Z2).
- * Translucent with a hairline border. It stays at 92% opacity because there is no backdrop blur yet;
- * drop it to ~62% only once a blur (for example Haze) sits behind it and `MotionPolicy.glass` is on.
+ * Haze state of the content that sits behind glass surfaces. A screen creates one with `HazeState()`, marks
+ * its scrolling content with `Modifier.hazeSource(state)` and provides it here.
+ */
+val LocalGlassBackdrop = staticCompositionLocalOf<HazeState?> { null }
+
+/**
+ * Surface for dock, reader bars and sheets (depth level Z2), with a hairline border.
+ * With a [hazeState] and `MotionPolicy.glass` it blurs what is behind it. Otherwise (no backdrop provided,
+ * API below 31, power save, reduced motion) it is a nearly opaque solid, which keeps text readable.
  */
 @Composable
 fun GlassSurface(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(26.dp),
+    hazeState: HazeState? = LocalGlassBackdrop.current,
     content: @Composable BoxScope.() -> Unit,
 ) {
+    val container = MaterialTheme.colorScheme.surfaceContainerHigh
+    val surface = if (hazeState != null && LocalMotionPolicy.current.glass) {
+        Modifier
+            .clip(shape)
+            .hazeEffect(
+                state = hazeState,
+                style = HazeStyle(
+                    backgroundColor = Color.Transparent,
+                    tint = HazeDefaults.tint(container.copy(alpha = 0.6f)),
+                    blurRadius = 24.dp,
+                ),
+            )
+    } else {
+        Modifier
+            .clip(shape)
+            .background(container.copy(alpha = 0.92f))
+    }
     Box(
         modifier = modifier
-            .clip(shape)
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.92f))
+            .then(surface)
             .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.14f), shape),
         content = content,
     )
+}
+
+/**
+ * Placeholder fill that sweeps a soft highlight, for content that is still loading.
+ * Static when the motion policy turns decorative animation off.
+ */
+fun Modifier.shimmer(): Modifier = composed {
+    val onSurface = MaterialTheme.colorScheme.onSurface
+    val base = onSurface.copy(alpha = 0.06f)
+    val peak = onSurface.copy(alpha = 0.18f)
+    if (!LocalMotionPolicy.current.parallax) return@composed background(base)
+
+    val sweep by rememberInfiniteTransition(label = "Shimmer").animateFloat(
+        initialValue = -1f,
+        targetValue = 2f,
+        animationSpec = infiniteRepeatable(tween(durationMillis = 1500, easing = LinearEasing)),
+        label = "ShimmerSweep",
+    )
+    drawBehind {
+        drawRect(
+            Brush.horizontalGradient(
+                colors = listOf(base, peak, base),
+                startX = (sweep - 0.5f) * size.width,
+                endX = (sweep + 0.5f) * size.width,
+            ),
+        )
+    }
 }

@@ -40,6 +40,7 @@ import tachiyomi.presentation.core.theme.CoverPalette
 import tachiyomi.presentation.core.theme.LocalCoverPalette
 import tachiyomi.presentation.core.theme.LocalMotionPolicy
 import tachiyomi.presentation.core.theme.rememberMotionPolicy
+import tachiyomi.presentation.core.theme.withRedesignFonts
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -74,6 +75,7 @@ fun TachiyomiTheme(
         val isAmoled = amoled ?: uiPreferences.themeDarkAmoled().get()
         // Redesign: expose the four cover tokens next to the Material scheme.
         val coverPalette = remember(seedColor) { CoverPalette.fromSeed(seedColor) }
+        val redesignTypography = remember(typography) { typography.withRedesignFonts() }
         CompositionLocalProvider(
             LocalCoverPalette provides coverPalette,
             LocalMotionPolicy provides rememberMotionPolicy(),
@@ -82,7 +84,7 @@ fun TachiyomiTheme(
                 seedColor = seedColor,
                 isAmoled = isAmoled,
                 style = uiPreferences.themeCoverBasedStyle().get(),
-                typography = typography,
+                typography = redesignTypography,
                 animate = true,
                 content = content,
             )
@@ -107,17 +109,27 @@ private fun BaseTachiyomiTheme(
     val context = LocalContext.current
     val isDark = isSystemInDarkTheme()
     // KMK -->
-    CompositionLocalProvider(LocalMotionPolicy provides rememberMotionPolicy()) {
+    val colorScheme = remember(appTheme, isDark, isAmoled) {
+        getThemeColorScheme(
+            context = context,
+            appTheme = appTheme,
+            isDark = isDark,
+            isAmoled = isAmoled,
+        )
+    }
+    // Without a cover in focus the palette follows whatever the chosen scheme calls "primary".
+    val coverPalette = remember(colorScheme.primary) { CoverPalette.fromSeed(colorScheme.primary) }
+    val typography = remember { Typography().withRedesignFonts() }
+    CompositionLocalProvider(
+        LocalCoverPalette provides coverPalette,
+        LocalMotionPolicy provides rememberMotionPolicy(),
+    ) {
         // KMK <--
         MaterialExpressiveTheme(
-            colorScheme = remember(appTheme, isDark, isAmoled) {
-                getThemeColorScheme(
-                    context = context,
-                    appTheme = appTheme,
-                    isDark = isDark,
-                    isAmoled = isAmoled,
-                )
-            },
+            colorScheme = colorScheme,
+            // KMK -->
+            typography = typography,
+            // KMK <--
             content = content,
         )
         // KMK -->

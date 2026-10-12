@@ -3,6 +3,9 @@ package eu.kanade.tachiyomi.ui.home
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
@@ -16,6 +19,7 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,9 +30,12 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastFilter
 import androidx.compose.ui.util.fastForEach
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -61,6 +68,8 @@ import tachiyomi.presentation.core.components.material.NavigationBar
 import tachiyomi.presentation.core.components.material.NavigationRail
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.pluralStringResource
+import tachiyomi.presentation.core.theme.LocalCoverPalette
+import tachiyomi.presentation.core.theme.LocalMotionPolicy
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -218,6 +227,21 @@ object HomeScreen : Screen() {
         val navigator = LocalNavigator.currentOrThrow
         val scope = rememberCoroutineScope()
         val selected = tabNavigator.current::class == tab::class
+        // KMK -->
+        val palette = LocalCoverPalette.current
+        val isDark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
+        // The accent is light, so it is only used as text/icon color on dark surfaces.
+        val itemColors = NavigationBarItemDefaults.colors(
+            selectedIconColor = if (isDark) palette.accent else MaterialTheme.colorScheme.onSecondaryContainer,
+            selectedTextColor = if (isDark) palette.accent else MaterialTheme.colorScheme.onSurface,
+            indicatorColor = palette.veil,
+        )
+        val lift by animateFloatAsState(
+            targetValue = if (selected && LocalMotionPolicy.current.parallax) 1f else 0f,
+            animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessMediumLow),
+            label = "NavigationItemLift",
+        )
+        // KMK <--
         NavigationBarItem(
             selected = selected,
             onClick = {
@@ -237,6 +261,14 @@ object HomeScreen : Screen() {
                 )
             },
             alwaysShowLabel = /* SY --> */alwaysShowLabel, /* SY <-- */
+            // KMK -->
+            colors = itemColors,
+            modifier = Modifier.graphicsLayer {
+                translationY = -3.dp.toPx() * lift
+                scaleX = 1f + 0.04f * lift
+                scaleY = 1f + 0.04f * lift
+            },
+            // KMK <--
         )
     }
 

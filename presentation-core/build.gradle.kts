@@ -50,6 +50,10 @@ dependencies {
     implementation(kotlinx.immutables)
 
     // KMK -->
+    implementation(libs.haze)
+    // KMK <--
+
+    // KMK -->
     testImplementation(libs.bundles.test)
     testRuntimeOnly(libs.junit.platform.launcher)
     // KMK <--
