@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import tachiyomi.presentation.core.components.SectionLabel
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 
 @Composable
 fun PreferenceGroupHeader(title: String) {
@@ -18,6 +20,15 @@ fun PreferenceGroupHeader(title: String) {
             .fillMaxWidth()
             .padding(bottom = 8.dp, top = 14.dp),
     ) {
+        // KMK -->
+        if (LocalCoverAtmosphere.current) {
+            SectionLabel(
+                text = title,
+                modifier = Modifier.padding(horizontal = PrefsHorizontalPadding),
+            )
+            return@Box
+        }
+        // KMK <--
         Text(
             text = title,
             color = MaterialTheme.colorScheme.secondary,

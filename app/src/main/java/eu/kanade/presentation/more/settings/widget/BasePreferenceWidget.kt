@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import eu.kanade.presentation.more.settings.LocalPreferenceHighlighted
 import eu.kanade.presentation.more.settings.LocalPreferenceMinHeight
 import kotlinx.coroutines.delay
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -45,8 +47,24 @@ internal fun BasePreferenceWidget(
 ) {
     val highlighted = LocalPreferenceHighlighted.current
     val minHeight = LocalPreferenceMinHeight.current
+    // KMK -->
+    val isRedesign = LocalCoverAtmosphere.current
+    // KMK <--
     Row(
         modifier = modifier
+            // KMK -->
+            // Redesign: every preference is a rounded card with a little breathing room around it.
+            .then(
+                if (isRedesign) {
+                    Modifier
+                        .padding(horizontal = 12.dp, vertical = 3.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                } else {
+                    Modifier
+                },
+            )
+            // KMK <--
             .highlightBackground(highlighted)
             .sizeIn(minHeight = minHeight)
             .clickable(enabled = onClick != null, onClick = { onClick?.invoke() })
