@@ -33,12 +33,15 @@ import eu.kanade.tachiyomi.ui.history.HistoryScreenModel.HistorySelectionOptions
 import kotlinx.collections.immutable.persistentListOf
 import tachiyomi.domain.history.model.HistoryWithRelations
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.FastScrollLazyColumn
 import tachiyomi.presentation.core.components.ListGroupHeader
+import tachiyomi.presentation.core.components.RedesignScreenHeader
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.screens.EmptyScreen
 import tachiyomi.presentation.core.screens.LoadingScreen
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 import tachiyomi.presentation.core.theme.active
 import java.time.LocalDate
 
@@ -78,7 +81,10 @@ fun HistoryScreen(
                 )
                 // KMK <--
                 else -> SearchToolbar(
-                    titleContent = { AppBarTitle(stringResource(MR.strings.history)) },
+                    // KMK -->
+                    // Redesign: the title is the large header at the top of the list.
+                    titleContent = { if (!LocalCoverAtmosphere.current) AppBarTitle(stringResource(MR.strings.history)) },
+                    // KMK <--
                     searchQuery = state.searchQuery,
                     onChangeSearchQuery = onSearchQueryChange,
                     actions = {
@@ -165,9 +171,22 @@ private fun HistoryScreenContent(
     usePanoramaCover: Boolean,
     // KMK <--
 ) {
+    // KMK -->
+    val isRedesign = LocalCoverAtmosphere.current
+    // KMK <--
     FastScrollLazyColumn(
         contentPadding = contentPadding,
     ) {
+        // KMK -->
+        if (isRedesign) {
+            item(key = "redesign-header", contentType = "redesign_header") {
+                RedesignScreenHeader(
+                    eyebrow = stringResource(KMR.strings.redesign_eyebrow_history),
+                    title = stringResource(MR.strings.history),
+                )
+            }
+        }
+        // KMK <--
         items(
             items = history,
             key = { "history-${it.hashCode()}" },

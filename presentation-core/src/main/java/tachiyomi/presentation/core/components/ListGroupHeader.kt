@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import tachiyomi.presentation.core.components.material.padding
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 
 @Composable
 fun ListGroupHeader(
@@ -25,6 +26,24 @@ fun ListGroupHeader(
     // KMK <--
 ) {
     // KMK -->
+    if (LocalCoverAtmosphere.current) {
+        // Redesign: section label (small, upper case) on the screen background, with the count as a badge.
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = MaterialTheme.padding.medium,
+                    vertical = MaterialTheme.padding.small,
+                ),
+        ) {
+            SectionLabel(text = text, modifier = Modifier.weight(1f, fill = false))
+            if (count != null) {
+                CoverBadge(text = "$count", modifier = Modifier.padding(start = 8.dp))
+            }
+        }
+        return
+    }
     Surface(
         modifier = modifier
             .fillMaxWidth(),

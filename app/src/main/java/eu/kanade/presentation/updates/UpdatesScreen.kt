@@ -1,6 +1,7 @@
 package eu.kanade.presentation.updates
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -35,12 +36,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.presentation.core.components.FastScrollLazyColumn
+import tachiyomi.presentation.core.components.RedesignScreenHeader
 import tachiyomi.presentation.core.components.material.PullRefresh
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.screens.EmptyScreen
 import tachiyomi.presentation.core.screens.LoadingScreen
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 import tachiyomi.presentation.core.theme.active
 import java.time.LocalDate
 import kotlin.time.Duration.Companion.seconds
@@ -105,8 +109,23 @@ fun UpdateScreen(
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { contentPadding ->
+        // KMK -->
+        val isRedesign = LocalCoverAtmosphere.current
+        // KMK <--
         when {
             state.isLoading -> LoadingScreen(Modifier.padding(contentPadding))
+            // KMK -->
+            state.items.isEmpty() && isRedesign -> Column(modifier = Modifier.padding(contentPadding)) {
+                RedesignScreenHeader(
+                    eyebrow = stringResource(KMR.strings.redesign_eyebrow_updates),
+                    title = stringResource(MR.strings.label_recent_updates),
+                )
+                EmptyScreen(
+                    stringRes = MR.strings.information_no_recent,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+            // KMK <--
             state.items.isEmpty() -> EmptyScreen(
                 stringRes = MR.strings.information_no_recent,
                 modifier = Modifier.padding(contentPadding),
@@ -136,6 +155,16 @@ fun UpdateScreen(
                     FastScrollLazyColumn(
                         contentPadding = contentPadding,
                     ) {
+                        // KMK -->
+                        if (isRedesign) {
+                            item(key = "redesign-header", contentType = "redesign_header") {
+                                RedesignScreenHeader(
+                                    eyebrow = stringResource(KMR.strings.redesign_eyebrow_updates),
+                                    title = stringResource(MR.strings.label_recent_updates),
+                                )
+                            }
+                        }
+                        // KMK <--
                         updatesLastUpdatedItem(lastUpdated)
 
                         updatesUiItems(
@@ -182,7 +211,10 @@ private fun UpdatesAppBar(
 ) {
     AppBar(
         modifier = modifier,
-        title = stringResource(MR.strings.label_recent_updates),
+        // KMK -->
+        // Redesign: the title is the large header at the top of the list.
+        title = if (LocalCoverAtmosphere.current) "" else stringResource(MR.strings.label_recent_updates),
+        // KMK <--
         actions = {
             AppBarActions(
                 persistentListOf(

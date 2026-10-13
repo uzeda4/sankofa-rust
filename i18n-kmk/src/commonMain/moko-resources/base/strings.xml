@@ -82,6 +82,9 @@
     <string name="redesign_continue_reading">Continue reading</string>
     <string name="redesign_chapters_read_progress">%1$d of %2$d chapters read</string>
     <string name="action_continue">Continue</string>
+    <string name="redesign_eyebrow_discover">Discover</string>
+    <string name="redesign_eyebrow_updates">What\'s new</string>
+    <string name="redesign_eyebrow_history">Where you stopped</string>
     <string name="custom_theme_palette_casual">Casual</string>
     <string name="custom_theme_palette_sunset">Sunset</string>
     <string name="custom_theme_palette_outrun">Outrun</string>

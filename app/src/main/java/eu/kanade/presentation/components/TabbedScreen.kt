@@ -1,11 +1,14 @@
 package eu.kanade.presentation.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -22,6 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import dev.icerock.moko.resources.StringResource
 import eu.kanade.tachiyomi.ui.browse.BulkFavoriteScreenModel
@@ -29,9 +33,13 @@ import eu.kanade.tachiyomi.ui.browse.feed.FeedScreenModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
+import tachiyomi.i18n.kmk.KMR
+import tachiyomi.presentation.core.components.CoverChip
+import tachiyomi.presentation.core.components.RedesignScreenHeader
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.components.material.TabText
 import tachiyomi.presentation.core.i18n.stringResource
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 
 @Composable
 fun TabbedScreen(
@@ -82,7 +90,10 @@ fun TabbedScreen(
             } else {
                 // KMK <--
                 SearchToolbar(
-                    titleContent = { AppBarTitle(stringResource(titleRes)) },
+                    // KMK -->
+                    // Redesign: the title is the large header below the bar.
+                    titleContent = { if (!LocalCoverAtmosphere.current) AppBarTitle(stringResource(titleRes)) },
+                    // KMK <--
                     searchEnabled = searchEnabled,
                     searchQuery = if (searchEnabled) searchQuery else null,
                     onChangeSearchQuery = onChangeSearchQuery,
@@ -99,19 +110,44 @@ fun TabbedScreen(
                 end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
             ),
         ) {
-            PrimaryTabRow(
-                selectedTabIndex = state.currentPage,
-                modifier = Modifier.zIndex(1f),
-            ) {
-                tabs.forEachIndexed { index, tab ->
-                    Tab(
-                        selected = state.currentPage == index,
-                        onClick = { scope.launch { state.animateScrollToPage(index) } },
-                        text = { TabText(text = stringResource(tab.titleRes), badgeCount = tab.badgeNumber) },
-                        unselectedContentColor = MaterialTheme.colorScheme.onSurface,
-                    )
+            // KMK -->
+            if (LocalCoverAtmosphere.current) {
+                RedesignScreenHeader(
+                    eyebrow = stringResource(KMR.strings.redesign_eyebrow_discover),
+                    title = stringResource(titleRes),
+                )
+                LazyRow(
+                    modifier = Modifier.zIndex(1f),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    itemsIndexed(tabs) { index, tab ->
+                        val label = stringResource(tab.titleRes)
+                        CoverChip(
+                            label = tab.badgeNumber?.let { "$label · $it" } ?: label,
+                            selected = state.currentPage == index,
+                            onClick = { scope.launch { state.animateScrollToPage(index) } },
+                        )
+                    }
                 }
+            } else {
+                // KMK <--
+                PrimaryTabRow(
+                    selectedTabIndex = state.currentPage,
+                    modifier = Modifier.zIndex(1f),
+                ) {
+                    tabs.forEachIndexed { index, tab ->
+                        Tab(
+                            selected = state.currentPage == index,
+                            onClick = { scope.launch { state.animateScrollToPage(index) } },
+                            text = { TabText(text = stringResource(tab.titleRes), badgeCount = tab.badgeNumber) },
+                            unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                        )
+                    }
+                }
+                // KMK -->
             }
+            // KMK <--
 
             HorizontalPager(
                 modifier = Modifier.fillMaxSize(),

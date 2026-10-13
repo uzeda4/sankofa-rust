@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -52,11 +53,13 @@ import tachiyomi.i18n.sy.SYMR
 import tachiyomi.presentation.core.components.FastScrollLazyColumn
 import tachiyomi.presentation.core.components.LabeledCheckbox
 import tachiyomi.presentation.core.components.Scroller.STICKY_HEADER_KEY_PREFIX
+import tachiyomi.presentation.core.components.SectionLabel
 import tachiyomi.presentation.core.components.material.SECONDARY_ALPHA
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.screens.EmptyScreen
 import tachiyomi.presentation.core.screens.LoadingScreen
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 import tachiyomi.presentation.core.theme.header
 import tachiyomi.source.local.LocalSource
 import tachiyomi.source.local.isLocal
@@ -174,14 +177,25 @@ private fun SourceHeader(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    // SY -->
+    val headerText = if (!isCategory) {
+        LocaleHelper.getSourceDisplayName(language, context)
+    } else {
+        language
+    }
+    // SY <--
+    // KMK -->
+    if (LocalCoverAtmosphere.current) {
+        SectionLabel(
+            text = headerText,
+            modifier = modifier
+                .padding(horizontal = MaterialTheme.padding.medium, vertical = MaterialTheme.padding.small),
+        )
+        return
+    }
+    // KMK <--
     Text(
-        // SY -->
-        text = if (!isCategory) {
-            LocaleHelper.getSourceDisplayName(language, context)
-        } else {
-            language
-        },
-        // SY <--
+        text = headerText,
         modifier = modifier
             .padding(horizontal = MaterialTheme.padding.medium, vertical = MaterialTheme.padding.small),
         style = MaterialTheme.typography.header,
@@ -201,7 +215,17 @@ private fun SourceItem(
     modifier: Modifier = Modifier,
 ) {
     BaseSourceItem(
-        modifier = modifier,
+        // KMK -->
+        // Redesign: each source is a rounded card instead of a flat row.
+        modifier = if (LocalCoverAtmosphere.current) {
+            modifier
+                .padding(horizontal = 12.dp, vertical = 4.dp)
+                .clip(MaterialTheme.shapes.medium)
+                .background(MaterialTheme.colorScheme.surfaceContainer)
+        } else {
+            modifier
+        },
+        // KMK <--
         source = source,
         onClickItem = { onClickItem(source, Listing.Popular) },
         onLongClickItem = { onLongClickItem(source) },
