@@ -24,11 +24,17 @@ internal fun LibraryComfortableGrid(
     usePanoramaCover: Boolean = false,
     // KMK <--
 ) {
+    // KMK -->
+    val hasHeader = rememberHasLibraryHeader()
+    // KMK <--
     LazyLibraryGrid(
         modifier = Modifier.fillMaxSize(),
         columns = columns,
         contentPadding = contentPadding,
     ) {
+        // KMK -->
+        libraryHeaderItem(hasHeader)
+        // KMK <--
         globalSearchItem(searchQuery, onGlobalSearchClicked)
 
         items(

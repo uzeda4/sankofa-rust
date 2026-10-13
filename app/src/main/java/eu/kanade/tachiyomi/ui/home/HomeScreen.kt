@@ -9,15 +9,19 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationRailItem
@@ -30,6 +34,8 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.semantics.contentDescription
@@ -68,6 +74,7 @@ import tachiyomi.presentation.core.components.material.NavigationBar
 import tachiyomi.presentation.core.components.material.NavigationRail
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.pluralStringResource
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 import tachiyomi.presentation.core.theme.LocalCoverPalette
 import tachiyomi.presentation.core.theme.LocalMotionPolicy
 import tachiyomi.presentation.core.theme.coverAtmosphere
@@ -137,15 +144,57 @@ object HomeScreen : Screen() {
                                 enter = expandVertically(),
                                 exit = shrinkVertically(),
                             ) {
-                                NavigationBar {
-                                    TABS
-                                        // SY -->
-                                        .fastFilter { it.isEnabled() }
-                                        // SY <--
-                                        .fastForEach {
-                                            NavigationBarItem(it/* SY --> */, alwaysShowLabel/* SY <-- */)
-                                        }
+                                // KMK -->
+                                val isRedesign = LocalCoverAtmosphere.current
+                                val barShape = RoundedCornerShape(28.dp)
+                                // Redesign: a floating, rounded dock with margins instead of a full width bar.
+                                Box(
+                                    modifier = if (isRedesign) {
+                                        Modifier
+                                            .navigationBarsPadding()
+                                            .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 12.dp)
+                                            .shadow(12.dp, barShape, clip = false)
+                                    } else {
+                                        Modifier
+                                    },
+                                ) {
+                                    // KMK <--
+                                    NavigationBar(
+                                        // KMK -->
+                                        modifier = if (isRedesign) {
+                                            Modifier
+                                                .clip(barShape)
+                                                .border(
+                                                    1.dp,
+                                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.14f),
+                                                    barShape,
+                                                )
+                                        } else {
+                                            Modifier
+                                        },
+                                        containerColor = if (isRedesign) {
+                                            MaterialTheme.colorScheme.surfaceContainerHigh
+                                        } else {
+                                            NavigationBarDefaults.containerColor
+                                        },
+                                        windowInsets = if (isRedesign) {
+                                            WindowInsets(0)
+                                        } else {
+                                            NavigationBarDefaults.windowInsets
+                                        },
+                                        // KMK <--
+                                    ) {
+                                        TABS
+                                            // SY -->
+                                            .fastFilter { it.isEnabled() }
+                                            // SY <--
+                                            .fastForEach {
+                                                NavigationBarItem(it/* SY --> */, alwaysShowLabel/* SY <-- */)
+                                            }
+                                    }
+                                    // KMK -->
                                 }
+                                // KMK <--
                             }
                         }
                     },

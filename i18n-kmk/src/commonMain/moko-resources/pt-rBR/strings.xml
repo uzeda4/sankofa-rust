@@ -61,6 +61,11 @@
     <string name="action_confirm_color">Confirmar cor</string>
     <string name="pref_custom_color">Personalização da Paleta</string>
     <string name="theme_custom">Tema personalizado</string>
+    <string name="theme_redesign">Redesign</string>
+    <string name="redesign_library_eyebrow">Sua estante</string>
+    <string name="redesign_continue_reading">Continuar lendo</string>
+    <string name="redesign_chapters_read_progress">%1$d de %2$d capítulos lidos</string>
+    <string name="action_continue">Continuar</string>
     <string name="extensions_page_need_refresh">Atualize a página da extensão para atualizar a lista.</string>
     <string name="extensions_page_more">Mais extensões...</string>
     <string name="pref_expand_related_mangas">Expandir sugestões</string>

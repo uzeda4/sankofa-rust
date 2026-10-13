@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +24,7 @@ import tachiyomi.domain.category.model.Category
 import tachiyomi.domain.library.model.LibraryDisplayMode
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.presentation.core.components.material.PullRefresh
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -87,42 +89,68 @@ fun LibraryContent(
             )
         }
 
-        PullRefresh(
-            refreshing = isRefreshing,
-            enabled = selection.isEmpty(),
-            onRefresh = {
-                val started = onRefresh()
-                if (!started) return@PullRefresh
-                scope.launch {
-                    // Fake refresh status but hide it after a second as it's a long running task
-                    isRefreshing = true
-                    delay(1.seconds)
-                    isRefreshing = false
-                }
-            },
+        // KMK -->
+        val isRedesign = LocalCoverAtmosphere.current
+        val header: (@Composable () -> Unit)? = if (
+            isRedesign && categories.isNotEmpty() && selection.isEmpty() && searchQuery.isNullOrEmpty()
         ) {
-            LibraryPager(
-                state = pagerState,
-                contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
-                hasActiveFilters = hasActiveFilters,
-                selection = selection,
-                searchQuery = searchQuery,
-                onGlobalSearchClicked = onGlobalSearchClicked,
-                getCategoryForPage = { page -> categories[page] },
-                getDisplayMode = getDisplayMode,
-                getColumnsForOrientation = getColumnsForOrientation,
-                getItemsForCategory = getItemsForCategory,
-                onClickManga = { category, manga ->
-                    if (selection.isNotEmpty()) {
-                        onToggleSelection(category, manga)
-                    } else {
-                        onClickManga(manga.manga.id)
+            val pageItems = getItemsForCategory(categories[pagerState.currentPage.coerceIn(0, categories.lastIndex)])
+            val candidates = pageItems.map { it.libraryManga }.filter { it.unreadCount > 0 }
+            // Most recently read title with chapters left, otherwise the first title that has something to read.
+            val inProgress = candidates.filter { it.lastRead > 0 }.maxByOrNull { it.lastRead }
+                ?: candidates.firstOrNull();
+            {
+                LibraryRedesignHeader(
+                    totalCount = pageItems.size,
+                    inProgress = inProgress,
+                    onOpenManga = onClickManga,
+                    onContinueReading = onContinueReadingClicked,
+                )
+            }
+        } else {
+            null
+        }
+        // KMK <--
+        CompositionLocalProvider(LocalLibraryHeader provides header) {
+            PullRefresh(
+                refreshing = isRefreshing,
+                enabled = selection.isEmpty(),
+                onRefresh = {
+                    val started = onRefresh()
+                    if (!started) return@PullRefresh
+                    scope.launch {
+                        // Fake refresh status but hide it after a second as it's a long running task
+                        isRefreshing = true
+                        delay(1.seconds)
+                        isRefreshing = false
                     }
                 },
-                onLongClickManga = onToggleRangeSelection,
-                onClickContinueReading = onContinueReadingClicked,
-            )
+            ) {
+                LibraryPager(
+                    state = pagerState,
+                    contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding()),
+                    hasActiveFilters = hasActiveFilters,
+                    selection = selection,
+                    searchQuery = searchQuery,
+                    onGlobalSearchClicked = onGlobalSearchClicked,
+                    getCategoryForPage = { page -> categories[page] },
+                    getDisplayMode = getDisplayMode,
+                    getColumnsForOrientation = getColumnsForOrientation,
+                    getItemsForCategory = getItemsForCategory,
+                    onClickManga = { category, manga ->
+                        if (selection.isNotEmpty()) {
+                            onToggleSelection(category, manga)
+                        } else {
+                            onClickManga(manga.manga.id)
+                        }
+                    },
+                    onLongClickManga = onToggleRangeSelection,
+                    onClickContinueReading = onContinueReadingClicked,
+                )
+            }
+            // KMK -->
         }
+        // KMK <--
 
         LaunchedEffect(pagerState.currentPage) {
             onChangeCurrentPage(pagerState.currentPage)

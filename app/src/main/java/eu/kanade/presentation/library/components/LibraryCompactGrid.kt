@@ -22,11 +22,17 @@ internal fun LibraryCompactGrid(
     searchQuery: String?,
     onGlobalSearchClicked: () -> Unit,
 ) {
+    // KMK -->
+    val hasHeader = rememberHasLibraryHeader()
+    // KMK <--
     LazyLibraryGrid(
         modifier = Modifier.fillMaxSize(),
         columns = columns,
         contentPadding = contentPadding,
     ) {
+        // KMK -->
+        libraryHeaderItem(hasHeader)
+        // KMK <--
         globalSearchItem(searchQuery, onGlobalSearchClicked)
 
         items(

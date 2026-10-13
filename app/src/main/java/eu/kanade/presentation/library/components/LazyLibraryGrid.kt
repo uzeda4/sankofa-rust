@@ -28,6 +28,23 @@ internal fun LazyLibraryGrid(
     )
 }
 
+// KMK -->
+/** Redesign header as the first, full width item. Nothing is emitted for the classic layout. */
+@Composable
+internal fun rememberHasLibraryHeader(): Boolean = LocalLibraryHeader.current != null
+
+internal fun LazyGridScope.libraryHeaderItem(hasHeader: Boolean) {
+    if (hasHeader) {
+        item(
+            span = { GridItemSpan(maxLineSpan) },
+            contentType = { "library_redesign_header" },
+        ) {
+            LocalLibraryHeader.current?.invoke()
+        }
+    }
+}
+// KMK <--
+
 internal fun LazyGridScope.globalSearchItem(
     searchQuery: String?,
     onGlobalSearchClicked: () -> Unit,

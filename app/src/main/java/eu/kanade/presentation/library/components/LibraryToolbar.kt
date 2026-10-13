@@ -26,6 +26,7 @@ import tachiyomi.i18n.MR
 import tachiyomi.i18n.sy.SYMR
 import tachiyomi.presentation.core.components.Pill
 import tachiyomi.presentation.core.i18n.stringResource
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 import tachiyomi.presentation.core.theme.active
 
 @Composable
@@ -97,6 +98,10 @@ private fun LibraryRegularToolbar(
     val pillAlpha = if (isSystemInDarkTheme()) 0.12f else 0.08f
     SearchToolbar(
         titleContent = {
+            // KMK -->
+            // Redesign: the large title lives in the library header instead of the bar.
+            if (LocalCoverAtmosphere.current) return@SearchToolbar
+            // KMK <--
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = title.text,

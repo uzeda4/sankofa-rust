@@ -28,6 +28,11 @@ internal fun LibraryList(
         modifier = Modifier.fillMaxSize(),
         contentPadding = contentPadding + PaddingValues(vertical = 8.dp),
     ) {
+        // KMK -->
+        item(contentType = "library_redesign_header") {
+            LocalLibraryHeader.current?.invoke()
+        }
+        // KMK <--
         item {
             if (!searchQuery.isNullOrEmpty()) {
                 GlobalSearchItem(
