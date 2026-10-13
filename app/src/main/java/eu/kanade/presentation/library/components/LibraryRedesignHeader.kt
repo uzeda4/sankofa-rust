@@ -78,7 +78,8 @@ internal fun LibraryRedesignHeader(
             ContinueReadingCard(
                 libraryManga = inProgress,
                 onOpen = { onOpenManga(inProgress.manga.id) },
-                onContinue = onContinueReading?.let { { it(inProgress) } },
+                // Without the "continue reading" shortcut enabled, the button just opens the title.
+                onContinue = onContinueReading?.let { { it(inProgress) } } ?: { onOpenManga(inProgress.manga.id) },
             )
         }
     }

@@ -20,11 +20,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.reader.components.ChapterNavigator
@@ -34,6 +37,7 @@ import eu.kanade.tachiyomi.ui.reader.viewer.Viewer
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.R2LPagerViewer
 import kotlinx.collections.immutable.ImmutableSet
 import tachiyomi.presentation.core.components.material.padding
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 
 private val readerBarsSlideAnimationSpec = tween<IntOffset>(200)
 private val readerBarsFadeAnimationSpec = tween<Float>(150)
@@ -101,9 +105,18 @@ fun ReaderAppBars(
     // SY <--
 ) {
     val isRtl = viewer is R2LPagerViewer
+    // KMK -->
+    val isRedesign = LocalCoverAtmosphere.current
+    // KMK <--
     val backgroundColor = MaterialTheme.colorScheme
         .surfaceColorAtElevation(3.dp)
         .copy(alpha = if (isSystemInDarkTheme()) 0.9f else 0.95f)
+        // KMK -->
+        .let { if (isRedesign) MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.92f) else it }
+    // Redesign: the bars are rounded sheets that hang from the edges instead of flat bands.
+    val topBarShape = if (isRedesign) RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp) else RectangleShape
+    val bottomBarShape = if (isRedesign) RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp) else RectangleShape
+    // KMK <--
 
     Column(modifier = Modifier.fillMaxHeight()) {
         AnimatedVisibility(
@@ -118,6 +131,9 @@ fun ReaderAppBars(
                 // SY <--
                 ReaderTopBar(
                     modifier = Modifier
+                        // KMK -->
+                        .clip(topBarShape)
+                        // KMK <--
                         .background(backgroundColor)
                         .clickable(onClick = onClickTopAppBar),
                     mangaTitle = mangaTitle,
@@ -253,6 +269,9 @@ fun ReaderAppBars(
                 ReaderBottomBar(
                     modifier = Modifier
                         .fillMaxWidth()
+                        // KMK -->
+                        .clip(bottomBarShape)
+                        // KMK <--
                         .background(backgroundColor)
                         .padding(horizontal = MaterialTheme.padding.small)
                         .windowInsetsPadding(WindowInsets.navigationBars),

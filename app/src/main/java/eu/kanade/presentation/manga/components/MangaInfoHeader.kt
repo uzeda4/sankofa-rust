@@ -109,9 +109,11 @@ import tachiyomi.presentation.core.components.material.TextButton
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.pluralStringResource
 import tachiyomi.presentation.core.i18n.stringResource
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 import tachiyomi.presentation.core.util.clickableNoIndication
 import tachiyomi.presentation.core.util.collectAsState
 import tachiyomi.presentation.core.util.secondaryItemAlpha
+import tachiyomi.presentation.core.util.tilt3d
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import java.time.Instant
@@ -617,10 +619,15 @@ private fun MangaAndSourceTitlesSmall(
             )
         } else {
             // KMK <--
+            // KMK -->
+            val isRedesign = LocalCoverAtmosphere.current
+            // KMK <--
             MangaCover.Book(
                 modifier = Modifier
-                    .sizeIn(maxWidth = 100.dp)
                     // KMK -->
+                    .sizeIn(maxWidth = if (isRedesign) 132.dp else 100.dp)
+                    // Redesign: larger cover that tilts in 3D under the finger.
+                    .then(if (isRedesign) Modifier.tilt3d(maxDegrees = 15f, pressedScale = 1.04f) else Modifier)
                     .align(if (topAlignCover) Alignment.Top else Alignment.CenterVertically),
                 // KMK <--
                 data = ImageRequest.Builder(LocalContext.current)
@@ -630,6 +637,7 @@ private fun MangaAndSourceTitlesSmall(
                 contentDescription = stringResource(MR.strings.manga_cover),
                 onClick = onCoverClick,
                 // KMK -->
+                shape = if (isRedesign) MaterialTheme.shapes.small else MaterialTheme.shapes.extraSmall,
                 onCoverLoaded = { mangaCover, result ->
                     val image = result.result.image
                     coverRatio.floatValue = image.height.toFloat() / image.width
@@ -716,7 +724,13 @@ private fun ColumnScope.MangaContentInfo(
     // KMK <--
     Text(
         text = title.ifBlank { stringResource(MR.strings.unknown_title) },
-        style = MaterialTheme.typography.titleLarge,
+        // KMK -->
+        style = if (LocalCoverAtmosphere.current) {
+            MaterialTheme.typography.headlineMedium
+        } else {
+            MaterialTheme.typography.titleLarge
+        },
+        // KMK <--
         modifier = Modifier.clickableNoIndication(
             onLongClick = {
                 if (title.isNotBlank()) {
