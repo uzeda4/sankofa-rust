@@ -215,17 +215,7 @@ private fun SourceItem(
     modifier: Modifier = Modifier,
 ) {
     BaseSourceItem(
-        // KMK -->
-        // Redesign: each source is a rounded card instead of a flat row.
-        modifier = if (LocalCoverAtmosphere.current) {
-            modifier
-                .padding(horizontal = 12.dp, vertical = 4.dp)
-                .clip(MaterialTheme.shapes.medium)
-                .background(MaterialTheme.colorScheme.surfaceContainer)
-        } else {
-            modifier
-        },
-        // KMK <--
+        modifier = modifier,
         source = source,
         onClickItem = { onClickItem(source, Listing.Popular) },
         onLongClickItem = { onLongClickItem(source) },

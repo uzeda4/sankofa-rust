@@ -1,5 +1,6 @@
 package eu.kanade.presentation.browse.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -8,7 +9,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import tachiyomi.presentation.core.components.material.padding
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 
 @Composable
 fun BaseBrowseItem(
@@ -21,6 +25,19 @@ fun BaseBrowseItem(
 ) {
     Row(
         modifier = modifier
+            // KMK -->
+            // Redesign: sources and extensions are rounded cards instead of flat rows.
+            .then(
+                if (LocalCoverAtmosphere.current) {
+                    Modifier
+                        .padding(horizontal = 12.dp, vertical = 4.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                } else {
+                    Modifier
+                },
+            )
+            // KMK <--
             .combinedClickable(
                 onClick = onClickItem,
                 onLongClick = onLongClickItem,

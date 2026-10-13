@@ -2,6 +2,7 @@ import mihon.buildlogic.Config
 import mihon.buildlogic.getBuildTime
 import mihon.buildlogic.getCommitCount
 import mihon.buildlogic.getGitSha
+import java.util.Properties
 
 plugins {
     id("mihon.android.application")
@@ -22,8 +23,29 @@ if (Config.includeTelemetry) {
 
 shortcutHelper.setFilePath("./shortcuts.xml")
 
+// KMK -->
+// Optional release signing for the fork. Pass -Predesign.signing=<path to a .properties file> with
+// storeFile, storePassword, keyAlias and keyPassword. Keep that file and the keystore out of the repo.
+val redesignSigning: Properties? = providers.gradleProperty("redesign.signing").orNull?.let { path ->
+    Properties().apply { file(path).inputStream().use { load(it) } }
+}
+// KMK <--
+
 android {
     namespace = "eu.kanade.tachiyomi"
+
+    // KMK -->
+    signingConfigs {
+        redesignSigning?.let { props ->
+            create("redesign") {
+                storeFile = file(props.getProperty("storeFile"))
+                storePassword = props.getProperty("storePassword")
+                keyAlias = props.getProperty("keyAlias")
+                keyPassword = props.getProperty("keyPassword")
+            }
+        }
+    }
+    // KMK <--
 
     defaultConfig {
         // KMK -->
@@ -55,6 +77,10 @@ android {
             isShrinkResources = Config.enableCodeShrink
 
             proguardFiles("proguard-android-optimize.txt", "proguard-rules.pro")
+
+            // KMK -->
+            signingConfigs.findByName("redesign")?.let { signingConfig = it }
+            // KMK <--
 
             buildConfigField("String", "BUILD_TIME", "\"${getBuildTime(useLastCommitTime = true)}\"")
         }
