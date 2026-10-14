@@ -23,10 +23,12 @@ data class MotionPolicy(
     val parallax: Boolean,
     /** Blurred glass surfaces. Needs RenderEffect (API 31+). */
     val glass: Boolean,
+    /** Multiplier for the tilt angle, 0f to 1f. The user can soften it without turning motion off. */
+    val tiltIntensity: Float = 1f,
 ) {
     companion object {
         val Full = MotionPolicy(tilt = true, parallax = true, glass = true)
-        val Reduced = MotionPolicy(tilt = false, parallax = false, glass = false)
+        val Reduced = MotionPolicy(tilt = false, parallax = false, glass = false, tiltIntensity = 0f)
 
         fun resolve(
             userReduce: Boolean,
@@ -34,9 +36,17 @@ data class MotionPolicy(
             powerSave: Boolean,
             lowRam: Boolean,
             sdkInt: Int,
+            tiltIntensity: Float = 1f,
         ): MotionPolicy = when {
             userReduce || animatorScale == 0f || powerSave || lowRam -> Reduced
-            else -> Full.copy(glass = sdkInt >= Build.VERSION_CODES.S)
+            else -> {
+                val intensity = tiltIntensity.coerceIn(0f, 1f)
+                Full.copy(
+                    tilt = intensity > 0f,
+                    glass = sdkInt >= Build.VERSION_CODES.S,
+                    tiltIntensity = intensity,
+                )
+            }
         }
     }
 }
@@ -49,14 +59,14 @@ val LocalMotionPolicy = staticCompositionLocalOf { MotionPolicy.Full }
  * for a policy that only gates decoration.
  */
 @Composable
-fun rememberMotionPolicy(userReduce: Boolean = false): MotionPolicy {
+fun rememberMotionPolicy(userReduce: Boolean = false, tiltIntensity: Float = 1f): MotionPolicy {
     val context = LocalContext.current
-    return remember(userReduce) { context.currentMotionPolicy(userReduce) }
+    return remember(userReduce, tiltIntensity) { context.currentMotionPolicy(userReduce, tiltIntensity) }
 }
 
-private fun Context.currentMotionPolicy(userReduce: Boolean): MotionPolicy {
+private fun Context.currentMotionPolicy(userReduce: Boolean, tiltIntensity: Float): MotionPolicy {
     val scale = Settings.Global.getFloat(contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f)
     val powerSave = getSystemService(PowerManager::class.java)?.isPowerSaveMode == true
     val lowRam = getSystemService(ActivityManager::class.java)?.isLowRamDevice == true
-    return MotionPolicy.resolve(userReduce, scale, powerSave, lowRam, Build.VERSION.SDK_INT)
+    return MotionPolicy.resolve(userReduce, scale, powerSave, lowRam, Build.VERSION.SDK_INT, tiltIntensity)
 }

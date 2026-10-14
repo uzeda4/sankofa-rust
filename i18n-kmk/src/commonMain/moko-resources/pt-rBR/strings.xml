@@ -66,6 +66,10 @@
     <string name="redesign_continue_reading">Continuar lendo</string>
     <string name="redesign_chapters_read_progress">%1$d de %2$d capítulos lidos</string>
     <string name="action_continue">Continuar</string>
+    <string name="pref_group_motion">Movimento</string>
+    <string name="pref_reduce_motion">Reduzir movimento</string>
+    <string name="pref_reduce_motion_summary">Desliga a inclinação 3D e o desfoque. A economia de bateria e as animações do sistema são sempre respeitadas</string>
+    <string name="pref_tilt_intensity">Força da inclinação das capas</string>
     <string name="redesign_eyebrow_discover">Descobrir</string>
     <string name="redesign_eyebrow_updates">Novidades</string>
     <string name="redesign_eyebrow_history">Onde você parou</string>

@@ -27,7 +27,11 @@ private val TiltOut = spring<Float>(dampingRatio = 0.7f, stiffness = Spring.Stif
  * @param pressedScale scale while pressed.
  */
 fun Modifier.tilt3d(maxDegrees: Float = 11f, pressedScale: Float = 1.05f): Modifier = composed {
-    if (!LocalMotionPolicy.current.tilt) return@composed this
+    val policy = LocalMotionPolicy.current
+    if (!policy.tilt) return@composed this
+    // The user's intensity setting scales both the angle and the press zoom.
+    val degrees = maxDegrees * policy.tiltIntensity
+    val zoom = 1f + (pressedScale - 1f) * policy.tiltIntensity
 
     val rotationX = remember { Animatable(0f) }
     val rotationY = remember { Animatable(0f) }
@@ -35,7 +39,7 @@ fun Modifier.tilt3d(maxDegrees: Float = 11f, pressedScale: Float = 1.05f): Modif
     val scope = rememberCoroutineScope()
 
     this
-        .pointerInput(maxDegrees, pressedScale) {
+        .pointerInput(degrees, zoom) {
             awaitPointerEventScope {
                 while (true) {
                     val event = awaitPointerEvent(PointerEventPass.Final)
@@ -45,9 +49,9 @@ fun Modifier.tilt3d(maxDegrees: Float = 11f, pressedScale: Float = 1.05f): Modif
                     if (change != null && change.pressed && !change.isConsumed && w > 0f && h > 0f) {
                         val fx = (change.position.x / w).coerceIn(0f, 1f) - 0.5f
                         val fy = (change.position.y / h).coerceIn(0f, 1f) - 0.5f
-                        scope.launch { rotationX.animateTo(-fy * 2f * maxDegrees, TiltIn) }
-                        scope.launch { rotationY.animateTo(fx * 2f * maxDegrees, TiltIn) }
-                        scope.launch { scale.animateTo(pressedScale, TiltIn) }
+                        scope.launch { rotationX.animateTo(-fy * 2f * degrees, TiltIn) }
+                        scope.launch { rotationY.animateTo(fx * 2f * degrees, TiltIn) }
+                        scope.launch { scale.animateTo(zoom, TiltIn) }
                     } else {
                         scope.launch { rotationX.animateTo(0f, TiltOut) }
                         scope.launch { rotationY.animateTo(0f, TiltOut) }

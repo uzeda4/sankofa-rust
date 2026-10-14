@@ -52,6 +52,7 @@ object SettingsAppearanceScreen : SearchableSettings {
         return listOf(
             getThemeGroup(uiPreferences = uiPreferences),
             // KMK -->
+            getMotionGroup(uiPreferences = uiPreferences),
             getMangaInfoThemeGroup(uiPreferences = uiPreferences),
             // KMK <--
             getDisplayGroup(uiPreferences = uiPreferences),
@@ -155,6 +156,34 @@ object SettingsAppearanceScreen : SearchableSettings {
     }
 
     // KMK -->
+    @Composable
+    private fun getMotionGroup(
+        uiPreferences: UiPreferences,
+    ): Preference.PreferenceGroup {
+        val reduceMotion by uiPreferences.reduceMotion().collectAsState()
+        val tiltPref = uiPreferences.tiltIntensity()
+        val tilt by tiltPref.collectAsState()
+        return Preference.PreferenceGroup(
+            title = stringResource(KMR.strings.pref_group_motion),
+            preferenceItems = persistentListOf(
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = uiPreferences.reduceMotion(),
+                    title = stringResource(KMR.strings.pref_reduce_motion),
+                    subtitle = stringResource(KMR.strings.pref_reduce_motion_summary),
+                ),
+                Preference.PreferenceItem.SliderPreference(
+                    value = tilt,
+                    title = stringResource(KMR.strings.pref_tilt_intensity),
+                    valueString = "$tilt%",
+                    valueRange = 0..100,
+                    steps = 9,
+                    enabled = !reduceMotion,
+                    onValueChanged = { tiltPref.set(it) },
+                ),
+            ),
+        )
+    }
+
     @Composable
     private fun getMangaInfoThemeGroup(
         uiPreferences: UiPreferences,

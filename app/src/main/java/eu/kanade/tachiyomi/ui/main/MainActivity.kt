@@ -414,8 +414,12 @@ class MainActivity : BaseActivity() {
             var showChangelog by remember {
                 mutableStateOf(
                     // KMK -->
-                    (isReleaseBuildType && didMigration) ||
-                        (isPreviewBuildType && previewCurrentVersion > previewLastVersion.get()),
+                    // The fork has no release feed of its own yet, and the upstream one describes other builds.
+                    SHOW_UPSTREAM_CHANGELOG &&
+                        (
+                            (isReleaseBuildType && didMigration) ||
+                                (isPreviewBuildType && previewCurrentVersion > previewLastVersion.get())
+                            ),
                     // KMK <--
                 )
             }
@@ -726,6 +730,11 @@ class MainActivity : BaseActivity() {
 }
 
 // Splash screen
+// KMK -->
+/** Flip to true once the fork publishes its own releases and AppUpdateChecker points at them. */
+private const val SHOW_UPSTREAM_CHANGELOG = false
+// KMK <--
+
 private const val SPLASH_MIN_DURATION = 500 // ms
 private const val SPLASH_MAX_DURATION = 5000 // ms
 private const val SPLASH_EXIT_ANIM_DURATION = 400L // ms

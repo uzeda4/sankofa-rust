@@ -30,6 +30,14 @@ class UiPreferences(
     fun themeDarkAmoled() = preferenceStore.getBoolean("pref_theme_dark_amoled_key", false)
 
     // KMK -->
+    /** Turns off 3D tilt, parallax and blur everywhere, on top of what the system already asks for. */
+    fun reduceMotion() = preferenceStore.getBoolean("pref_reduce_motion_key", false)
+
+    /** Strength of the cover tilt, 0 to 100 percent. */
+    fun tiltIntensity() = preferenceStore.getInt("pref_tilt_intensity_key", 100)
+    // KMK <--
+
+    // KMK -->
     fun colorTheme() = preferenceStore.getInt("pref_color_theme", 0xFFDF0090.toInt())
 
     fun customThemeStyle() = preferenceStore.getEnum("pref_custom_theme_style_key", PaletteStyle.Fidelity)

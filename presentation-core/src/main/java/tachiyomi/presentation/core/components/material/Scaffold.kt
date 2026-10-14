@@ -18,6 +18,7 @@
 
 package tachiyomi.presentation.core.components.material
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.MutableWindowInsets
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -53,6 +54,7 @@ import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMap
 import androidx.compose.ui.util.fastMapNotNull
 import androidx.compose.ui.util.fastMaxBy
+import tachiyomi.presentation.core.theme.coverAtmosphere
 import kotlin.math.max
 
 /**
@@ -133,16 +135,23 @@ fun Scaffold(
         color = containerColor,
         contentColor = contentColor,
     ) {
-        ScaffoldLayout(
-            fabPosition = floatingActionButtonPosition,
-            topBar = { topBar(topBarScrollBehavior) },
-            startBar = startBar,
-            bottomBar = bottomBar,
-            content = content,
-            snackbar = snackbarHost,
-            contentWindowInsets = remainingWindowInsets,
-            fab = floatingActionButton,
-        )
+        // KMK -->
+        // Redesign: the atmosphere is painted on the Surface, behind everything the screen draws.
+        Box(modifier = Modifier.coverAtmosphere()) {
+            // KMK <--
+            ScaffoldLayout(
+                fabPosition = floatingActionButtonPosition,
+                topBar = { topBar(topBarScrollBehavior) },
+                startBar = startBar,
+                bottomBar = bottomBar,
+                content = content,
+                snackbar = snackbarHost,
+                contentWindowInsets = remainingWindowInsets,
+                fab = floatingActionButton,
+            )
+            // KMK -->
+        }
+        // KMK <--
     }
 }
 

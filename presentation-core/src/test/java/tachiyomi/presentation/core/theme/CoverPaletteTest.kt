@@ -67,13 +67,22 @@ class CoverPaletteTest {
         policy(sdkInt = 34) shouldBe MotionPolicy.Full
     }
 
+    @Test
+    fun `tilt intensity is clamped and zero turns tilt off`() {
+        policy(tiltIntensity = 0.5f).tiltIntensity shouldBe 0.5f
+        policy(tiltIntensity = 2f).tiltIntensity shouldBe 1f
+        policy(tiltIntensity = 0f).tilt shouldBe false
+        policy(tiltIntensity = 0f).parallax shouldBe true
+    }
+
     private fun policy(
         userReduce: Boolean = false,
         animatorScale: Float = 1f,
         powerSave: Boolean = false,
         lowRam: Boolean = false,
         sdkInt: Int = 34,
-    ) = MotionPolicy.resolve(userReduce, animatorScale, powerSave, lowRam, sdkInt)
+        tiltIntensity: Float = 1f,
+    ) = MotionPolicy.resolve(userReduce, animatorScale, powerSave, lowRam, sdkInt, tiltIntensity)
 
     private fun Color.luminanceOf(): Float = 0.2126f * red + 0.7152f * green + 0.0722f * blue
 }

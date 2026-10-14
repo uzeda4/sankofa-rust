@@ -82,6 +82,10 @@
     <string name="redesign_continue_reading">Continue reading</string>
     <string name="redesign_chapters_read_progress">%1$d of %2$d chapters read</string>
     <string name="action_continue">Continue</string>
+    <string name="pref_group_motion">Motion</string>
+    <string name="pref_reduce_motion">Reduce motion</string>
+    <string name="pref_reduce_motion_summary">Turns off 3D tilt and blur. The system power saver and animation settings are always respected</string>
+    <string name="pref_tilt_intensity">Cover tilt strength</string>
     <string name="redesign_eyebrow_discover">Discover</string>
     <string name="redesign_eyebrow_updates">What\'s new</string>
     <string name="redesign_eyebrow_history">Where you stopped</string>

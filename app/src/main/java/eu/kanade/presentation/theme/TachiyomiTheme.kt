@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -44,6 +45,7 @@ import tachiyomi.presentation.core.theme.LocalMotionPolicy
 import tachiyomi.presentation.core.theme.RedesignShapes
 import tachiyomi.presentation.core.theme.rememberMotionPolicy
 import tachiyomi.presentation.core.theme.withRedesignFonts
+import tachiyomi.presentation.core.util.collectAsState
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -54,9 +56,17 @@ fun TachiyomiTheme(
     content: @Composable () -> Unit,
 ) {
     val uiPreferences = Injekt.get<UiPreferences>()
+    // KMK -->
+    val reduceMotion by uiPreferences.reduceMotion().collectAsState()
+    val tiltIntensity by uiPreferences.tiltIntensity().collectAsState()
+    // KMK <--
     BaseTachiyomiTheme(
         appTheme = appTheme ?: uiPreferences.appTheme().get(),
         isAmoled = amoled ?: uiPreferences.themeDarkAmoled().get(),
+        // KMK -->
+        reduceMotion = reduceMotion,
+        tiltIntensity = tiltIntensity / 100f,
+        // KMK <--
         content = content,
     )
 }
@@ -80,9 +90,11 @@ fun TachiyomiTheme(
         val coverPalette = remember(seedColor) { CoverPalette.fromSeed(seedColor) }
         val redesignTypography = remember(typography) { typography.withRedesignFonts() }
         val isRedesign = (appTheme ?: uiPreferences.appTheme().get()) == AppTheme.REDESIGN
+        val reduceMotion by uiPreferences.reduceMotion().collectAsState()
+        val tiltIntensity by uiPreferences.tiltIntensity().collectAsState()
         CompositionLocalProvider(
             LocalCoverPalette provides coverPalette,
-            LocalMotionPolicy provides rememberMotionPolicy(),
+            LocalMotionPolicy provides rememberMotionPolicy(reduceMotion, tiltIntensity / 100f),
             LocalCoverAtmosphere provides isRedesign,
         ) {
             DynamicMaterialExpressiveTheme(
@@ -111,6 +123,10 @@ private fun BaseTachiyomiTheme(
     appTheme: AppTheme,
     isAmoled: Boolean,
     content: @Composable () -> Unit,
+    // KMK -->
+    reduceMotion: Boolean = false,
+    tiltIntensity: Float = 1f,
+    // KMK <--
 ) {
     val context = LocalContext.current
     val isDark = isSystemInDarkTheme()
@@ -129,7 +145,7 @@ private fun BaseTachiyomiTheme(
     val isRedesign = appTheme == AppTheme.REDESIGN
     CompositionLocalProvider(
         LocalCoverPalette provides coverPalette,
-        LocalMotionPolicy provides rememberMotionPolicy(),
+        LocalMotionPolicy provides rememberMotionPolicy(reduceMotion, tiltIntensity),
         LocalCoverAtmosphere provides isRedesign,
     ) {
         // KMK <--
