@@ -7,17 +7,24 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -32,15 +39,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,6 +61,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
 import eu.kanade.core.preference.asState
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.domain.ui.UiPreferences
@@ -73,6 +85,9 @@ import soup.compose.material.motion.animation.materialFadeThroughIn
 import soup.compose.material.motion.animation.materialFadeThroughOut
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.i18n.MR
+import tachiyomi.presentation.core.components.GlassSurface
+import tachiyomi.presentation.core.components.LocalGlassBackdrop
+import tachiyomi.presentation.core.components.material.LocalBottomBarInset
 import tachiyomi.presentation.core.components.material.NavigationBar
 import tachiyomi.presentation.core.components.material.NavigationRail
 import tachiyomi.presentation.core.components.material.Scaffold
@@ -115,6 +130,10 @@ object HomeScreen : Screen() {
             Injekt.get<UiPreferences>().bottomBarLabels().asState(scope)
         }
         // SY <--
+        // KMK -->
+        // With the Redesign theme on phones the dock floats over the content (with real blur behind it).
+        val overlayDock = LocalCoverAtmosphere.current && !isTabletUi()
+        // KMK <--
 
         TabNavigator(
             tab = LibraryTab,
@@ -137,7 +156,10 @@ object HomeScreen : Screen() {
                         }
                     },
                     bottomBar = {
-                        if (!isTabletUi()) {
+                        // KMK -->
+                        // Redesign on phones: the dock is drawn over the content below instead of in this slot.
+                        if (!isTabletUi() && !overlayDock) {
+                            // KMK <--
                             val bottomNavVisible by produceState(initialValue = true) {
                                 showBottomNavEvent.receiveAsFlow().collectLatest { value = it }
                             }
@@ -146,87 +168,77 @@ object HomeScreen : Screen() {
                                 enter = expandVertically(),
                                 exit = shrinkVertically(),
                             ) {
-                                // KMK -->
-                                val isRedesign = LocalCoverAtmosphere.current
-                                val barShape = RoundedCornerShape(28.dp)
-                                // Redesign: a floating, rounded dock with margins instead of a full width bar.
-                                // It stops growing past 560 dp, so in landscape it stays a compact pill.
-                                Box(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    contentAlignment = Alignment.BottomCenter,
-                                ) {
-                                    Box(
-                                        modifier = if (isRedesign) {
-                                            Modifier
-                                                .widthIn(max = 560.dp)
-                                                .navigationBarsPadding()
-                                                .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 12.dp)
-                                                .shadow(12.dp, barShape, clip = false)
-                                        } else {
-                                            Modifier.fillMaxWidth()
-                                        },
-                                    ) {
-                                        // KMK <--
-                                        NavigationBar(
-                                            // KMK -->
-                                            modifier = if (isRedesign) {
-                                                Modifier
-                                                    .clip(barShape)
-                                                    .border(
-                                                        1.dp,
-                                                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.14f),
-                                                        barShape,
-                                                    )
-                                            } else {
-                                                Modifier
-                                            },
-                                            containerColor = if (isRedesign) {
-                                                MaterialTheme.colorScheme.surfaceContainerHigh
-                                            } else {
-                                                NavigationBarDefaults.containerColor
-                                            },
-                                            windowInsets = if (isRedesign) {
-                                                WindowInsets(0)
-                                            } else {
-                                                NavigationBarDefaults.windowInsets
-                                            },
-                                            // KMK <--
-                                        ) {
-                                            TABS
-                                                // SY -->
-                                                .fastFilter { it.isEnabled() }
-                                                // SY <--
-                                                .fastForEach {
-                                                    NavigationBarItem(it/* SY --> */, alwaysShowLabel/* SY <-- */)
-                                                }
+                                NavigationBar {
+                                    TABS
+                                        // SY -->
+                                        .fastFilter { it.isEnabled() }
+                                        // SY <--
+                                        .fastForEach {
+                                            NavigationBarItem(it/* SY --> */, alwaysShowLabel/* SY <-- */)
                                         }
-                                        // KMK -->
-                                    }
                                 }
-                                // KMK <--
                             }
                         }
                     },
                     contentWindowInsets = WindowInsets(0),
                 ) { contentPadding ->
+                    // KMK -->
+                    val hazeState = remember { HazeState() }
+                    var dockHeightPx by remember { mutableIntStateOf(0) }
+                    val density = LocalDensity.current
+                    // KMK <--
                     Box(
                         modifier = Modifier
                             .padding(contentPadding)
                             .consumeWindowInsets(contentPadding),
                     ) {
-                        AnimatedContent(
-                            targetState = tabNavigator.current,
-                            transitionSpec = {
-                                materialFadeThroughIn(initialScale = 1f, durationMillis = TabFadeDuration) togetherWith
-                                    materialFadeThroughOut(durationMillis = TabFadeDuration)
+                        // KMK -->
+                        CompositionLocalProvider(
+                            LocalBottomBarInset provides if (overlayDock) {
+                                with(density) { dockHeightPx.toDp() }
+                            } else {
+                                0.dp
                             },
-                            label = "tabContent",
-                            contentKey = { it.key },
+                            LocalGlassBackdrop provides hazeState,
                         ) {
-                            tabNavigator.saveableState(key = "currentTab", it) {
-                                it.Content()
+                            // KMK <--
+                            AnimatedContent(
+                                targetState = tabNavigator.current,
+                                transitionSpec = {
+                                    materialFadeThroughIn(
+                                        initialScale = 1f,
+                                        durationMillis = TabFadeDuration,
+                                    ) togetherWith materialFadeThroughOut(durationMillis = TabFadeDuration)
+                                },
+                                label = "tabContent",
+                                contentKey = { it.key },
+                                // KMK -->
+                                modifier = Modifier.hazeSource(state = hazeState),
+                                // KMK <--
+                            ) {
+                                tabNavigator.saveableState(key = "currentTab", it) {
+                                    it.Content()
+                                }
                             }
+                            // KMK -->
                         }
+                        if (overlayDock) {
+                            // Keeps list items from showing through behind the system navigation buttons.
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .fillMaxWidth()
+                                    .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                                    .background(MaterialTheme.colorScheme.background),
+                            )
+                            RedesignDock(
+                                hazeState = hazeState,
+                                alwaysShowLabel = alwaysShowLabel,
+                                onHeightChanged = { dockHeightPx = it },
+                                modifier = Modifier.align(Alignment.BottomCenter),
+                            )
+                        }
+                        // KMK <--
                     }
                 }
             }
@@ -274,6 +286,63 @@ object HomeScreen : Screen() {
             }
         }
     }
+
+    // KMK -->
+    /**
+     * Floating glass dock of the Redesign theme. It is drawn over the tab content; [hazeState] is the
+     * content behind it, which gets blurred. Reports its own height so screens can leave room for it.
+     */
+    @Composable
+    private fun RedesignDock(
+        hazeState: HazeState,
+        alwaysShowLabel: Boolean,
+        onHeightChanged: (Int) -> Unit,
+        modifier: Modifier = Modifier,
+    ) {
+        val bottomNavVisible by produceState(initialValue = true) {
+            showBottomNavEvent.receiveAsFlow().collectLatest { value = it }
+        }
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .onSizeChanged { onHeightChanged(it.height) },
+            contentAlignment = Alignment.BottomCenter,
+        ) {
+            AnimatedVisibility(
+                visible = bottomNavVisible,
+                enter = fadeIn() + slideInVertically { it },
+                exit = fadeOut() + slideOutVertically { it },
+            ) {
+                // Stops growing past 560 dp, so in landscape it stays a compact pill.
+                Box(
+                    modifier = Modifier
+                        .widthIn(max = 560.dp)
+                        .navigationBarsPadding()
+                        .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 12.dp),
+                ) {
+                    GlassSurface(
+                        shape = RoundedCornerShape(28.dp),
+                        hazeState = hazeState,
+                    ) {
+                        NavigationBar(
+                            containerColor = Color.Transparent,
+                            tonalElevation = 0.dp,
+                            windowInsets = WindowInsets(0),
+                        ) {
+                            TABS
+                                // SY -->
+                                .fastFilter { it.isEnabled() }
+                                // SY <--
+                                .fastForEach {
+                                    NavigationBarItem(it/* SY --> */, alwaysShowLabel/* SY <-- */)
+                                }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    // KMK <--
 
     @Composable
     private fun RowScope.NavigationBarItem(

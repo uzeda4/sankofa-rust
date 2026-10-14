@@ -19,13 +19,16 @@
 package tachiyomi.presentation.core.components.material
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.MutableWindowInsets
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.exclude
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.onConsumedWindowInsetsChanged
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -39,7 +42,9 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,6 +61,14 @@ import androidx.compose.ui.util.fastMapNotNull
 import androidx.compose.ui.util.fastMaxBy
 import tachiyomi.presentation.core.theme.coverAtmosphere
 import kotlin.math.max
+
+// KMK -->
+/**
+ * Height of a floating dock drawn over the screen by an ancestor. [Scaffold] reserves that much space at
+ * the bottom of its content so lists keep their last item reachable while they scroll under the dock.
+ */
+val LocalBottomBarInset = compositionLocalOf { 0.dp }
+// KMK <--
 
 /**
  * <a href="https://material.io/design/layout/understanding-layout.html" class="external" target="_blank">Material Design layout</a>.
@@ -123,6 +136,21 @@ fun Scaffold(
 ) {
     // Tachiyomi: Handle consumed window insets
     val remainingWindowInsets = remember { MutableWindowInsets() }
+    // KMK -->
+    // A floating dock sits on top of the screen. Treat the space it covers as an empty bottom bar, so the
+    // content scrolls under it (and shows through its blur) while its last item stays reachable.
+    val dockInset = LocalBottomBarInset.current
+    val effectiveBottomBar: @Composable () -> Unit = if (dockInset > 0.dp) {
+        {
+            Column {
+                Spacer(modifier = Modifier.height(dockInset))
+                bottomBar()
+            }
+        }
+    } else {
+        bottomBar
+    }
+    // KMK <--
     androidx.compose.material3.Surface(
         modifier = Modifier
             .nestedScroll(topBarScrollBehavior.nestedScrollConnection)
@@ -139,16 +167,25 @@ fun Scaffold(
         // Redesign: the atmosphere is painted on the Surface, behind everything the screen draws.
         Box(modifier = Modifier.coverAtmosphere()) {
             // KMK <--
-            ScaffoldLayout(
-                fabPosition = floatingActionButtonPosition,
-                topBar = { topBar(topBarScrollBehavior) },
-                startBar = startBar,
-                bottomBar = bottomBar,
-                content = content,
-                snackbar = snackbarHost,
-                contentWindowInsets = remainingWindowInsets,
-                fab = floatingActionButton,
-            )
+            // KMK -->
+            // Nested scaffolds must not add the dock space a second time.
+            CompositionLocalProvider(LocalBottomBarInset provides 0.dp) {
+                // KMK <--
+                ScaffoldLayout(
+                    fabPosition = floatingActionButtonPosition,
+                    topBar = { topBar(topBarScrollBehavior) },
+                    startBar = startBar,
+                    // KMK -->
+                    bottomBar = effectiveBottomBar,
+                    // KMK <--
+                    content = content,
+                    snackbar = snackbarHost,
+                    contentWindowInsets = remainingWindowInsets,
+                    fab = floatingActionButton,
+                )
+                // KMK -->
+            }
+            // KMK <--
             // KMK -->
         }
         // KMK <--
