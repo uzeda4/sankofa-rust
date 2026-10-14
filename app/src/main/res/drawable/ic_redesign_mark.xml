@@ -1,0 +1,20 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="54dp"
+    android:height="72dp"
+    android:viewportWidth="54"
+    android:viewportHeight="72">
+  <!-- Same mark as the launcher icon, for the splash screen: a 36x54 cover centered in a 54x72 canvas. -->
+  <path
+      android:fillColor="#1B3A4B"
+      android:pathData="M14,9H40A5,5 0 0 1 45,14V58A5,5 0 0 1 40,63H14A5,5 0 0 1 9,58V14A5,5 0 0 1 14,9Z" />
+  <group>
+    <clip-path
+        android:pathData="M14,9H40A5,5 0 0 1 45,14V58A5,5 0 0 1 40,63H14A5,5 0 0 1 9,58V14A5,5 0 0 1 14,9Z" />
+    <path
+        android:fillColor="#F2A65A"
+        android:pathData="M15,22a8,8 0 1 0 16,0a8,8 0 1 0 -16,0z" />
+    <path
+        android:fillColor="#0B1820"
+        android:pathData="M9,48L17,38L25,46L35,34L45,42V63H9Z" />
+  </group>
+</vector>
