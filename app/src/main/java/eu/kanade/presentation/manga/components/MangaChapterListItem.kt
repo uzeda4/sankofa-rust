@@ -1,5 +1,6 @@
 package eu.kanade.presentation.manga.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -44,6 +46,7 @@ import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.material.DISABLED_ALPHA
 import tachiyomi.presentation.core.components.material.SECONDARY_ALPHA
 import tachiyomi.presentation.core.i18n.stringResource
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 import tachiyomi.presentation.core.util.selectedBackground
 
 @Composable
@@ -96,7 +99,21 @@ fun MangaChapterListItem(
     }
 
     SwipeableActionsBox(
-        modifier = modifier.clipToBounds(),
+        modifier = modifier
+            // KMK -->
+            // Redesign: each chapter is a rounded card instead of a flat row.
+            .then(
+                if (LocalCoverAtmosphere.current) {
+                    Modifier
+                        .padding(horizontal = 12.dp, vertical = 3.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                } else {
+                    Modifier
+                },
+            )
+            // KMK <--
+            .clipToBounds(),
         startActions = listOfNotNull(swipeStart),
         endActions = listOfNotNull(swipeEnd),
         swipeThreshold = swipeActionThreshold,
