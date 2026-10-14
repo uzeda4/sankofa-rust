@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -33,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -147,51 +150,58 @@ object HomeScreen : Screen() {
                                 val isRedesign = LocalCoverAtmosphere.current
                                 val barShape = RoundedCornerShape(28.dp)
                                 // Redesign: a floating, rounded dock with margins instead of a full width bar.
+                                // It stops growing past 560 dp, so in landscape it stays a compact pill.
                                 Box(
-                                    modifier = if (isRedesign) {
-                                        Modifier
-                                            .navigationBarsPadding()
-                                            .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 12.dp)
-                                            .shadow(12.dp, barShape, clip = false)
-                                    } else {
-                                        Modifier
-                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    contentAlignment = Alignment.BottomCenter,
                                 ) {
-                                    // KMK <--
-                                    NavigationBar(
-                                        // KMK -->
+                                    Box(
                                         modifier = if (isRedesign) {
                                             Modifier
-                                                .clip(barShape)
-                                                .border(
-                                                    1.dp,
-                                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.14f),
-                                                    barShape,
-                                                )
+                                                .widthIn(max = 560.dp)
+                                                .navigationBarsPadding()
+                                                .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 12.dp)
+                                                .shadow(12.dp, barShape, clip = false)
                                         } else {
-                                            Modifier
+                                            Modifier.fillMaxWidth()
                                         },
-                                        containerColor = if (isRedesign) {
-                                            MaterialTheme.colorScheme.surfaceContainerHigh
-                                        } else {
-                                            NavigationBarDefaults.containerColor
-                                        },
-                                        windowInsets = if (isRedesign) {
-                                            WindowInsets(0)
-                                        } else {
-                                            NavigationBarDefaults.windowInsets
-                                        },
-                                        // KMK <--
                                     ) {
-                                        TABS
-                                            // SY -->
-                                            .fastFilter { it.isEnabled() }
-                                            // SY <--
-                                            .fastForEach {
-                                                NavigationBarItem(it/* SY --> */, alwaysShowLabel/* SY <-- */)
-                                            }
+                                        // KMK <--
+                                        NavigationBar(
+                                            // KMK -->
+                                            modifier = if (isRedesign) {
+                                                Modifier
+                                                    .clip(barShape)
+                                                    .border(
+                                                        1.dp,
+                                                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.14f),
+                                                        barShape,
+                                                    )
+                                            } else {
+                                                Modifier
+                                            },
+                                            containerColor = if (isRedesign) {
+                                                MaterialTheme.colorScheme.surfaceContainerHigh
+                                            } else {
+                                                NavigationBarDefaults.containerColor
+                                            },
+                                            windowInsets = if (isRedesign) {
+                                                WindowInsets(0)
+                                            } else {
+                                                NavigationBarDefaults.windowInsets
+                                            },
+                                            // KMK <--
+                                        ) {
+                                            TABS
+                                                // SY -->
+                                                .fastFilter { it.isEnabled() }
+                                                // SY <--
+                                                .fastForEach {
+                                                    NavigationBarItem(it/* SY --> */, alwaysShowLabel/* SY <-- */)
+                                                }
+                                        }
+                                        // KMK -->
                                     }
-                                    // KMK -->
                                 }
                                 // KMK <--
                             }

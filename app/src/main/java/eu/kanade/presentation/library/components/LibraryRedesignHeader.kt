@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -100,6 +101,8 @@ private fun ContinueReadingCard(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            // On wide screens (landscape) the card stays a readable size instead of stretching across.
+            .widthIn(max = 640.dp)
             .clip(shape)
             .background(MaterialTheme.colorScheme.surfaceContainerHigh)
             .border(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f), shape)
