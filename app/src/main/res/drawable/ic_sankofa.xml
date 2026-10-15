@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+  <!-- Notification icon: the Sankofa bird silhouette (same shapes as the themed launcher icon). -->
+  <group android:pivotX="50" android:pivotY="60" android:scaleX="0.8" android:scaleY="0.8" android:translateX="4" android:translateY="-6">
+    <group android:translateX="2" android:translateY="3">
+      <path android:fillColor="#FFFFFFFF" android:pathData="M46,63C37,60 31,52 31,42C40,45 46,52 49,59Z" />
+      <path android:fillColor="#FFFFFFFF" android:pathData="M45,66C34,67 23,62 18,52C30,51 40,56 48,62Z" />
+      <path android:fillColor="#FFFFFFFF" android:pathData="M79,66a20,14.5 -10 1 1 -40,0a20,14.5 -10 1 1 40,0z" />
+      <path android:pathData="M70,58C83,50 81,33 68,30C60,28 54,31 52,36" android:strokeColor="#FFFFFFFF" android:strokeLineCap="round" android:strokeWidth="9" />
+      <path android:fillColor="#FFFFFFFF" android:pathData="M42,35a8,8 0 1 0 16,0a8,8 0 1 0 -16,0z" />
+      <path android:fillColor="#FFFFFFFF" android:pathData="M44,30C38,31 32,34 29,39C35,40 40,42 44,43Z" />
+
+      <path android:pathData="M54,80L52,92M64,79L66,91" android:strokeColor="#FFFFFFFF" android:strokeLineCap="round" android:strokeWidth="3.6" />
+      <path android:pathData="M22.5,45a6.5,6.5 0 1 0 13,0a6.5,6.5 0 1 0 -13,0z" android:strokeColor="#FFFFFFFF" android:strokeWidth="2.4" />
+
+    </group>
+  </group>
+</vector>

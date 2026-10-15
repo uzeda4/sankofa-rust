@@ -28,6 +28,7 @@ import eu.kanade.presentation.manga.components.MangaCover
 import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.kmk.KMR
+import tachiyomi.presentation.core.components.BrandMark
 import tachiyomi.presentation.core.components.CoverBadge
 import tachiyomi.presentation.core.components.CoverProgress
 import tachiyomi.presentation.core.components.SectionLabel
@@ -59,7 +60,13 @@ internal fun LibraryRedesignHeader(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            SectionLabel(text = stringResource(KMR.strings.redesign_library_eyebrow))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                BrandMark(size = 18.dp)
+                SectionLabel(text = stringResource(KMR.strings.redesign_library_eyebrow))
+            }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,

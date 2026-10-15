@@ -97,7 +97,7 @@ class EHentaiUpdateNotifier(private val context: Context) {
         ) {
             setContentTitle(context.pluralStringResource(MR.plurals.notification_update_error, failed, failed))
             setContentText(context.stringResource(MR.strings.action_show_errors))
-            setSmallIcon(R.drawable.ic_komikku)
+            setSmallIcon(R.drawable.ic_sankofa)
             setColor(ContextCompat.getColor(context, R.color.ic_launcher))
             setLargeIcon(notificationBitmap)
 

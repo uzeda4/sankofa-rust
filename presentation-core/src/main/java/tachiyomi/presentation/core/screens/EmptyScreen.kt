@@ -24,8 +24,10 @@ import androidx.compose.ui.util.fastForEach
 import dev.icerock.moko.resources.StringResource
 import kotlinx.collections.immutable.ImmutableList
 import tachiyomi.presentation.core.components.ActionButton
+import tachiyomi.presentation.core.components.BrandMark
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
+import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 import tachiyomi.presentation.core.util.secondaryItemAlpha
 import kotlin.random.Random
 
@@ -72,13 +74,26 @@ fun EmptyScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-            Text(
-                text = face,
+        // KMK -->
+        if (LocalCoverAtmosphere.current) {
+            // Redesign: the Sankofa bird, quiet, in place of the face.
+            BrandMark(
+                size = 64.dp,
                 modifier = Modifier.secondaryItemAlpha(),
-                style = MaterialTheme.typography.displayMedium,
+                eggColor = MaterialTheme.colorScheme.onSurface,
             )
+        } else {
+            // KMK <--
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                Text(
+                    text = face,
+                    modifier = Modifier.secondaryItemAlpha(),
+                    style = MaterialTheme.typography.displayMedium,
+                )
+            }
+            // KMK -->
         }
+        // KMK <--
 
         Text(
             text = message,

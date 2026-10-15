@@ -14,7 +14,9 @@ Atribuição: o conceito e o provérbio pertencem à cultura Akan e à tradiçã
 |---|---|---|
 | Ícone adaptativo | `ic_launcher_background.xml` + `ic_launcher_foreground.xml` | launcher |
 | Monocromático | `ic_launcher_monochrome.xml` | ícone temático Android 13+ (ovo vira anel) |
-| Splash / marca compacta | `ic_redesign_mark.xml`, `ic_splash.xml` (+ `-night`) | splash, telas vazias |
+| Splash / marca compacta | `ic_redesign_mark.xml`, `ic_splash.xml` (+ `-night`) | splash |
+| Ícone de notificação | `ic_sankofa.xml` | `setSmallIcon` de todas as notificações (substitui `ic_komikku`) |
+| Marca em Compose | `presentation-core/.../components/BrandMark.kt` | cabeçalho de Mais e Sobre (`LogoHeader`), estados vazios, cabeçalho da biblioteca |
 
 ## Cores
 | Token | Hex | Papel |
