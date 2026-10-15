@@ -217,7 +217,7 @@ Conferir o nome exato do pacote de migração e de busca global no checkout; os 
 | 6 | Desempenho e polimento | `macrobenchmark` | metas da seção 9 atingidas em aparelho de referência |
 
 Fase 0, já aplicada em `chore/fork-identity` (sem commit):
-- `applicationId` `app.komikku` → `app.sankofa` (debug `.dev`, preview `.beta`, foss `.foss`, benchmark `.benchmark` herdam o sufixo). `namespace` mantido.
+- `applicationId` `app.komikku` → `app.sankofa.rust` (debug `.dev`, preview `.beta`, foss `.foss`, benchmark `.benchmark` herdam o sufixo). `namespace` mantido.
 - `versionCode 1`, `versionName 0.1.0`.
 - `app_name` → "Sankofa". Identidade em `docs/redesign/IDENTITY.md`.
 - Pacote de benchmark atualizado em `StartupBenchmark.kt` e `BaselineProfileGenerator.kt`.

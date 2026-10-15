@@ -12,7 +12,7 @@ class BaselineProfileGenerator {
 
     @Test
     fun generate() = baselineProfileRule.collect(
-        packageName = "app.sankofa.benchmark",
+        packageName = "app.sankofa.rust.benchmark",
         profileBlock = {
             pressHome()
             startActivityAndWait()

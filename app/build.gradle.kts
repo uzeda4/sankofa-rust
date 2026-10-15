@@ -51,7 +51,7 @@ android {
         // KMK -->
         // Fork identity (provisional). applicationId only: `namespace` stays eu.kanade.tachiyomi on purpose
         // so extensions and upstream cherry-picks keep working.
-        applicationId = "app.sankofa"
+        applicationId = "app.sankofa.rust"
 
         versionCode = 1
         versionName = "0.1.0"

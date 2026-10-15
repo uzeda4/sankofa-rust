@@ -38,5 +38,5 @@ Regra: o ovo é sempre a única área em cor de acento; sobre a capa de um títu
 - Fundo mínimo de contraste 4,5:1 entre pássaro e fundo.
 
 ## Identificadores
-- `app_name`: Sankofa
-- `applicationId`: `app.sankofa` (debug `.dev`, preview `.beta`, foss `.foss`, benchmark `.benchmark`). Instala como app separado de builds anteriores `app.komikkuredesign`.
+- `app_name`: Sankofa Rust (o fork; o original se chama Sankofa)
+- `applicationId`: `app.sankofa.rust` (debug `.dev`, preview `.beta`, foss `.foss`, benchmark `.benchmark`). Este repositório é o fork de trabalho; o original (`app.sankofa`) fica instalado ao lado e não é alterado.
