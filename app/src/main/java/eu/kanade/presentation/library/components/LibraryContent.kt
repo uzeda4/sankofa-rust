@@ -27,6 +27,10 @@ import tachiyomi.presentation.core.components.material.PullRefresh
 import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
 import kotlin.time.Duration.Companion.seconds
 
+// KMK -->
+private const val REDISCOVER_COUNT = 12
+// KMK <--
+
 @Composable
 fun LibraryContent(
     categories: List<Category>,
@@ -98,11 +102,17 @@ fun LibraryContent(
             val candidates = pageItems.map { it.libraryManga }.filter { it.unreadCount > 0 }
             // Most recently read title with chapters left, otherwise the first title that has something to read.
             val inProgress = candidates.filter { it.lastRead > 0 }.maxByOrNull { it.lastRead }
-                ?: candidates.firstOrNull();
+                ?: candidates.firstOrNull()
+            // Titles left behind: the ones with chapters to read first, then never opened, then read longest ago.
+            val rediscover = pageItems.map { it.libraryManga }
+                .filter { it.manga.id != inProgress?.manga?.id }
+                .sortedWith(compareBy({ it.unreadCount == 0L }, { it.lastRead }))
+                .take(REDISCOVER_COUNT);
             {
                 LibraryRedesignHeader(
                     totalCount = pageItems.size,
                     inProgress = inProgress,
+                    rediscover = rediscover,
                     onOpenManga = onClickManga,
                     onContinueReading = onContinueReadingClicked,
                 )

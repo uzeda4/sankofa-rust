@@ -48,7 +48,9 @@ import exh.debug.DebugToggles
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.BadgeGroup
 import tachiyomi.presentation.core.i18n.stringResource
+import tachiyomi.presentation.core.util.SharedCoverTarget
 import tachiyomi.presentation.core.util.selectedBackground
+import tachiyomi.presentation.core.util.sharedCover
 import tachiyomi.presentation.core.util.tilt3d
 import tachiyomi.domain.manga.model.MangaCover as MangaCoverModel
 
@@ -101,6 +103,7 @@ fun MangaCompactGridItem(
     val onBgColor = coverData.dominantCoverColors?.second.takeIf { libraryColored }
     // KMK <--
     GridItemSelectable(
+        mangaId = coverData.mangaId,
         isSelected = isSelected,
         onClick = onClick,
         onLongClick = onLongClick,
@@ -121,6 +124,7 @@ fun MangaCompactGridItem(
                         modifier = Modifier
                             // KMK -->
                             // .alpha(if (isSelected) GridSelectedCoverAlpha else coverAlpha)
+                            .sharedCover(coverData.mangaId)
                             // KMK <--
                             .fillMaxWidth(),
                         data = coverData,
@@ -236,6 +240,7 @@ fun MangaComfortableGridItem(
     val onBgColor = coverData.dominantCoverColors?.second.takeIf { libraryColored }
     // KMK <--
     GridItemSelectable(
+        mangaId = coverData.mangaId,
         isSelected = isSelected,
         onClick = onClick,
         onLongClick = onLongClick,
@@ -257,6 +262,7 @@ fun MangaComfortableGridItem(
                                 modifier = Modifier
                                     // KMK -->
                                     // .alpha(if (isSelected) GridSelectedCoverAlpha else coverAlpha)
+                                    .sharedCover(coverData.mangaId)
                                     // KMK <--
                                     .fillMaxWidth(),
                                 data = coverData,
@@ -276,6 +282,7 @@ fun MangaComfortableGridItem(
                                 modifier = Modifier
                                     // KMK -->
                                     // .alpha(if (isSelected) GridSelectedCoverAlpha else coverAlpha)
+                                    .sharedCover(coverData.mangaId)
                                     // KMK <--
                                     .fillMaxWidth(),
                                 data = coverData,
@@ -399,6 +406,7 @@ private fun GridItemTitle(
  */
 @Composable
 private fun GridItemSelectable(
+    mangaId: Long,
     isSelected: Boolean,
     onClick: () -> Unit,
     onLongClick: () -> Unit,
@@ -409,7 +417,12 @@ private fun GridItemSelectable(
         modifier = modifier
             .clip(MaterialTheme.shapes.small)
             .combinedClickable(
-                onClick = onClick,
+                // KMK -->
+                onClick = {
+                    SharedCoverTarget.mangaId = mangaId
+                    onClick()
+                },
+                // KMK <--
                 onLongClick = onLongClick,
             )
             .selectedOutline(isSelected = isSelected, color = MaterialTheme.colorScheme.secondary)
@@ -460,7 +473,12 @@ fun MangaListItem(
             .selectedBackground(isSelected)
             .height(56.dp)
             .combinedClickable(
-                onClick = onClick,
+                // KMK -->
+                onClick = {
+                    SharedCoverTarget.mangaId = coverData.mangaId
+                    onClick()
+                },
+                // KMK <--
                 onLongClick = onLongClick,
             )
             .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -480,6 +498,7 @@ fun MangaListItem(
                 modifier = Modifier
                     // KMK -->
                     // .alpha(coverAlpha)
+                    .sharedCover(coverData.mangaId)
                     // KMK <--
                     .fillMaxHeight(),
                 data = coverData,

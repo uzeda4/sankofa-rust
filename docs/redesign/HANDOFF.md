@@ -232,7 +232,13 @@ Estado das fases seguintes (branches empilhadas `chore/fork-identity` → `feat/
 - Dock flutuante com blur real feito (`HomeScreen.RedesignDock`, `LocalBottomBarInset` no `Scaffold`). Conferido em Navegar → Extensões, com a lista passando por baixo. Não conferido: seleção em massa na Biblioteca/Histórico/Atualizações (o dock some e o menu de ações aparece), snackbars e FABs.
 - Seleção em massa conferida na Biblioteca com o dock novo: o dock some, a barra de seleção aparece no topo e o menu de ações no rodapé, com o contorno âmbar na capa selecionada.
 - Marca: ícone adaptativo e tela de abertura novos (cover com sol e relevo; `ic_launcher_*`, `ic_redesign_mark`, `ic_splash`). Desenhados do zero, sem derivar do logotipo do Komikku. O nome definitivo da marca continua em aberto.
-- Fora do que foi feito: cover flow, elemento compartilhado capa → detalhes, cartão de virada de capítulo, widgets e onboarding redesenhados.
+- Movimento da fase 3 (feito, branch `feat/cover-flow-shared-motion`):
+  - **Redescobrir** (`LibraryCoverFlow.kt`): cover flow no topo da biblioteca, com títulos com capítulos por ler primeiro e depois os lidos há mais tempo. Capa central de frente, vizinhas giram até ±42° e encolhem; sem tilt (movimento reduzido) vira carrossel plano.
+  - **Elemento compartilhado** (`SharedCover.kt`, `SharedTransitionLayout` em `MainActivity`): a capa tocada na biblioteca ou no cover flow voa até a capa do detalhe e volta ao fechar. Só a capa tocada (`SharedCoverTarget`) participa, para nunca repetir a chave quando o título aparece duas vezes.
+  - **Brilho** em `tilt3d`: radial branco 26% seguindo o dedo, recortado no formato da capa. **Parallax**: `TiltState` compartilhado entre a capa do detalhe e o fundo desfocado, que desloca até 10 dp no sentido oposto (`tiltParallax`).
+  - **Virada de capítulo** (`ReaderTransitionView`): o cartão de transição gira (até 50° em Y, 18° em X) e esmaece conforme se afasta do centro da tela durante o gesto.
+- Verificado no aparelho: cover flow, brilho, ida ao detalhe e volta com a capa voando de volta ao tile. Não verificado visualmente: a virada de capítulo (precisa chegar ao fim de um capítulo no reader).
+- Fora do que foi feito: widgets e onboarding redesenhados.
 - Aviso do Android 16 em builds de debug: libs nativas herdadas do upstream (`libsqliteJni`, `libimagedecoder`, `libarchive-jni`, `libquickjs`...) não estão alinhadas a 16 KB. Não é da nossa mudança; resolver antes de publicar na Play Store.
 
 Regras do fork:

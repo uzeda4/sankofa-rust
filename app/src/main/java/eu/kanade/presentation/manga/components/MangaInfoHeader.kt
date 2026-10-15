@@ -110,10 +110,14 @@ import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.pluralStringResource
 import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.theme.LocalCoverAtmosphere
+import tachiyomi.presentation.core.util.LocalCoverTilt
+import tachiyomi.presentation.core.util.TiltState
 import tachiyomi.presentation.core.util.clickableNoIndication
 import tachiyomi.presentation.core.util.collectAsState
 import tachiyomi.presentation.core.util.secondaryItemAlpha
+import tachiyomi.presentation.core.util.sharedCover
 import tachiyomi.presentation.core.util.tilt3d
+import tachiyomi.presentation.core.util.tiltParallax
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import java.time.Instant
@@ -144,6 +148,8 @@ fun MangaInfoBox(
     // KMK -->
     val usePanoramaCover by Injekt.get<UiPreferences>().usePanoramaCoverMangaInfo().collectAsState()
     val topAlignCover by Injekt.get<UiPreferences>().topAlignCover().collectAsState()
+    // Cover tilt shared with the backdrop so it drifts opposite to the cover (parallax).
+    val coverTilt = remember { TiltState() }
     // KMK <--
     Box(modifier = modifier) {
         // Backdrop
@@ -181,12 +187,18 @@ fun MangaInfoBox(
                 .background(MaterialTheme.colorScheme.surfaceTint.copy(alpha = 0.4f))
                 .blur(7.dp)
                 // .blur(4.dp)
+                .tiltParallax(maxShift = 10.dp, state = coverTilt)
                 // KMK <--
                 .alpha(0.2f),
         )
 
         // Manga & source info
-        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+        CompositionLocalProvider(
+            LocalContentColor provides MaterialTheme.colorScheme.onSurface,
+            // KMK -->
+            LocalCoverTilt provides coverTilt,
+            // KMK <--
+        ) {
             if (!isTabletUi) {
                 MangaAndSourceTitlesSmall(
                     appBarPadding = appBarPadding,
@@ -626,8 +638,16 @@ private fun MangaAndSourceTitlesSmall(
                 modifier = Modifier
                     // KMK -->
                     .sizeIn(maxWidth = if (isRedesign) 132.dp else 100.dp)
-                    // Redesign: larger cover that tilts in 3D under the finger.
-                    .then(if (isRedesign) Modifier.tilt3d(maxDegrees = 15f, pressedScale = 1.04f) else Modifier)
+                    // Redesign: larger cover that flies in from the library tile and tilts in 3D under the finger.
+                    .then(
+                        if (isRedesign) {
+                            Modifier
+                                .sharedCover(manga.id, isOrigin = false)
+                                .tilt3d(maxDegrees = 15f, pressedScale = 1.04f, state = LocalCoverTilt.current)
+                        } else {
+                            Modifier
+                        },
+                    )
                     .align(if (topAlignCover) Alignment.Top else Alignment.CenterVertically),
                 // KMK <--
                 data = ImageRequest.Builder(LocalContext.current)

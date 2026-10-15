@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
@@ -24,6 +25,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.plus
 import soup.compose.material.motion.animation.materialSharedAxisX
 import soup.compose.material.motion.animation.rememberSlideDistance
+import tachiyomi.presentation.core.util.LocalScreenVisibilityScope
 
 /**
  * For invoking back press to the parent activity
@@ -103,8 +105,15 @@ fun ScreenTransition(
         contentKey = { it.key },
         // KMK <--
     ) { screen ->
+        // KMK -->
+        val visibilityScope = this
+        // KMK <--
         navigator.saveableState("transition", screen) {
-            content(screen)
+            // KMK -->
+            CompositionLocalProvider(LocalScreenVisibilityScope provides visibilityScope) {
+                content(screen)
+            }
+            // KMK <--
         }
     }
     // KMK: BackHandler moved above AnimatedContent

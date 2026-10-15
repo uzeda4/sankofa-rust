@@ -47,6 +47,7 @@ internal val LocalLibraryHeader = compositionLocalOf<(@Composable () -> Unit)?> 
 internal fun LibraryRedesignHeader(
     totalCount: Int,
     inProgress: LibraryManga?,
+    rediscover: List<LibraryManga>,
     onOpenManga: (Long) -> Unit,
     onContinueReading: ((LibraryManga) -> Unit)?,
     modifier: Modifier = Modifier,
@@ -83,6 +84,8 @@ internal fun LibraryRedesignHeader(
                 onContinue = onContinueReading?.let { { it(inProgress) } } ?: { onOpenManga(inProgress.manga.id) },
             )
         }
+
+        RediscoverCoverFlow(items = rediscover, onOpenManga = onOpenManga)
     }
 }
 
