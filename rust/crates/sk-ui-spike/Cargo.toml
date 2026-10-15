@@ -1,0 +1,15 @@
+[package]
+name = "sk-ui-spike"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+# The UI stack is Android-only; the host builds just the pure logic (tilt math) for tests.
+[target.'cfg(target_os = "android")'.dependencies]
+eframe = { version = "0.36.2", default-features = false, features = ["wgpu", "android-native-activity", "default_fonts"] }
+log = "0.4.34"
+android_logger = "0.15.1"
+winit = { version = "0.30.13", features = ["android-native-activity"] }
