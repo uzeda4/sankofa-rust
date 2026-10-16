@@ -8,8 +8,10 @@ license.workspace = true
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
+serde_json = "1.0.154"
 sk-db = { version = "0.1.0", path = "../sk-db" }
 sk-model = { version = "0.1.0", path = "../sk-model" }
 sk-net = { version = "0.1.0", path = "../sk-net" }
+sk-source = { version = "0.1.0", path = "../sk-source" }
 uniffi = "0.32"
 

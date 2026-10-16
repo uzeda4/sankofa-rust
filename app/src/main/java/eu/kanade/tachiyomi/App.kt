@@ -61,6 +61,7 @@ import eu.kanade.tachiyomi.di.PreferenceModule
 import eu.kanade.tachiyomi.di.SYPreferenceModule
 import eu.kanade.tachiyomi.network.NetworkHelper
 import eu.kanade.tachiyomi.rustcore.RustCore
+import eu.kanade.tachiyomi.source.rust.RustSources
 import eu.kanade.tachiyomi.ui.base.delegate.SecureActivityDelegate
 import eu.kanade.tachiyomi.util.CrashLogUtil
 import eu.kanade.tachiyomi.util.system.DeviceUtil
@@ -171,6 +172,16 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
             ProcessLifecycleOwner.get().lifecycleScope.launch(Dispatchers.IO) {
                 RustCore.info(this@App)?.let {
                     logcat(LogPriority.INFO) { "Rust core v${it.version}: db schema ${it.schemaVersion}, ${it.favorites} favorites" }
+                }
+                RustSources.load(this@App).forEach { source ->
+                    logcat(LogPriority.INFO) { "Rust source: ${source.name} (${source.lang}), id ${source.id}" }
+                    runCatching { source.getPopularManga(1) }
+                        .onSuccess { page ->
+                            logcat(LogPriority.INFO) {
+                                "Rust source ${source.name}: ${page.mangas.size} popular, first '${page.mangas.firstOrNull()?.title}'"
+                            }
+                        }
+                        .onFailure { logcat(LogPriority.WARN, it) { "Rust source ${source.name} failed" } }
                 }
             }
         }

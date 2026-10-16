@@ -14,6 +14,7 @@ import eu.kanade.tachiyomi.source.online.all.MergedSource
 import eu.kanade.tachiyomi.source.online.all.NHentai
 import eu.kanade.tachiyomi.source.online.all.Pururin
 import eu.kanade.tachiyomi.source.online.english.EightMuses
+import eu.kanade.tachiyomi.source.rust.RustSources
 import exh.log.xLogD
 import exh.source.BlacklistedSources
 import exh.source.DelegatedHttpSource
@@ -61,6 +62,11 @@ class AndroidSourceManager(
     private val scope = CoroutineScope(Job() + Dispatchers.IO)
 
     private val sourcesMapFlow = MutableStateFlow(ConcurrentHashMap<Long, Source>())
+
+    // KMK -->
+    // Sources written in Rust (WebAssembly), loaded once per process from files/rust-sources.
+    private val rustSources by lazy { RustSources.load(context) }
+    // KMK <--
 
     private val stubSourcesMap = ConcurrentHashMap<Long, StubSource>()
 
@@ -116,6 +122,12 @@ class AndroidSourceManager(
                         put(MERGED_SOURCE_ID, MergedSource())
                         // SY <--
                     }
+                    // KMK -->
+                    rustSources.forEach {
+                        mutableMap[it.id] = it
+                        registerStubSource(StubSource.from(it))
+                    }
+                    // KMK <--
                     extensions.forEach { extension ->
                         extension.sources.mapNotNull { it.toInternalSource(/* KMK --> */isHentaiEnabled/* KMK <-- */) }.forEach {
                             mutableMap[it.id] = it
