@@ -81,3 +81,21 @@ Leitura: a grade com imagens reais roda a 60 fps na maior parte do tempo, mas a 
 
 ### Ainda não medido
 IME com acento (ç, ã) e acessibilidade (TalkBack); capas baixadas pelo app (bloqueado pelo item 2); bateria.
+
+## IME e acessibilidade (2026-10-16): os dois gatilhos do plano B foram atingidos
+Teste no mesmo spike (egui 0.36 + winit 0.30 + `NativeActivity`), aparelho com Gboard.
+
+| Teste | Resultado |
+|---|---|
+| Letras ASCII | funciona |
+| Caractere acentuado por toque longo (`ç`) | **chega ao campo** (como tecla com caractere, ex.: `ça`) |
+| Tipo de entrada que o app declara ao teclado (`dumpsys input_method`) | `inputType=0x0` (TYPE_NULL): modo de eventos de tecla, **sem `InputConnection` de texto** |
+| Sugestões, autocorreção, predição | **ausentes** (a barra de sugestões nem aparece) |
+| IMEs com composição (japonês, coreano, chinês, e a digitação por deslize) | **não funcionam**: dependem de texto em composição (preedit), que o winit 0.30 no Android não entrega |
+| Acessibilidade: árvore de nós vista por serviços como o TalkBack (`uiautomator dump`) | spike: **9 nós, nenhum do conteúdo do egui** (só a moldura da Activity). App Kotlin: **140 nós, 21 com texto, 3 com descrição** |
+
+Consequências:
+- Uma tela em Rust desenhada direto numa superfície GL é invisível para o TalkBack: não há árvore de acessibilidade. O egui tem integração com AccessKit, mas o adaptador de Android exige código Java/Kotlin dentro do APK.
+- Campo de texto em Rust puro serve para ASCII e caracteres acentuados por tecla, mas quebra a busca em japonês/coreano/chinês, que é central num leitor de mangá, e perde autocorreção e predição.
+- Consertar exige, em qualquer toolkit Rust sobre `NativeActivity`, uma camada Kotlin/Java de `InputConnection` e `AccessibilityNodeProvider`: o app deixa de ser "100% Rust" e vira um híbrido com a parte mais difícil (texto e acessibilidade) fora do Rust.
+- Esses dois resultados mais os engasgos de rolagem são os gatilhos (1) e (2) do plano B definido em `HANDOFF`/plano da reescrita.
