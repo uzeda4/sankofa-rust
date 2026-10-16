@@ -43,3 +43,19 @@ Data: 2026-10-15 · Aparelho: Adreno 616 (Vulkan), Android arm64 · Crate: `rust
 - Os testes de `sk-db` rodam **no aparelho**: o host só tem toolchain GNU sem compilador C. `rust/tools/test-on-device.ps1 -Crate sk-db -DbFile <tachiyomi.db>` compila, empurra, roda e apaga os arquivos de `/data/local/tmp/sk`.
 - O banco do Kotlin é dono do schema; `sk-db` só lê por enquanto. Migrações em Rust vêm depois, com o app Kotlin ainda sendo a referência.
 - Cópias de banco ficam em `rust/target/testdata/` (ignorado pelo git); contêm dados de leitura do usuário e não devem ser commitadas.
+
+## sk-net: HTTPS no aparelho (2026-10-16)
+`rust/crates/sk-net` (ureq 3 + rustls/ring, raízes Mozilla embutidas, gzip/brotli) baixa páginas pelo telefone.
+
+| Teste (no aparelho, via Wi-Fi) | Resultado |
+|---|---|
+| `https://example.com/` | 577 bytes, contém "Example Domain" |
+| Página inexistente | `Error::Status(404)` |
+| `expired.badssl.com`, `self-signed.badssl.com`, `wrong.host.badssl.com` | os três rejeitados pela validação TLS (data vencida, emissor desconhecido, nome errado) |
+| `https://www.mangakakalot.gg/` (a fonte da biblioteca) | 242 KB baixados e decodificados, sem desafio do Cloudflare nesta rede |
+
+Decisões:
+- **ureq em vez de reqwest.** O reqwest 0.13 sempre usa `rustls-platform-verifier`, que no Android precisa de JNI e de uma classe Kotlin no APK; isso quebra o app 100% nativo (`hasCode=false`) e não roda em binário de teste via adb. O ureq usa raízes embutidas, é bloqueante e traz bem menos dependências. Chamadas assíncronas ficam em threads de trabalho.
+- **Limitação conhecida** (marcada com `ponytail:` no código): CAs instaladas pelo usuário e proxies corporativos não são confiados.
+- **Ainda não tem:** cookies persistentes, DoH, cache em disco e limitação de taxa (o Kotlin tem os quatro em `NetworkHelper`/OkHttp). Entram no marco 1.
+- **Cloudflare:** a página abriu sem desafio, mas fontes protegidas vão exigir o WebView via `sk-android`.
