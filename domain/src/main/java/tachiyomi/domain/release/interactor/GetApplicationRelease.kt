@@ -89,7 +89,8 @@ class GetApplicationRelease(
         } else {
             // Release builds: based on releases in "komikku-app/komikku" repo
             // tagged as something like "v0.1.2"
-            val oldVersion = versionName.replace("[^\\d.]".toRegex(), "")
+            // KMK: "0.1.0-1234" (debug and preview builds) is version 0.1.0
+            val oldVersion = versionName.substringBefore('-').replace("[^\\d.]".toRegex(), "")
 
             val newSemVer = newVersion.split(".").map { it.toInt() }
             val oldSemVer = oldVersion.split(".").map { it.toInt() }

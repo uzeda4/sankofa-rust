@@ -42,6 +42,7 @@ import eu.kanade.tachiyomi.util.system.isDebugBuildType
 import eu.kanade.tachiyomi.util.system.isPreviewBuildType
 import eu.kanade.tachiyomi.util.system.isReleaseBuildType
 import eu.kanade.tachiyomi.util.system.toast
+import eu.kanade.tachiyomi.util.system.updateRepoConfigured
 import eu.kanade.tachiyomi.util.system.updaterEnabled
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -80,7 +81,6 @@ class AboutScreen : Screen() {
 
         // KMK -->
         var isCheckingWhatsNew by remember { mutableStateOf(false) }
-        var isCheckingWhatsComing by remember { mutableStateOf(false) }
         // KMK <--
 
         Scaffold(
@@ -164,49 +164,12 @@ class AboutScreen : Screen() {
                 }
 
                 // KMK -->
-                item {
-                    TextPreferenceWidget(
-                        title = stringResource(MR.strings.whats_new),
-                        widget = {
-                            AnimatedVisibility(visible = isCheckingWhatsNew) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(28.dp),
-                                    strokeWidth = 3.dp,
-                                )
-                            }
-                        },
-                        onPreferenceClick = {
-                            if (!isCheckingWhatsNew) {
-                                scope.launch {
-                                    isCheckingWhatsNew = true
-
-                                    getReleaseNotes(
-                                        context = context,
-                                        onAvailableUpdate = { result ->
-                                            val whatsNewScreen = WhatsNewScreen(
-                                                currentVersion = BuildConfig.VERSION_NAME,
-                                                versionName = result.release.version,
-                                                changelogInfo = result.release.info,
-                                                releaseLink = result.release.releaseLink,
-                                            )
-                                            navigator.push(whatsNewScreen)
-                                        },
-                                        onFinish = {
-                                            isCheckingWhatsNew = false
-                                        },
-                                    )
-                                }
-                            }
-                        },
-                    )
-                }
-
-                if (isReleaseBuildType || isDebugBuildType) {
+                if (updateRepoConfigured) {
                     item {
                         TextPreferenceWidget(
-                            title = stringResource(KMR.strings.whats_coming),
+                            title = stringResource(MR.strings.whats_new),
                             widget = {
-                                AnimatedVisibility(visible = isCheckingWhatsComing) {
+                                AnimatedVisibility(visible = isCheckingWhatsNew) {
                                     CircularProgressIndicator(
                                         modifier = Modifier.size(28.dp),
                                         strokeWidth = 3.dp,
@@ -214,25 +177,24 @@ class AboutScreen : Screen() {
                                 }
                             },
                             onPreferenceClick = {
-                                if (!isCheckingWhatsComing) {
+                                if (!isCheckingWhatsNew) {
                                     scope.launch {
-                                        isCheckingWhatsComing = true
+                                        isCheckingWhatsNew = true
 
-                                        checkVersion(
+                                        getReleaseNotes(
                                             context = context,
                                             onAvailableUpdate = { result ->
-                                                val updateScreen = ComingUpdatesScreen(
+                                                val whatsNewScreen = WhatsNewScreen(
+                                                    currentVersion = BuildConfig.VERSION_NAME,
                                                     versionName = result.release.version,
                                                     changelogInfo = result.release.info,
                                                     releaseLink = result.release.releaseLink,
-                                                    downloadLink = result.release.downloadLink,
                                                 )
-                                                navigator.push(updateScreen)
+                                                navigator.push(whatsNewScreen)
                                             },
                                             onFinish = {
-                                                isCheckingWhatsComing = false
+                                                isCheckingWhatsNew = false
                                             },
-                                            peekIntoPreview = true,
                                         )
                                     }
                                 }
@@ -240,30 +202,13 @@ class AboutScreen : Screen() {
                         )
                     }
                 }
-                // KMK <--
 
-                item {
-                    TextPreferenceWidget(
-                        title = stringResource(MR.strings.help_translate),
-                        onPreferenceClick = {
-                            uriHandler.openUri(
-                                "https://hosted.weblate.org/engage/komikku-app/",
-                            )
-                        },
-                    )
-                }
+                // KMK <--
 
                 item {
                     TextPreferenceWidget(
                         title = stringResource(MR.strings.licenses),
                         onPreferenceClick = { navigator.push(OpenSourceLicensesScreen()) },
-                    )
-                }
-
-                item {
-                    TextPreferenceWidget(
-                        title = stringResource(MR.strings.privacy_policy),
-                        onPreferenceClick = { uriHandler.openUri("https://komikku-app.github.io/privacy/") },
                     )
                 }
 
@@ -274,16 +219,6 @@ class AboutScreen : Screen() {
                             .padding(vertical = 8.dp),
                         horizontalArrangement = Arrangement.Center,
                     ) {
-                        LinkIcon(
-                            label = stringResource(MR.strings.website),
-                            icon = Icons.Outlined.Public,
-                            url = "https://komikku-app.github.io",
-                        )
-                        LinkIcon(
-                            label = "Discord",
-                            icon = CustomIcons.Discord,
-                            url = "https://discord.gg/85jB7V5AJR",
-                        )
                         // LinkIcon(
                         //     label = "X",
                         //     icon = CustomIcons.X,
@@ -299,11 +234,13 @@ class AboutScreen : Screen() {
                         //     icon = CustomIcons.Reddit,
                         //     url = "https://www.reddit.com/r/mihonapp",
                         // )
-                        LinkIcon(
-                            label = "GitHub",
-                            icon = CustomIcons.Github,
-                            url = "https://github.com/komikku-app",
-                        )
+                        if (updateRepoConfigured) {
+                            LinkIcon(
+                                label = "GitHub",
+                                icon = CustomIcons.Github,
+                                url = "https://github.com/${BuildConfig.UPDATE_REPO}",
+                            )
+                        }
                     }
                 }
             }

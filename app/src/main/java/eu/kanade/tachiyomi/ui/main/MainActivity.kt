@@ -101,6 +101,7 @@ import eu.kanade.tachiyomi.util.system.isDebugBuildType
 import eu.kanade.tachiyomi.util.system.isNavigationBarNeedsScrim
 import eu.kanade.tachiyomi.util.system.isPreviewBuildType
 import eu.kanade.tachiyomi.util.system.isReleaseBuildType
+import eu.kanade.tachiyomi.util.system.updateRepoConfigured
 import eu.kanade.tachiyomi.util.system.updaterEnabled
 import eu.kanade.tachiyomi.util.view.setComposeContent
 import exh.debug.DebugToggles
@@ -423,8 +424,8 @@ class MainActivity : BaseActivity() {
             var showChangelog by remember {
                 mutableStateOf(
                     // KMK -->
-                    // The fork has no release feed of its own yet, and the upstream one describes other builds.
-                    SHOW_UPSTREAM_CHANGELOG &&
+                    // Only when the build knows where its own releases are published.
+                    updateRepoConfigured &&
                         (
                             (isReleaseBuildType && didMigration) ||
                                 (isPreviewBuildType && previewCurrentVersion > previewLastVersion.get())
@@ -740,8 +741,6 @@ class MainActivity : BaseActivity() {
 
 // Splash screen
 // KMK -->
-/** Flip to true once the fork publishes its own releases and AppUpdateChecker points at them. */
-private const val SHOW_UPSTREAM_CHANGELOG = false
 // KMK <--
 
 private const val SPLASH_MIN_DURATION = 500 // ms

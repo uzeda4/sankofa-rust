@@ -95,12 +95,10 @@ class AppUpdateChecker(
 
 val GITHUB_REPO: String by lazy { getGithubRepo() }
 
-fun getGithubRepo(peekIntoPreview: Boolean = false): String =
-    if (isPreviewBuildType || peekIntoPreview) {
-        "komikku-app/komikku-preview"
-    } else {
-        "komikku-app/komikku"
-    }
+// KMK -->
+/** The only repository this build updates from. There is no separate preview channel in this fork. */
+@Suppress("UNUSED_PARAMETER")
+fun getGithubRepo(peekIntoPreview: Boolean = false): String = BuildConfig.UPDATE_REPO
 
 val RELEASE_TAG: String by lazy { getReleaseTag() }
 
@@ -112,3 +110,4 @@ fun getReleaseTag(peekIntoPreview: Boolean = false): String =
     }
 
 val RELEASE_URL = "https://github.com/$GITHUB_REPO/releases/tag/$RELEASE_TAG"
+// KMK <--

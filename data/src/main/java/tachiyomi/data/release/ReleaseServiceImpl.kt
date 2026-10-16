@@ -13,12 +13,15 @@ import tachiyomi.domain.release.service.ReleaseService
 class ReleaseServiceImpl(
     private val networkService: NetworkHelper,
     private val json: Json,
+    // KMK -->
+    private val apiBase: String = "https://api.github.com",
+    // KMK <--
 ) : ReleaseService {
 
     override suspend fun latest(arguments: GetApplicationRelease.Arguments): Release? {
         val release = with(json) {
             networkService.client
-                .newCall(GET("https://api.github.com/repos/${arguments.repository}/releases/latest"))
+                .newCall(GET("$apiBase/repos/${arguments.repository}/releases/latest"))
                 .awaitSuccess()
                 .parseAs<GithubRelease>()
         }
@@ -39,7 +42,7 @@ class ReleaseServiceImpl(
     override suspend fun releaseNotes(arguments: GetApplicationRelease.Arguments): List<Release> {
         return with(json) {
             networkService.client
-                .newCall(GET("https://api.github.com/repos/${arguments.repository}/releases"))
+                .newCall(GET("$apiBase/repos/${arguments.repository}/releases"))
                 .awaitSuccess()
                 .parseAs<List<GithubRelease>>()
                 .mapNotNull { release ->

@@ -62,6 +62,13 @@ android {
         buildConfigField("String", "BUILD_TIME", "\"${getBuildTime(useLastCommitTime = false)}\"")
         buildConfigField("boolean", "TELEMETRY_INCLUDED", "${Config.includeTelemetry}")
         buildConfigField("boolean", "UPDATER_ENABLED", "${Config.enableUpdater}")
+        // KMK -->
+        // Where this build looks for its own updates: "owner/repo" of a GitHub repository that publishes releases.
+        // Empty (the default) disables the updater and the in-app changelog instead of pointing at someone else's.
+        // Set it with -Psankofa.updateRepo=owner/repo (and -Psankofa.updateApi=<url> to test against a local server).
+        buildConfigField("String", "UPDATE_REPO", "\"${findProperty("sankofa.updateRepo") ?: ""}\"")
+        buildConfigField("String", "UPDATE_API", "\"${findProperty("sankofa.updateApi") ?: "https://api.github.com"}\"")
+        // KMK <--
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -146,7 +146,11 @@ class DomainModule : InjektModule {
             )
         }
 
-        addSingletonFactory<ReleaseService> { ReleaseServiceImpl(get(), get()) }
+        addSingletonFactory<ReleaseService> {
+            // KMK -->
+            ReleaseServiceImpl(get(), get(), eu.kanade.tachiyomi.BuildConfig.UPDATE_API)
+            // KMK <--
+        }
         addFactory { GetApplicationRelease(get(), get()) }
 
         addSingletonFactory<TrackRepository> { TrackRepositoryImpl(get()) }
