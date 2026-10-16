@@ -1,0 +1,9 @@
+[package]
+name = "sk-db"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+sk-model = { version = "0.1.0", path = "../sk-model" }

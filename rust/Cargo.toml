@@ -1,6 +1,8 @@
 [workspace]
 resolver = "2"
 members = ["crates/*"]
+# The host has no C compiler (GNU toolchain only); crates with C code build for Android with `-p`.
+default-members = ["crates/sk-model"]
 
 [workspace.package]
 version = "0.1.0"

@@ -28,3 +28,18 @@ Data: 2026-10-15 · Aparelho: Adreno 616 (Vulkan), Android arm64 · Crate: `rust
 - `rust/.cargo/config.toml` aponta o linker para o clang do NDK 29.
 - `rust/tools/package-spike.ps1` empacota o `.so` em APK (aapt2 + zipalign + apksigner com a debug keystore).
 - `cargo-apk` não compilou neste host (falta `dlltool` para a árvore do `windows-sys` em tempo de instalação); por isso o script próprio.
+
+## sk-db: leitura do banco real (2026-10-16)
+`rust/crates/sk-db` (rusqlite com SQLite embutido, compilado pelo clang do NDK) abre o `tachiyomi.db` do app Kotlin e lê a biblioteca.
+
+| Verificação | Resultado |
+|---|---|
+| Banco usado | Cópia do `tachiyomi.db` (+ `-wal`, `-shm`) do app debug, via `run-as`; SQLite puro, sem criptografia |
+| `PRAGMA user_version` | 48 (migrações aplicadas pelo SQLDelight) |
+| Biblioteca | 4 favoritos, os mesmos títulos do app |
+| Capítulos | Wind Mage 0/31, Hwarim 0/16 (lidos/total), iguais ao que o app mostra |
+| Testes | 2 passam no aparelho: um com banco em memória e um contra o banco real |
+
+- Os testes de `sk-db` rodam **no aparelho**: o host só tem toolchain GNU sem compilador C. `rust/tools/test-on-device.ps1 -Crate sk-db -DbFile <tachiyomi.db>` compila, empurra, roda e apaga os arquivos de `/data/local/tmp/sk`.
+- O banco do Kotlin é dono do schema; `sk-db` só lê por enquanto. Migrações em Rust vêm depois, com o app Kotlin ainda sendo a referência.
+- Cópias de banco ficam em `rust/target/testdata/` (ignorado pelo git); contêm dados de leitura do usuário e não devem ser commitadas.
