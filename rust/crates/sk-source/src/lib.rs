@@ -9,6 +9,8 @@
 //! The host provides `sk.http_get(url, headers) -> response` and `sk.log(msg)`; sources never open sockets.
 //! Execution is fuel-metered, so a looping source cannot hang the app.
 
+pub mod package;
+
 use std::sync::{Arc, Mutex};
 use wasmi::{Caller, Engine, Extern, Linker, Memory, Module, Store, TypedFunc};
 
@@ -197,3 +199,4 @@ mod tests {
         assert!(err.contains("memory") || err.contains("sk_alloc"), "{err}");
     }
 }
+

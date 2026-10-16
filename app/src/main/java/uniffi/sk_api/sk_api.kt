@@ -674,8 +674,6 @@ internal object IntegrityCheckingUniffiLib {
     }
 
     internal fun ensureInitialized() = Unit
-    external fun uniffi_sk_api_checksum_func_call_rust_source(
-    ): Int
     external fun uniffi_sk_api_checksum_func_core_info(
     ): Int
     external fun uniffi_sk_api_checksum_func_core_version(
@@ -684,7 +682,15 @@ internal object IntegrityCheckingUniffiLib {
     ): Int
     external fun uniffi_sk_api_checksum_func_library(
     ): Int
+    external fun uniffi_sk_api_checksum_func_call_rust_source(
+    ): Int
+    external fun uniffi_sk_api_checksum_func_inspect_source_package(
+    ): Int
+    external fun uniffi_sk_api_checksum_func_install_source_package(
+    ): Int
     external fun uniffi_sk_api_checksum_func_load_rust_sources(
+    ): Int
+    external fun uniffi_sk_api_checksum_func_uninstall_source(
     ): Int
     external fun ffi_sk_api_uniffi_contract_version(
     ): Int
@@ -701,8 +707,6 @@ internal object UniffiLib {
     }
 
     internal fun ensureInitialized() = Unit
-    external fun uniffi_sk_api_fn_func_call_rust_source(`id`: Long,`request`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
-    ): RustBuffer.ByValue
     external fun uniffi_sk_api_fn_func_core_info(`dbPath`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
     external fun uniffi_sk_api_fn_func_core_version(uniffi_out_err: UniffiRustCallStatus, 
@@ -711,8 +715,16 @@ internal object UniffiLib {
     ): RustBuffer.ByValue
     external fun uniffi_sk_api_fn_func_library(`dbPath`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
-    external fun uniffi_sk_api_fn_func_load_rust_sources(`dir`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    external fun uniffi_sk_api_fn_func_call_rust_source(`id`: Long,`request`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
+    external fun uniffi_sk_api_fn_func_inspect_source_package(`bytes`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_sk_api_fn_func_install_source_package(`bytes`: RustBuffer.ByValue,`dir`: RustBuffer.ByValue,`trusted`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_sk_api_fn_func_load_rust_sources(`dir`: RustBuffer.ByValue,`trusted`: RustBuffer.ByValue,`allowUnsigned`: Byte,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_sk_api_fn_func_uninstall_source(`dir`: RustBuffer.ByValue,`fileName`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): Unit
     external fun ffi_sk_api_rustbuffer_alloc(`size`: Long,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
     external fun ffi_sk_api_rustbuffer_from_bytes(`bytes`: ForeignBytes.ByValue,uniffi_out_err: UniffiRustCallStatus, 
@@ -832,9 +844,6 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
 }
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
-    if ((lib.uniffi_sk_api_checksum_func_call_rust_source() and 0xFFFF) != 22218) {
-        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
-    }
     if ((lib.uniffi_sk_api_checksum_func_core_info() and 0xFFFF) != 2473) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
@@ -847,7 +856,19 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if ((lib.uniffi_sk_api_checksum_func_library() and 0xFFFF) != 45439) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if ((lib.uniffi_sk_api_checksum_func_load_rust_sources() and 0xFFFF) != 35206) {
+    if ((lib.uniffi_sk_api_checksum_func_call_rust_source() and 0xFFFF) != 43166) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_sk_api_checksum_func_inspect_source_package() and 0xFFFF) != 17512) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_sk_api_checksum_func_install_source_package() and 0xFFFF) != 62708) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_sk_api_checksum_func_load_rust_sources() and 0xFFFF) != 56984) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_sk_api_checksum_func_uninstall_source() and 0xFFFF) != 55896) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -1096,6 +1117,25 @@ public object FfiConverterString: FfiConverter<String, RustBuffer.ByValue> {
     }
 }
 
+/**
+ * @suppress
+ */
+public object FfiConverterByteArray: FfiConverterRustBuffer<ByteArray> {
+    override fun read(buf: ByteBuffer): ByteArray {
+        val len = buf.getInt()
+        val byteArr = ByteArray(len)
+        buf.get(byteArr)
+        return byteArr
+    }
+    override fun allocationSize(value: ByteArray): ULong {
+        return 4UL + value.size.toULong()
+    }
+    override fun write(value: ByteArray, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        buf.put(value)
+    }
+}
+
 
 
 data class CoreInfo (
@@ -1238,6 +1278,146 @@ public object FfiConverterTypeLibraryEntry: FfiConverterRustBuffer<LibraryEntry>
 
 
 
+data class LoadReport (
+    var `sources`: List<RustSourceInfo>
+    , 
+    var `rejected`: List<Rejected>
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeLoadReport: FfiConverterRustBuffer<LoadReport> {
+    override fun read(buf: ByteBuffer): LoadReport {
+        return LoadReport(
+            FfiConverterSequenceTypeRustSourceInfo.read(buf),
+            FfiConverterSequenceTypeRejected.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: LoadReport) = (
+            FfiConverterSequenceTypeRustSourceInfo.allocationSize(value.`sources`) +
+            FfiConverterSequenceTypeRejected.allocationSize(value.`rejected`)
+    )
+
+    override fun write(value: LoadReport, buf: ByteBuffer) {
+            FfiConverterSequenceTypeRustSourceInfo.write(value.`sources`, buf)
+            FfiConverterSequenceTypeRejected.write(value.`rejected`, buf)
+    }
+}
+
+
+
+/**
+ * What the user is asked to trust before an install.
+ */
+data class PackageInfo (
+    var `name`: kotlin.String
+    , 
+    var `lang`: kotlin.String
+    , 
+    var `version`: kotlin.UInt
+    , 
+    var `publisher`: kotlin.String
+    , 
+    var `fingerprint`: kotlin.String
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypePackageInfo: FfiConverterRustBuffer<PackageInfo> {
+    override fun read(buf: ByteBuffer): PackageInfo {
+        return PackageInfo(
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterUInt.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: PackageInfo) = (
+            FfiConverterString.allocationSize(value.`name`) +
+            FfiConverterString.allocationSize(value.`lang`) +
+            FfiConverterUInt.allocationSize(value.`version`) +
+            FfiConverterString.allocationSize(value.`publisher`) +
+            FfiConverterString.allocationSize(value.`fingerprint`)
+    )
+
+    override fun write(value: PackageInfo, buf: ByteBuffer) {
+            FfiConverterString.write(value.`name`, buf)
+            FfiConverterString.write(value.`lang`, buf)
+            FfiConverterUInt.write(value.`version`, buf)
+            FfiConverterString.write(value.`publisher`, buf)
+            FfiConverterString.write(value.`fingerprint`, buf)
+    }
+}
+
+
+
+data class Rejected (
+    var `fileName`: kotlin.String
+    , 
+    var `reason`: kotlin.String
+    , 
+    /**
+     * Set when the package is fine but its publisher is not trusted (yet), so the UI can offer to trust it.
+     */
+    var `fingerprint`: kotlin.String
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeRejected: FfiConverterRustBuffer<Rejected> {
+    override fun read(buf: ByteBuffer): Rejected {
+        return Rejected(
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: Rejected) = (
+            FfiConverterString.allocationSize(value.`fileName`) +
+            FfiConverterString.allocationSize(value.`reason`) +
+            FfiConverterString.allocationSize(value.`fingerprint`)
+    )
+
+    override fun write(value: Rejected, buf: ByteBuffer) {
+            FfiConverterString.write(value.`fileName`, buf)
+            FfiConverterString.write(value.`reason`, buf)
+            FfiConverterString.write(value.`fingerprint`, buf)
+    }
+}
+
+
+
 data class RustSourceInfo (
     var `id`: kotlin.Long
     , 
@@ -1248,6 +1428,20 @@ data class RustSourceInfo (
     var `baseUrl`: kotlin.String
     , 
     var `supportsLatest`: kotlin.Boolean
+    , 
+    /**
+     * File inside the sources directory, so the app can uninstall it.
+     */
+    var `fileName`: kotlin.String
+    , 
+    var `version`: kotlin.UInt
+    , 
+    var `publisher`: kotlin.String
+    , 
+    /**
+     * Publisher key fingerprint; empty for an unsigned `.wasm` loaded in a debug build.
+     */
+    var `fingerprint`: kotlin.String
     
 ){
     
@@ -1269,6 +1463,10 @@ public object FfiConverterTypeRustSourceInfo: FfiConverterRustBuffer<RustSourceI
             FfiConverterString.read(buf),
             FfiConverterString.read(buf),
             FfiConverterBoolean.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterUInt.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
         )
     }
 
@@ -1277,7 +1475,11 @@ public object FfiConverterTypeRustSourceInfo: FfiConverterRustBuffer<RustSourceI
             FfiConverterString.allocationSize(value.`name`) +
             FfiConverterString.allocationSize(value.`lang`) +
             FfiConverterString.allocationSize(value.`baseUrl`) +
-            FfiConverterBoolean.allocationSize(value.`supportsLatest`)
+            FfiConverterBoolean.allocationSize(value.`supportsLatest`) +
+            FfiConverterString.allocationSize(value.`fileName`) +
+            FfiConverterUInt.allocationSize(value.`version`) +
+            FfiConverterString.allocationSize(value.`publisher`) +
+            FfiConverterString.allocationSize(value.`fingerprint`)
     )
 
     override fun write(value: RustSourceInfo, buf: ByteBuffer) {
@@ -1286,6 +1488,10 @@ public object FfiConverterTypeRustSourceInfo: FfiConverterRustBuffer<RustSourceI
             FfiConverterString.write(value.`lang`, buf)
             FfiConverterString.write(value.`baseUrl`, buf)
             FfiConverterBoolean.write(value.`supportsLatest`, buf)
+            FfiConverterString.write(value.`fileName`, buf)
+            FfiConverterUInt.write(value.`version`, buf)
+            FfiConverterString.write(value.`publisher`, buf)
+            FfiConverterString.write(value.`fingerprint`, buf)
     }
 }
 
@@ -1304,6 +1510,14 @@ sealed class SkException: kotlin.Exception() {
     }
     
     class Net(
+        
+        val `reason`: kotlin.String
+        ) : SkException() {
+        override val message
+            get() = "reason=${ `reason` }"
+    }
+    
+    class Package(
         
         val `reason`: kotlin.String
         ) : SkException() {
@@ -1336,6 +1550,9 @@ public object FfiConverterTypeSkError : FfiConverterRustBuffer<SkException> {
             2 -> SkException.Net(
                 FfiConverterString.read(buf),
                 )
+            3 -> SkException.Package(
+                FfiConverterString.read(buf),
+                )
             else -> throw RuntimeException("invalid error enum value, something is very wrong!!")
         }
     }
@@ -1348,6 +1565,11 @@ public object FfiConverterTypeSkError : FfiConverterRustBuffer<SkException> {
                 + FfiConverterString.allocationSize(value.`reason`)
             )
             is SkException.Net -> (
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                4UL
+                + FfiConverterString.allocationSize(value.`reason`)
+            )
+            is SkException.Package -> (
                 // Add the size for the Int that specifies the variant plus the size needed for all fields
                 4UL
                 + FfiConverterString.allocationSize(value.`reason`)
@@ -1367,9 +1589,42 @@ public object FfiConverterTypeSkError : FfiConverterRustBuffer<SkException> {
                 FfiConverterString.write(value.`reason`, buf)
                 Unit
             }
+            is SkException.Package -> {
+                buf.putInt(3)
+                FfiConverterString.write(value.`reason`, buf)
+                Unit
+            }
         }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
     }
 
+}
+
+
+
+
+/**
+ * @suppress
+ */
+public object FfiConverterSequenceString: FfiConverterRustBuffer<List<kotlin.String>> {
+    override fun read(buf: ByteBuffer): List<kotlin.String> {
+        val len = buf.getInt()
+        return List<kotlin.String>(len) {
+            FfiConverterString.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<kotlin.String>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterString.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<kotlin.String>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterString.write(it, buf)
+        }
+    }
 }
 
 
@@ -1434,6 +1689,34 @@ public object FfiConverterSequenceTypeLibraryEntry: FfiConverterRustBuffer<List<
 /**
  * @suppress
  */
+public object FfiConverterSequenceTypeRejected: FfiConverterRustBuffer<List<Rejected>> {
+    override fun read(buf: ByteBuffer): List<Rejected> {
+        val len = buf.getInt()
+        return List<Rejected>(len) {
+            FfiConverterTypeRejected.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<Rejected>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterTypeRejected.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<Rejected>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterTypeRejected.write(it, buf)
+        }
+    }
+}
+
+
+
+
+/**
+ * @suppress
+ */
 public object FfiConverterSequenceTypeRustSourceInfo: FfiConverterRustBuffer<List<RustSourceInfo>> {
     override fun read(buf: ByteBuffer): List<RustSourceInfo> {
         val len = buf.getInt()
@@ -1455,23 +1738,6 @@ public object FfiConverterSequenceTypeRustSourceInfo: FfiConverterRustBuffer<Lis
         }
     }
 }
-        /**
-         * Sends one JSON request (see `docs/redesign/RUST-SOURCES.md`) to a loaded source and returns its JSON reply.
-         * Blocking, and serialized per source; call from a background dispatcher.
-         */
-    @Throws(SkException::class) fun `callRustSource`(`id`: kotlin.Long, `request`: kotlin.String): kotlin.String {
-            return FfiConverterString.lift(
-    uniffiRustCallWithError(SkException) { _status ->
-    UniffiLib.uniffi_sk_api_fn_func_call_rust_source(
-    
-        
-        FfiConverterLong.lower(`id`),
-        FfiConverterString.lower(`request`),_status)
-}
-    )
-    }
-    
-
     @Throws(SkException::class) fun `coreInfo`(`dbPath`: kotlin.String): CoreInfo {
             return FfiConverterTypeCoreInfo.lift(
     uniffiRustCallWithError(SkException) { _status ->
@@ -1529,18 +1795,87 @@ public object FfiConverterSequenceTypeRustSourceInfo: FfiConverterRustBuffer<Lis
     
 
         /**
-         * Loads every `*.wasm` source in `dir`, replacing what was loaded before. A module that fails to load is
-         * skipped (and logged by the caller through the returned list not containing it).
-         */ fun `loadRustSources`(`dir`: kotlin.String): List<RustSourceInfo> {
-            return FfiConverterSequenceTypeRustSourceInfo.lift(
+         * Sends one JSON request (see `docs/redesign/RUST-SOURCES.md`) to a loaded source and returns its JSON reply.
+         * Blocking, and serialized per source; call from a background dispatcher.
+         */
+    @Throws(SkException::class) fun `callRustSource`(`id`: kotlin.Long, `request`: kotlin.String): kotlin.String {
+            return FfiConverterString.lift(
+    uniffiRustCallWithError(SkException) { _status ->
+    UniffiLib.uniffi_sk_api_fn_func_call_rust_source(
+    
+        
+        FfiConverterLong.lower(`id`),
+        FfiConverterString.lower(`request`),_status)
+}
+    )
+    }
+    
+
+        /**
+         * Checks a package's integrity and signature without installing or trusting anything.
+         */
+    @Throws(SkException::class) fun `inspectSourcePackage`(`bytes`: kotlin.ByteArray): PackageInfo {
+            return FfiConverterTypePackageInfo.lift(
+    uniffiRustCallWithError(SkException) { _status ->
+    UniffiLib.uniffi_sk_api_fn_func_inspect_source_package(
+    
+        
+        FfiConverterByteArray.lower(`bytes`),_status)
+}
+    )
+    }
+    
+
+        /**
+         * Verifies, checks trust, test-loads the module and writes it into `dir`. Replaces an older version from the
+         * same publisher; refuses to replace a source of the same name that another publisher signed.
+         */
+    @Throws(SkException::class) fun `installSourcePackage`(`bytes`: kotlin.ByteArray, `dir`: kotlin.String, `trusted`: List<kotlin.String>): RustSourceInfo {
+            return FfiConverterTypeRustSourceInfo.lift(
+    uniffiRustCallWithError(SkException) { _status ->
+    UniffiLib.uniffi_sk_api_fn_func_install_source_package(
+    
+        
+        FfiConverterByteArray.lower(`bytes`),
+        FfiConverterString.lower(`dir`),
+        FfiConverterSequenceString.lower(`trusted`),_status)
+}
+    )
+    }
+    
+
+        /**
+         * Loads the installed sources from `dir`, replacing what was loaded before.
+         *
+         * `.sksource` packages need a valid signature and a publisher in `trusted`; the rest are reported in
+         * `rejected`. Raw `.wasm` modules load only when `allow_unsigned` is true.
+         */ fun `loadRustSources`(`dir`: kotlin.String, `trusted`: List<kotlin.String>, `allowUnsigned`: kotlin.Boolean): LoadReport {
+            return FfiConverterTypeLoadReport.lift(
     uniffiRustCall() { _status ->
     UniffiLib.uniffi_sk_api_fn_func_load_rust_sources(
     
         
-        FfiConverterString.lower(`dir`),_status)
+        FfiConverterString.lower(`dir`),
+        FfiConverterSequenceString.lower(`trusted`),
+        FfiConverterBoolean.lower(`allowUnsigned`),_status)
 }
     )
     }
+    
+
+        /**
+         * Removes an installed package or raw module by file name (no path separators allowed).
+         */
+    @Throws(SkException::class) fun `uninstallSource`(`dir`: kotlin.String, `fileName`: kotlin.String)
+        = 
+    uniffiRustCallWithError(SkException) { _status ->
+    UniffiLib.uniffi_sk_api_fn_func_uninstall_source(
+    
+        
+        FfiConverterString.lower(`dir`),
+        FfiConverterString.lower(`fileName`),_status)
+}
+    
     
 
 

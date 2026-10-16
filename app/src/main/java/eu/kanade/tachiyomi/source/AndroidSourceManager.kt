@@ -63,11 +63,6 @@ class AndroidSourceManager(
 
     private val sourcesMapFlow = MutableStateFlow(ConcurrentHashMap<Long, Source>())
 
-    // KMK -->
-    // Sources written in Rust (WebAssembly), loaded once per process from files/rust-sources.
-    private val rustSources by lazy { RustSources.load(context) }
-    // KMK <--
-
     private val stubSourcesMap = ConcurrentHashMap<Long, StubSource>()
 
     override val sources: Flow<List<Source>> = sourcesMapFlow.map { it.values.toList() }
@@ -81,6 +76,9 @@ class AndroidSourceManager(
     // KMK <--
 
     init {
+        // KMK -->
+        scope.launch { RustSources.reload(context) }
+        // KMK <--
         scope.launch {
             extensionManager.installedExtensionsFlow
                 // SY -->
@@ -91,9 +89,12 @@ class AndroidSourceManager(
                 .combine(
                     exhPreferences.isHentaiEnabled().changes(),
                 ) { (a, b), c -> Triple(a, b, c) }
+                // Sources written in Rust (WebAssembly) reload when one is installed, removed or trusted.
+                .combine(RustSources.sources) { triple, rust -> triple to rust }
                 // KMK <--
                 // SY <--
-                .collectLatest { (extensions, enableExhentai/* KMK --> */, isHentaiEnabled/* KMK <-- */) ->
+                .collectLatest { (triple, rustSources) ->
+                    val (extensions, enableExhentai/* KMK --> */, isHentaiEnabled/* KMK <-- */) = triple
                     val mutableMap = ConcurrentHashMap<Long, Source>(
                         mapOf(
                             LocalSource.ID to LocalSource(

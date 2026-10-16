@@ -29,7 +29,7 @@ impl Source for MySource {
 export_source!(MySource);
 ```
 3. Compile: `cargo build --release --target wasm32-unknown-unknown` (uma vez: `rustup target add wasm32-unknown-unknown`).
-4. Copie o `.wasm` para `files/rust-sources/` do app e reabra o app.
+4. Assine e empacote (próxima seção) e instale pelo app em **Configurações > Navegar > Fontes em Rust > Instalar de um arquivo**.
 
 Referência completa: `rust/sources/mangadex` (popular, últimos, busca, detalhes, capítulos e páginas, 235 KB).
 
@@ -62,9 +62,30 @@ O host oferece ao módulo, no namespace `sk`:
 - Pedido e resposta limitados a 16 MB.
 - Os módulos são carregados da pasta privada do app, que só o próprio app e o `adb` de um app depurável escrevem. Um instalador com confiança por assinatura (como o das extensões) ainda não existe.
 
+## Pacotes assinados (`.sksource`)
+Uma fonte instalada é um pacote assinado com Ed25519: o módulo `.wasm` mais um manifesto (nome, idioma, versão, publicador, chave pública, SHA-256 do módulo e a assinatura). A assinatura cobre nome, idioma, versão e o hash do módulo, então trocar o módulo ou renomear o pacote a invalida.
+
+```text
+cargo build -p sk-pack --release
+sk-pack keygen  chave.key                      # uma vez; gera a chave e mostra a impressão digital
+sk-pack pack --key chave.key --wasm fonte.wasm --name "Minha fonte" --lang en --version 1 \
+             --publisher "Meu nome" --out minha-fonte.sksource
+sk-pack inspect minha-fonte.sksource           # confere assinatura e mostra a impressão digital
+```
+A chave privada (`chave.key`, a semente em hex) **não vai para o repositório**: quem a tem publica fontes em que seus usuários confiam. Guarde uma cópia; sem ela não há como assinar uma atualização com a mesma identidade.
+
+### Confiança
+- A **impressão digital** do publicador é o SHA-256 da chave pública (32 caracteres hex). Ao instalar, o app mostra nome, versão, publicador e impressão digital, e só instala depois que o usuário confirma ("Confiar no publicador e instalar").
+- As impressões digitais confiáveis ficam guardadas no app. **A cada abertura** o app reverifica assinatura e confiança: um pacote cuja chave foi revogada, cujo arquivo foi alterado ou que veio de um publicador não confiável não carrega e aparece em "Não carregada", com o botão Confiar e a impressão digital para conferir.
+- Atualizar: o mesmo nome e idioma, versão igual ou maior, **mesma chave**. Outra chave com o mesmo nome é recusada, e uma versão menor também.
+- Um módulo `.wasm` solto na pasta só carrega em build de depuração.
+
+### Verificado no aparelho
+Pacote adulterado (1 byte do módulo alterado): recusado na instalação ("o módulo não confere com o manifesto"). Pacote íntegro: o diálogo mostra a impressão digital `aca83acae150b852b62231082950406f`, a mesma que o `sk-pack` imprime; depois de confiar, a fonte instala e aparece em Navegar. Apagar a confiança e reabrir: a fonte some e o pacote aparece como não carregado. 8 testes do formato (round trip, hash, assinatura, chave trocada, lixo) rodam no PC.
+
 ## O que ainda não existe
-- **Filtros** (`Filter`/`FilterList`): a busca recebe só o texto.
-- **Preferências por fonte** (`ConfigurableSource`).
-- **Instalação pela interface** e repositório de fontes Rust; hoje o `.wasm` é copiado à mão.
-- **Cookies e sessão** persistentes no `sk-net`, e o desafio do Cloudflare, que precisa do WebView; hoje a fonte só vê o que o `sk-net` consegue baixar.
-- Segunda ABI (WIT/Component Model) se um dia valer a pena; a JSON-sobre-memória foi escolhida por funcionar em qualquer linguagem com saída WebAssembly (Rust, Zig, AssemblyScript, C).
+- **Filtros** e **preferências por fonte** nas fontes em Rust.
+- **Repositório de fontes** (índice, descoberta e atualização automática). Hoje o pacote vem de um arquivo.
+- **Revogação remota** e rotação de chave.
+- **Cookies persistentes e Cloudflare** no `sk-net` (o desafio precisa do WebView).
+- Segunda ABI (WIT/Component Model) se um dia valer a pena; a JSON-sobre-memória funciona em qualquer linguagem com saída WebAssembly (Rust, Zig, AssemblyScript, C).

@@ -78,6 +78,32 @@
     <string name="about_rust_core">Núcleo Rust</string>
     <string name="about_rust_core_summary">v%1$s · esquema %2$d · %3$d favoritos lidos pelo Rust</string>
     <string name="about_rust_core_missing">Indisponível neste aparelho (sem biblioteca nativa para a arquitetura dele)</string>
+    <string name="rust_sources_title">Fontes em Rust</string>
+    <string name="rust_sources_summary">%1$d instalada(s)</string>
+    <string name="rust_sources_install">Instalar de um arquivo</string>
+    <string name="rust_sources_install_summary">Um pacote .sksource, assinado pelo publicador</string>
+    <string name="rust_sources_none">Nenhuma fonte em Rust instalada</string>
+    <string name="rust_sources_unsigned">Módulo sem assinatura (só em build de depuração)</string>
+    <string name="rust_sources_uninstall">Desinstalar</string>
+    <string name="rust_sources_rejected">Não carregada: %1$s</string>
+    <string name="rust_sources_trust">Confiar</string>
+    <string name="rust_sources_trust_title">Instalar %1$s?</string>
+    <string name="rust_sources_trust_body">Versão %1$d, publicada por %2$s.
+
+Impressão digital do publicador:
+%3$s
+
+A assinatura é válida. Uma fonte vê o que você busca e lê por ela; instale só de publicadores em quem você confia.</string>
+    <string name="rust_sources_trust_and_install">Confiar no publicador e instalar</string>
+    <string name="rust_sources_install_now">Instalar</string>
+    <string name="rust_sources_installed_ok">%1$s instalada</string>
+    <string name="rust_sources_invalid">Não foi possível instalar: %1$s</string>
+    <string name="rust_sources_rejected_untrusted">Publicador ainda não confiável. Impressão digital: %1$s</string>
+    <string name="rust_sources_trust_dialog_title">Confiar neste publicador?</string>
+    <string name="rust_sources_trust_dialog_body">Impressão digital:
+%1$s
+
+As fontes deste publicador vão rodar no app e podem ver o que você busca e lê por elas. Compare a impressão digital com a que o publicador informou.</string>
     <string name="extensions_page_need_refresh">Atualize a página da extensão para atualizar a lista.</string>
     <string name="extensions_page_more">Mais extensões...</string>
     <string name="pref_expand_related_mangas">Expandir sugestões</string>

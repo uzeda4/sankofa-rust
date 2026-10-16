@@ -15,6 +15,8 @@ import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.presentation.more.settings.screen.browse.ExtensionStoresScreen
+import eu.kanade.presentation.more.settings.screen.browse.RustSourcesScreen
+import eu.kanade.tachiyomi.source.rust.RustSources
 import eu.kanade.tachiyomi.ui.category.sources.SourceCategoryScreen
 import eu.kanade.tachiyomi.util.system.AuthenticatorUtil.authenticate
 import kotlinx.collections.immutable.persistentListOf
@@ -141,6 +143,18 @@ object SettingsBrowseScreen : SearchableSettings {
                         preference = sourcePreferences.hideInLibraryItems(),
                         title = stringResource(MR.strings.pref_hide_in_library_items),
                     ),
+                    // KMK -->
+                    Preference.PreferenceItem.TextPreference(
+                        title = stringResource(KMR.strings.rust_sources_title),
+                        subtitle = stringResource(
+                            KMR.strings.rust_sources_summary,
+                            RustSources.sources.collectAsState().value.size,
+                        ),
+                        onClick = {
+                            navigator.push(RustSourcesScreen())
+                        },
+                    ),
+                    // KMK <--
                     Preference.PreferenceItem.TextPreference(
                         title = stringResource(MR.strings.extensionStores),
                         subtitle = pluralStringResource(MR.plurals.num_repos, reposCount.toInt(), reposCount),

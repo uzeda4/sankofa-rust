@@ -173,7 +173,8 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
                 RustCore.info(this@App)?.let {
                     logcat(LogPriority.INFO) { "Rust core v${it.version}: db schema ${it.schemaVersion}, ${it.favorites} favorites" }
                 }
-                RustSources.load(this@App).forEach { source ->
+                RustSources.reload(this@App)
+                RustSources.sources.value.forEach { source ->
                     logcat(LogPriority.INFO) { "Rust source: ${source.name} (${source.lang}), id ${source.id}" }
                     runCatching { source.getPopularManga(1) }
                         .onSuccess { page ->

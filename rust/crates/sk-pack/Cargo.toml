@@ -1,0 +1,9 @@
+[package]
+name = "sk-pack"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+getrandom = "0.4.3"
+sk-source = { version = "0.1.0", path = "../sk-source" }
