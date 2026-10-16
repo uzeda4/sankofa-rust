@@ -314,3 +314,9 @@
 -dontwarn org.ietf.jgss.Oid
 -dontwarn com.google.re2j.Matcher
 -dontwarn com.google.re2j.Pattern
+
+# KMK: Rust core bindings (UniFFI + JNA)
+-keep class com.sun.jna.** { *; }
+-keep class uniffi.** { *; }
+-keepclassmembers class * extends com.sun.jna.** { public *; }
+-dontwarn java.awt.*

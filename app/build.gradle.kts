@@ -249,6 +249,10 @@ dependencies {
     implementation(androidx.paging.compose)
 
     implementation(androidx.sqlite.bundled)
+    // KMK -->
+    // UniFFI bindings of the Rust core (rust/crates/sk-api) load libsk_api.so through JNA.
+    implementation("net.java.dev.jna:jna:${libs.versions.jna.get()}@aar")
+    // KMK <--
 
     // SY -->
     implementation(sylibs.sqlcipher)

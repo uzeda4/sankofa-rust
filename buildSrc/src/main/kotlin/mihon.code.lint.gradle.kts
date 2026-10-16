@@ -21,7 +21,7 @@ val xmlFormatExclude = buildList(2) {
 spotless {
     kotlin {
         target("**/*.kt", "**/*.kts")
-        targetExclude("**/build/**/*.kt")
+        targetExclude("**/build/**/*.kt", "**/uniffi/**/*.kt") // KMK: UniFFI generated bindings
         ktlint(libs.ktlint.core.get().version)
         trimTrailingWhitespace()
         endWithNewline()

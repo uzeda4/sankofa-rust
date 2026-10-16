@@ -60,6 +60,7 @@ import eu.kanade.tachiyomi.di.AppModule
 import eu.kanade.tachiyomi.di.PreferenceModule
 import eu.kanade.tachiyomi.di.SYPreferenceModule
 import eu.kanade.tachiyomi.network.NetworkHelper
+import eu.kanade.tachiyomi.rustcore.RustCore
 import eu.kanade.tachiyomi.ui.base.delegate.SecureActivityDelegate
 import eu.kanade.tachiyomi.util.CrashLogUtil
 import eu.kanade.tachiyomi.util.system.DeviceUtil
@@ -79,6 +80,7 @@ import exh.log.xLogD
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import logcat.AndroidLogcatLogger
 import logcat.LogPriority
 import logcat.LogcatLogger
@@ -162,6 +164,17 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
         }
 
         setupNotificationChannels()
+
+        // KMK -->
+        if (BuildConfig.DEBUG) {
+            // Proves on every debug start that the Rust core loads and reads this app's own database.
+            ProcessLifecycleOwner.get().lifecycleScope.launch(Dispatchers.IO) {
+                RustCore.info(this@App)?.let {
+                    logcat(LogPriority.INFO) { "Rust core v${it.version}: db schema ${it.schemaVersion}, ${it.favorites} favorites" }
+                }
+            }
+        }
+        // KMK <--
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 

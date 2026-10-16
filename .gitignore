@@ -21,3 +21,6 @@ local.properties
 /app/google-services.json
 *.jks
 app/standard/preview/*
+
+# Rust core built by rust/tools/build-android.ps1
+app/src/main/jniLibs/

@@ -1,6 +1,7 @@
 //! Read access to the SQLite database written by the Kotlin app (`tachiyomi.db`).
 //! The Kotlin side owns the schema and its migrations; this crate only reads for now.
 
+pub use rusqlite::Error;
 use rusqlite::{Connection, OpenFlags};
 use sk_model::{Manga, Status};
 use std::path::Path;
@@ -10,11 +11,12 @@ pub struct Db {
 }
 
 impl Db {
-    /// Opens an existing database. Fails if the file is missing instead of creating an empty one.
+    /// Opens an existing database read-only. Fails if the file is missing instead of creating an empty one.
+    /// Read-only keeps this safe next to the Kotlin app writing the same file (WAL allows concurrent readers).
     pub fn open(path: impl AsRef<Path>) -> rusqlite::Result<Self> {
         let conn = Connection::open_with_flags(
             path,
-            OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NO_MUTEX,
+            OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
         )?;
         Ok(Self { conn })
     }

@@ -1,0 +1,15 @@
+[package]
+name = "sk-api"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+sk-db = { version = "0.1.0", path = "../sk-db" }
+sk-model = { version = "0.1.0", path = "../sk-model" }
+sk-net = { version = "0.1.0", path = "../sk-net" }
+uniffi = "0.32"
+

@@ -75,6 +75,9 @@
     <string name="redesign_eyebrow_history">Onde você parou</string>
     <string name="redesign_eyebrow_rediscover">Volte e busque</string>
     <string name="redesign_rediscover">Redescobrir</string>
+    <string name="about_rust_core">Núcleo Rust</string>
+    <string name="about_rust_core_summary">v%1$s · esquema %2$d · %3$d favoritos lidos pelo Rust</string>
+    <string name="about_rust_core_missing">Indisponível neste aparelho (sem biblioteca nativa para a arquitetura dele)</string>
     <string name="extensions_page_need_refresh">Atualize a página da extensão para atualizar a lista.</string>
     <string name="extensions_page_more">Mais extensões...</string>
     <string name="pref_expand_related_mangas">Expandir sugestões</string>

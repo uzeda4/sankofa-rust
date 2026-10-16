@@ -13,6 +13,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -30,6 +31,7 @@ import eu.kanade.presentation.util.LocalBackPress
 import eu.kanade.presentation.util.Screen
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.data.updater.AppUpdateChecker
+import eu.kanade.tachiyomi.rustcore.RustCore
 import eu.kanade.tachiyomi.ui.more.ComingUpdatesScreen
 import eu.kanade.tachiyomi.ui.more.NewUpdateScreen
 import eu.kanade.tachiyomi.ui.more.WhatsNewScreen
@@ -41,7 +43,9 @@ import eu.kanade.tachiyomi.util.system.isPreviewBuildType
 import eu.kanade.tachiyomi.util.system.isReleaseBuildType
 import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.updaterEnabled
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import logcat.LogPriority
 import tachiyomi.core.common.util.lang.withIOContext
 import tachiyomi.core.common.util.lang.withUIContext
@@ -56,6 +60,7 @@ import tachiyomi.presentation.core.i18n.stringResource
 import tachiyomi.presentation.core.icons.CustomIcons
 import tachiyomi.presentation.core.icons.Discord
 import tachiyomi.presentation.core.icons.Github
+import uniffi.sk_api.CoreInfo
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import java.time.Instant
@@ -104,6 +109,20 @@ class AboutScreen : Screen() {
                         },
                     )
                 }
+
+                // KMK -->
+                item {
+                    val rustInfo by produceState<CoreInfo?>(null) {
+                        value = withContext(Dispatchers.IO) { RustCore.info(context) }
+                    }
+                    TextPreferenceWidget(
+                        title = stringResource(KMR.strings.about_rust_core),
+                        subtitle = rustInfo?.let {
+                            stringResource(KMR.strings.about_rust_core_summary, it.version, it.schemaVersion, it.favorites.toInt())
+                        } ?: stringResource(KMR.strings.about_rust_core_missing),
+                    )
+                }
+                // KMK <--
 
                 if (updaterEnabled) {
                     item {
