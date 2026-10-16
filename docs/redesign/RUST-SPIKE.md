@@ -25,7 +25,7 @@ Data: 2026-10-15 · Aparelho: Adreno 616 (Vulkan), Android arm64 · Crate: `rust
 
 ## Ferramentas (Windows)
 - Rust 1.99 via `rustup-init` com checksum conferido; toolchain `stable-x86_64-pc-windows-gnu` (sem MSVC). O `dlltool.exe` vem do NDK (`llvm-dlltool.exe`, copiado para `~/.cargo/bin`).
-- `rust/.cargo/config.toml` aponta o linker para o clang do NDK 29.
+- `rust/tools/ndk-env.ps1` configura o linker do NDK, o alinhamento de 16 KB e o remapeamento de caminhos locais por variáveis de ambiente (nada específico da máquina fica no repositório).
 - `rust/tools/package-spike.ps1` empacota o `.so` em APK (aapt2 + zipalign + apksigner com a debug keystore).
 - `cargo-apk` não compilou neste host (falta `dlltool` para a árvore do `windows-sys` em tempo de instalação); por isso o script próprio.
 

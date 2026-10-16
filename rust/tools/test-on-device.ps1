@@ -3,11 +3,11 @@
 # Everything pushed to /data/local/tmp/sk is deleted afterwards.
 param([Parameter(Mandatory)][string]$Crate, [string]$DbFile)
 $ErrorActionPreference = 'Continue'
-$env:PATH = "$env:USERPROFILE\.cargo\bin;$env:PATH"
+. "$PSScriptRoot\ndk-env.ps1"
 $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
 Push-Location "$PSScriptRoot\.."
 try {
-    $json = cargo test -p $Crate --target aarch64-linux-android --no-run --message-format json 2>$null
+    $json = cargo test -p $Crate --target aarch64-linux-android --no-run --message-format json @CargoAndroid 2>$null
     $exe = ($json | ConvertFrom-Json | Where-Object { $_.executable -and $_.profile.test } | Select-Object -Last 1).executable
     & $adb shell "mkdir -p /data/local/tmp/sk" | Out-Null
     & $adb push $exe /data/local/tmp/sk/t | Out-Null
