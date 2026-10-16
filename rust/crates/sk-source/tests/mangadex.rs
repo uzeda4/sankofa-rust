@@ -59,7 +59,7 @@ fn the_rust_source_browses_reads_and_pages_a_real_title() {
 
     let url = mangas[0]["url"].as_str().unwrap();
     let details = call(&mut src, &format!(r#"{{"op":"details","url":"{url}"}}"#));
-    println!("details: {:?}, status {}", details["manga"]["title"], details["manga"]["status"]);
+    println!("details: {:?}, status {}, author {:?}, artist {:?}", details["manga"]["title"], details["manga"]["status"], details["manga"]["author"], details["manga"]["artist"]);
 
     // The first popular title may have only external chapters; walk until one has readable pages.
     for m in mangas {
@@ -78,3 +78,4 @@ fn the_rust_source_browses_reads_and_pages_a_real_title() {
     }
     panic!("no popular title had readable chapters");
 }
+
