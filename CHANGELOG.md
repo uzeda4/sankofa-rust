@@ -27,6 +27,11 @@ The text of the matching release on GitHub is what the app shows in **About > Wh
 - The About screen no longer links to Komikku's website, Discord, translation project or privacy policy.
 - Application id is `app.sankofa.rust` and installs next to the original Sankofa and Komikku.
 
+### Security
+- Rust sources cannot reach local or private network addresses.
+- The updater's API address can be overridden only in debug builds; releases always use GitHub.
+- Removed the "Sponsor" button (it pointed at Komikku's maintainer) and Komikku's CI, funding and issue templates.
+
 ### Fixed
 - 16 KB page size: `libimagedecoder.so` is rebuilt with 16 KB segment alignment, so every arm64 native library passes
   the check (`native/image-decoder/README.md`).

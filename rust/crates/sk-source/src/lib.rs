@@ -118,6 +118,67 @@ impl WasmSource {
     }
 }
 
+/// True for URLs a source must not reach: loopback, private, link-local and similar ranges, written as IP
+/// literals, plus `localhost` and `.local`/`.internal` names. A source runs third-party code on the user's phone;
+/// without this it could probe the home network (router admin pages, NAS, local servers).
+///
+/// ponytail: only the host as written is checked, not what a public name resolves to, so DNS rebinding is not
+/// covered; resolve first and check the address in `sk-net` if that matters.
+pub fn is_blocked_url(url: &str) -> bool {
+    use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+
+    fn blocked_v4(ip: Ipv4Addr) -> bool {
+        let o = ip.octets();
+        ip.is_loopback()
+            || ip.is_private()
+            || ip.is_link_local()
+            || ip.is_unspecified()
+            || ip.is_broadcast()
+            || o[0] == 0
+            || (o[0] == 100 && (64..128).contains(&o[1])) // carrier-grade NAT
+    }
+    fn blocked_v6(ip: Ipv6Addr) -> bool {
+        let s = ip.segments();
+        ip.is_loopback()
+            || ip.is_unspecified()
+            || (s[0] & 0xfe00) == 0xfc00 // unique local
+            || (s[0] & 0xffc0) == 0xfe80 // link-local
+            || ip.to_ipv4_mapped().is_some_and(blocked_v4)
+    }
+
+    let rest = match url.split_once("://") {
+        Some((scheme, rest)) if scheme.eq_ignore_ascii_case("http") || scheme.eq_ignore_ascii_case("https") => rest,
+        _ => return true, // not http(s): refuse
+    };
+    let authority = rest.split(['/', '?', '#']).next().unwrap_or("");
+    let host_port = authority.rsplit('@').next().unwrap_or("");
+    let host = if let Some(v6) = host_port.strip_prefix('[') {
+        v6.split(']').next().unwrap_or("")
+    } else {
+        host_port.split(':').next().unwrap_or("")
+    };
+    let host = host.trim_end_matches('.').to_ascii_lowercase();
+    if host.is_empty() {
+        return true;
+    }
+    match host.parse::<IpAddr>() {
+        Ok(IpAddr::V4(ip)) => blocked_v4(ip),
+        Ok(IpAddr::V6(ip)) => blocked_v6(ip),
+        Err(_) => {
+            host == "localhost"
+                || host.ends_with(".localhost")
+                || host.ends_with(".local")
+                || host.ends_with(".internal")
+                || host.ends_with(".lan")
+                // decimal/hex/octal IPv4 spellings such as http://2130706433/ or http://0x7f.1/
+                || host.rsplit('.').next().is_some_and(|last| {
+                    // a real TLD never starts with a digit, so a numeric last label means an IPv4 in disguise
+                    last.starts_with(|c: char| c.is_ascii_digit()) && last.chars().all(|c| c.is_ascii_hexdigit() || c == 'x')
+                })
+        }
+    }
+}
+
 /// A source shared between threads (the app calls from a pool).
 pub type SharedSource = Arc<Mutex<WasmSource>>;
 
@@ -192,6 +253,25 @@ mod tests {
         src.set_fuel_per_call(1_000_000);
         let err = src.call("{}").unwrap_err();
         assert!(err.contains("trapped"), "{err}");
+    }
+
+    #[test]
+    fn local_and_private_addresses_are_blocked_for_sources() {
+        for url in [
+            "http://localhost/x", "http://LOCALHOST:8080/", "http://127.0.0.1/", "http://127.1.2.3:9/", "https://10.0.0.5/a",
+            "http://192.168.0.1/admin", "http://172.16.0.1/", "http://172.31.255.255/", "http://169.254.169.254/latest/meta-data",
+            "http://0.0.0.0/", "http://100.64.0.1/", "http://[::1]/", "http://[fe80::1]/", "http://[fd00::1]/",
+            "http://[::ffff:192.168.0.1]/", "http://user:pw@192.168.0.1/", "http://router.local/", "http://nas.lan/", "http://x.internal/",
+            "http://2130706433/", "http://0x7f.0.0.1/", "http://printer.localhost./", "ftp://example.org/", "file:///etc/passwd", "http://",
+        ] {
+            assert!(is_blocked_url(url), "{url} should be blocked");
+        }
+        for url in [
+            "https://api.mangadex.org/manga?limit=20", "http://example.com:8080/a", "https://uploads.mangadex.org/covers/x.jpg",
+            "https://172.32.0.1/", "https://8.8.8.8/", "https://1a.de/x", "https://4chan.org/", "https://[2606:4700::1111]/", "https://user@example.org/",
+        ] {
+            assert!(!is_blocked_url(url), "{url} should be allowed");
+        }
     }
 
     #[test]

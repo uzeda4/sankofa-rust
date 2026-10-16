@@ -24,3 +24,15 @@ app/standard/preview/*
 
 # Rust core built by rust/tools/build-android.ps1
 app/src/main/jniLibs/
+
+# Signing material and local settings must never be committed
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+signing.properties
+local.properties
+client_secrets.json
+google-services.json
+/rust/target/

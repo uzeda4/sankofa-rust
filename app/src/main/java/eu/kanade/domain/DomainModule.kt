@@ -148,7 +148,12 @@ class DomainModule : InjektModule {
 
         addSingletonFactory<ReleaseService> {
             // KMK -->
-            ReleaseServiceImpl(get(), get(), eu.kanade.tachiyomi.BuildConfig.UPDATE_API)
+            // Only debug builds may point the updater at another (e.g. local, plain http) API; releases always use GitHub.
+            ReleaseServiceImpl(
+                get(),
+                get(),
+                eu.kanade.tachiyomi.BuildConfig.UPDATE_API.takeIf { eu.kanade.tachiyomi.BuildConfig.DEBUG } ?: "https://api.github.com",
+            )
             // KMK <--
         }
         addFactory { GetApplicationRelease(get(), get()) }

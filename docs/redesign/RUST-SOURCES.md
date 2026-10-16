@@ -57,7 +57,7 @@ O host oferece ao módulo, no namespace `sk`:
 - `log(ptr, len)`: escreve uma linha no log do host.
 
 ## Segurança e limites
-- Uma fonte **não abre sockets nem arquivos**: tudo passa por `http_get`.
+- Uma fonte **não abre sockets nem arquivos**: tudo passa por `http_get`, que **recusa endereços locais e de rede privada** (`localhost`, `127.*`, `10.*`, `172.16-31.*`, `192.168.*`, `169.254.*`, IPv6 local, nomes `.local`/`.lan`/`.internal`, só `http(s)`), para uma fonte não poder sondar o roteador ou outros aparelhos da sua rede. Limite conhecido: confere o endereço escrito, não o que um nome público resolve (DNS rebinding).
 - Cada chamada tem um orçamento de 400 milhões de instruções (cerca de alguns segundos num telefone); estourou, a chamada é interrompida com erro, o app continua.
 - Pedido e resposta limitados a 16 MB.
 - Os módulos são carregados da pasta privada do app, que só o próprio app e o `adb` de um app depurável escrevem. Um instalador com confiança por assinatura (como o das extensões) ainda não existe.

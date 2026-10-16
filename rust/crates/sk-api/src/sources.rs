@@ -63,6 +63,9 @@ struct NetHttp(sk_net::Client);
 
 impl Http for NetHttp {
     fn get(&self, url: &str, headers: &[(String, String)]) -> Result<(u16, String), String> {
+        if sk_source::is_blocked_url(url) {
+            return Err("sources cannot reach local or private network addresses".into());
+        }
         let pairs: Vec<(&str, &str)> = headers.iter().map(|(k, v)| (k.as_str(), v.as_str())).collect();
         match self.0.get_bytes_with(url, &pairs) {
             Ok(bytes) => Ok((200, String::from_utf8_lossy(&bytes).into_owned())),
