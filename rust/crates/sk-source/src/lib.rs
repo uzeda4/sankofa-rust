@@ -10,6 +10,7 @@
 //! Execution is fuel-metered, so a looping source cannot hang the app.
 
 pub mod package;
+pub mod repo;
 
 use std::sync::{Arc, Mutex};
 use wasmi::{Caller, Engine, Extern, Linker, Memory, Module, Store, TypedFunc};
@@ -199,4 +200,5 @@ mod tests {
         assert!(err.contains("memory") || err.contains("sk_alloc"), "{err}");
     }
 }
+
 

@@ -119,6 +119,11 @@ pub fn decode_and_verify(bytes: &[u8]) -> Result<Package, PackageError> {
     Ok(Package { manifest, wasm: wasm.to_vec() })
 }
 
+/// SHA-256 of `bytes` as lowercase hex.
+pub fn sha256_hex(bytes: &[u8]) -> String {
+    to_hex(&Sha256::digest(bytes))
+}
+
 pub fn to_hex(bytes: &[u8]) -> String {
     bytes.iter().map(|b| format!("{b:02x}")).collect()
 }

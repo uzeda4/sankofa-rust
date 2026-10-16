@@ -684,7 +684,11 @@ internal object IntegrityCheckingUniffiLib {
     ): Int
     external fun uniffi_sk_api_checksum_func_call_rust_source(
     ): Int
+    external fun uniffi_sk_api_checksum_func_fetch_repo_index(
+    ): Int
     external fun uniffi_sk_api_checksum_func_inspect_source_package(
+    ): Int
+    external fun uniffi_sk_api_checksum_func_install_from_repo(
     ): Int
     external fun uniffi_sk_api_checksum_func_install_source_package(
     ): Int
@@ -717,7 +721,11 @@ internal object UniffiLib {
     ): RustBuffer.ByValue
     external fun uniffi_sk_api_fn_func_call_rust_source(`id`: Long,`request`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
+    external fun uniffi_sk_api_fn_func_fetch_repo_index(`url`: RustBuffer.ByValue,`expectedFingerprint`: RustBuffer.ByValue,`minSerial`: Long,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
     external fun uniffi_sk_api_fn_func_inspect_source_package(`bytes`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_sk_api_fn_func_install_from_repo(`packageUrl`: RustBuffer.ByValue,`sha256`: RustBuffer.ByValue,`dir`: RustBuffer.ByValue,`trusted`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
     external fun uniffi_sk_api_fn_func_install_source_package(`bytes`: RustBuffer.ByValue,`dir`: RustBuffer.ByValue,`trusted`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
@@ -859,7 +867,13 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
     if ((lib.uniffi_sk_api_checksum_func_call_rust_source() and 0xFFFF) != 43166) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if ((lib.uniffi_sk_api_checksum_func_fetch_repo_index() and 0xFFFF) != 38703) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
     if ((lib.uniffi_sk_api_checksum_func_inspect_source_package() and 0xFFFF) != 17512) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_sk_api_checksum_func_install_from_repo() and 0xFFFF) != 41865) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if ((lib.uniffi_sk_api_checksum_func_install_source_package() and 0xFFFF) != 62708) {
@@ -1011,6 +1025,29 @@ public object FfiConverterUInt: FfiConverter<UInt, Int> {
 
     override fun write(value: UInt, buf: ByteBuffer) {
         buf.putInt(value.toInt())
+    }
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterULong: FfiConverter<ULong, Long> {
+    override fun lift(value: Long): ULong {
+        return value.toULong()
+    }
+
+    override fun read(buf: ByteBuffer): ULong {
+        return lift(buf.getLong())
+    }
+
+    override fun lower(value: ULong): Long {
+        return value.toLong()
+    }
+
+    override fun allocationSize(value: ULong) = 8UL
+
+    override fun write(value: ULong, buf: ByteBuffer) {
+        buf.putLong(value.toLong())
     }
 }
 
@@ -1418,6 +1455,120 @@ public object FfiConverterTypeRejected: FfiConverterRustBuffer<Rejected> {
 
 
 
+data class RepoEntryInfo (
+    var `name`: kotlin.String
+    , 
+    var `lang`: kotlin.String
+    , 
+    var `version`: kotlin.UInt
+    , 
+    /**
+     * Absolute URL of the `.sksource` file.
+     */
+    var `packageUrl`: kotlin.String
+    , 
+    var `sha256`: kotlin.String
+    , 
+    var `size`: kotlin.ULong
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeRepoEntryInfo: FfiConverterRustBuffer<RepoEntryInfo> {
+    override fun read(buf: ByteBuffer): RepoEntryInfo {
+        return RepoEntryInfo(
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterUInt.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterULong.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: RepoEntryInfo) = (
+            FfiConverterString.allocationSize(value.`name`) +
+            FfiConverterString.allocationSize(value.`lang`) +
+            FfiConverterUInt.allocationSize(value.`version`) +
+            FfiConverterString.allocationSize(value.`packageUrl`) +
+            FfiConverterString.allocationSize(value.`sha256`) +
+            FfiConverterULong.allocationSize(value.`size`)
+    )
+
+    override fun write(value: RepoEntryInfo, buf: ByteBuffer) {
+            FfiConverterString.write(value.`name`, buf)
+            FfiConverterString.write(value.`lang`, buf)
+            FfiConverterUInt.write(value.`version`, buf)
+            FfiConverterString.write(value.`packageUrl`, buf)
+            FfiConverterString.write(value.`sha256`, buf)
+            FfiConverterULong.write(value.`size`, buf)
+    }
+}
+
+
+
+data class RepoInfo (
+    var `name`: kotlin.String
+    , 
+    var `publicKey`: kotlin.String
+    , 
+    var `fingerprint`: kotlin.String
+    , 
+    var `serial`: kotlin.ULong
+    , 
+    var `sources`: List<RepoEntryInfo>
+    
+){
+    
+
+    
+
+    
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeRepoInfo: FfiConverterRustBuffer<RepoInfo> {
+    override fun read(buf: ByteBuffer): RepoInfo {
+        return RepoInfo(
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterString.read(buf),
+            FfiConverterULong.read(buf),
+            FfiConverterSequenceTypeRepoEntryInfo.read(buf),
+        )
+    }
+
+    override fun allocationSize(value: RepoInfo) = (
+            FfiConverterString.allocationSize(value.`name`) +
+            FfiConverterString.allocationSize(value.`publicKey`) +
+            FfiConverterString.allocationSize(value.`fingerprint`) +
+            FfiConverterULong.allocationSize(value.`serial`) +
+            FfiConverterSequenceTypeRepoEntryInfo.allocationSize(value.`sources`)
+    )
+
+    override fun write(value: RepoInfo, buf: ByteBuffer) {
+            FfiConverterString.write(value.`name`, buf)
+            FfiConverterString.write(value.`publicKey`, buf)
+            FfiConverterString.write(value.`fingerprint`, buf)
+            FfiConverterULong.write(value.`serial`, buf)
+            FfiConverterSequenceTypeRepoEntryInfo.write(value.`sources`, buf)
+    }
+}
+
+
+
 data class RustSourceInfo (
     var `id`: kotlin.Long
     , 
@@ -1717,6 +1868,34 @@ public object FfiConverterSequenceTypeRejected: FfiConverterRustBuffer<List<Reje
 /**
  * @suppress
  */
+public object FfiConverterSequenceTypeRepoEntryInfo: FfiConverterRustBuffer<List<RepoEntryInfo>> {
+    override fun read(buf: ByteBuffer): List<RepoEntryInfo> {
+        val len = buf.getInt()
+        return List<RepoEntryInfo>(len) {
+            FfiConverterTypeRepoEntryInfo.read(buf)
+        }
+    }
+
+    override fun allocationSize(value: List<RepoEntryInfo>): ULong {
+        val sizeForLength = 4UL
+        val sizeForItems = value.map { FfiConverterTypeRepoEntryInfo.allocationSize(it) }.sum()
+        return sizeForLength + sizeForItems
+    }
+
+    override fun write(value: List<RepoEntryInfo>, buf: ByteBuffer) {
+        buf.putInt(value.size)
+        value.iterator().forEach {
+            FfiConverterTypeRepoEntryInfo.write(it, buf)
+        }
+    }
+}
+
+
+
+
+/**
+ * @suppress
+ */
 public object FfiConverterSequenceTypeRustSourceInfo: FfiConverterRustBuffer<List<RustSourceInfo>> {
     override fun read(buf: ByteBuffer): List<RustSourceInfo> {
         val len = buf.getInt()
@@ -1812,6 +1991,26 @@ public object FfiConverterSequenceTypeRustSourceInfo: FfiConverterRustBuffer<Lis
     
 
         /**
+         * Downloads and verifies a repository index.
+         *
+         * `expected_fingerprint` (empty the first time, when the user is still deciding) must match the index's key,
+         * and `min_serial` is the highest serial seen before: an older index is refused, so a stale list cannot be replayed.
+         */
+    @Throws(SkException::class) fun `fetchRepoIndex`(`url`: kotlin.String, `expectedFingerprint`: kotlin.String, `minSerial`: kotlin.ULong): RepoInfo {
+            return FfiConverterTypeRepoInfo.lift(
+    uniffiRustCallWithError(SkException) { _status ->
+    UniffiLib.uniffi_sk_api_fn_func_fetch_repo_index(
+    
+        
+        FfiConverterString.lower(`url`),
+        FfiConverterString.lower(`expectedFingerprint`),
+        FfiConverterULong.lower(`minSerial`),_status)
+}
+    )
+    }
+    
+
+        /**
          * Checks a package's integrity and signature without installing or trusting anything.
          */
     @Throws(SkException::class) fun `inspectSourcePackage`(`bytes`: kotlin.ByteArray): PackageInfo {
@@ -1821,6 +2020,25 @@ public object FfiConverterSequenceTypeRustSourceInfo: FfiConverterRustBuffer<Lis
     
         
         FfiConverterByteArray.lower(`bytes`),_status)
+}
+    )
+    }
+    
+
+        /**
+         * Downloads a package listed in a repository, checks it against the index's hash, then installs it like
+         * [`install_source_package`] (signature and trusted publisher still required).
+         */
+    @Throws(SkException::class) fun `installFromRepo`(`packageUrl`: kotlin.String, `sha256`: kotlin.String, `dir`: kotlin.String, `trusted`: List<kotlin.String>): RustSourceInfo {
+            return FfiConverterTypeRustSourceInfo.lift(
+    uniffiRustCallWithError(SkException) { _status ->
+    UniffiLib.uniffi_sk_api_fn_func_install_from_repo(
+    
+        
+        FfiConverterString.lower(`packageUrl`),
+        FfiConverterString.lower(`sha256`),
+        FfiConverterString.lower(`dir`),
+        FfiConverterSequenceString.lower(`trusted`),_status)
 }
     )
     }

@@ -101,6 +101,21 @@ A assinatura é válida. Uma fonte vê o que você busca e lê por ela; instale 
     <string name="rust_sources_rejected_untrusted">Publicador ainda não confiável. Impressão digital: %1$s</string>
     <string name="rust_sources_trust_dialog_title">Confiar neste publicador?</string>
     <string name="rust_sources_trust_dialog_body">Impressão digital:
+    <string name="rust_repos_header">Repositórios</string>
+    <string name="rust_repos_add">Adicionar repositório</string>
+    <string name="rust_repos_add_summary">Endereço de um arquivo index.skrepo</string>
+    <string name="rust_repos_url_title">Endereço do repositório</string>
+    <string name="rust_repos_continue">Continuar</string>
+    <string name="rust_repos_confirm_title">Adicionar %1$s?</string>
+    <string name="rust_repos_confirm_body">Impressão digital:\n%1$s\n\n%2$d fontes disponíveis.\n\nConfiar num repositório também confia na chave dele como publicador: as fontes dele vão rodar no app e podem ver o que você busca e lê por elas. Compare a impressão digital com a que o repositório informou.</string>
+    <string name="rust_repos_confirm">Confiar e adicionar</string>
+    <string name="rust_repos_remove">Remover</string>
+    <string name="rust_repos_summary">Série %1$d · %2$d fontes · %3$s</string>
+    <string name="rust_repos_error">Não foi possível ler: %1$s</string>
+    <string name="rust_repos_available">Disponíveis</string>
+    <string name="rust_repos_installed">Instalada v%1$d · o repositório tem v%2$d</string>
+    <string name="rust_repos_update">Atualizar</string>
+    <string name="rust_sources_installed_header">Instaladas</string>
 %1$s
 
 As fontes deste publicador vão rodar no app e podem ver o que você busca e lê por elas. Compare a impressão digital com a que o publicador informou.</string>

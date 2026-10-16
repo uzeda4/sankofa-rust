@@ -117,6 +117,21 @@ The signature is valid. A source sees what you search and read through it, so on
     <string name="rust_sources_rejected_untrusted">Publisher not trusted yet. Fingerprint: %1$s</string>
     <string name="rust_sources_trust_dialog_title">Trust this publisher?</string>
     <string name="rust_sources_trust_dialog_body">Fingerprint:
+    <string name="rust_repos_header">Repositories</string>
+    <string name="rust_repos_add">Add repository</string>
+    <string name="rust_repos_add_summary">Address of an index.skrepo file</string>
+    <string name="rust_repos_url_title">Repository address</string>
+    <string name="rust_repos_continue">Continue</string>
+    <string name="rust_repos_confirm_title">Add %1$s?</string>
+    <string name="rust_repos_confirm_body">Fingerprint:\n%1$s\n\n%2$d sources available.\n\nTrusting a repository also trusts its key as a publisher: its sources will run in the app and can see what you search and read through them. Compare the fingerprint with the one the repository gave you.</string>
+    <string name="rust_repos_confirm">Trust and add</string>
+    <string name="rust_repos_remove">Remove</string>
+    <string name="rust_repos_summary">Serial %1$d · %2$d sources · %3$s</string>
+    <string name="rust_repos_error">Could not read: %1$s</string>
+    <string name="rust_repos_available">Available</string>
+    <string name="rust_repos_installed">Installed v%1$d · repository has v%2$d</string>
+    <string name="rust_repos_update">Update</string>
+    <string name="rust_sources_installed_header">Installed</string>
 %1$s
 
 Sources from this publisher will run in the app and can see what you search and read through them. Compare the fingerprint with the one the publisher gave you.</string>

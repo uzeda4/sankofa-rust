@@ -6,6 +6,7 @@
 
 use crate::SkError;
 use sk_source::package::{self, fingerprint, Package};
+use sk_source::repo;
 use sk_source::{Http, SharedSource, WasmSource};
 use std::collections::HashMap;
 use std::path::Path;
@@ -118,6 +119,78 @@ pub fn install_source_package(bytes: Vec<u8>, dir: String, trusted: Vec<String>)
     std::fs::create_dir_all(&dir).map_err(|e| SkError::Package { reason: e.to_string() })?;
     std::fs::write(&path, &bytes).map_err(|e| SkError::Package { reason: e.to_string() })?;
     Ok(info)
+}
+
+#[derive(Debug, uniffi::Record)]
+pub struct RepoEntryInfo {
+    pub name: String,
+    pub lang: String,
+    pub version: u32,
+    /// Absolute URL of the `.sksource` file.
+    pub package_url: String,
+    pub sha256: String,
+    pub size: u64,
+}
+
+#[derive(Debug, uniffi::Record)]
+pub struct RepoInfo {
+    pub name: String,
+    pub public_key: String,
+    pub fingerprint: String,
+    pub serial: u64,
+    pub sources: Vec<RepoEntryInfo>,
+}
+
+fn download(url: &str) -> Result<Vec<u8>, SkError> {
+    sk_net::Client::new().get_bytes(url).map_err(|e| SkError::Net { reason: format!("{url}: {e}") })
+}
+
+/// Downloads and verifies a repository index.
+///
+/// `expected_fingerprint` (empty the first time, when the user is still deciding) must match the index's key,
+/// and `min_serial` is the highest serial seen before: an older index is refused, so a stale list cannot be replayed.
+#[uniffi::export]
+pub fn fetch_repo_index(url: String, expected_fingerprint: String, min_serial: u64) -> Result<RepoInfo, SkError> {
+    let bytes = download(&url)?;
+    let index = repo::decode_and_verify(&bytes).map_err(|e| SkError::Package { reason: e.to_string() })?;
+    let fp = fingerprint(&index.public_key);
+    if !expected_fingerprint.is_empty() && fp != expected_fingerprint {
+        return Err(SkError::Package { reason: format!("the repository key changed (now {fp})") });
+    }
+    if index.serial < min_serial {
+        return Err(SkError::Package {
+            reason: format!("the repository served an older index (serial {} < {min_serial})", index.serial),
+        });
+    }
+    Ok(RepoInfo {
+        sources: index
+            .sources
+            .iter()
+            .map(|e| RepoEntryInfo {
+                name: e.name.clone(),
+                lang: e.lang.clone(),
+                version: e.version,
+                package_url: repo::resolve_url(&url, &e.package),
+                sha256: e.sha256.clone(),
+                size: e.size,
+            })
+            .collect(),
+        name: index.name,
+        public_key: index.public_key,
+        fingerprint: fp,
+        serial: index.serial,
+    })
+}
+
+/// Downloads a package listed in a repository, checks it against the index's hash, then installs it like
+/// [`install_source_package`] (signature and trusted publisher still required).
+#[uniffi::export]
+pub fn install_from_repo(package_url: String, sha256: String, dir: String, trusted: Vec<String>) -> Result<RustSourceInfo, SkError> {
+    let bytes = download(&package_url)?;
+    if package::sha256_hex(&bytes) != sha256.to_ascii_lowercase() {
+        return Err(SkError::Package { reason: "the downloaded package does not match the repository index".into() });
+    }
+    install_source_package(bytes, dir, trusted)
 }
 
 /// Removes an installed package or raw module by file name (no path separators allowed).

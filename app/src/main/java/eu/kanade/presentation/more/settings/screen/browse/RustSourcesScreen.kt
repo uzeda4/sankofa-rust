@@ -4,9 +4,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,8 +19,12 @@ import androidx.compose.ui.platform.LocalContext
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.presentation.components.AppBar
+import eu.kanade.presentation.more.settings.widget.PreferenceGroupHeader
 import eu.kanade.presentation.more.settings.widget.TextPreferenceWidget
 import eu.kanade.presentation.util.Screen
+import eu.kanade.tachiyomi.source.rust.RepoListing
+import eu.kanade.tachiyomi.source.rust.RustRepo
+import eu.kanade.tachiyomi.source.rust.RustSourceRepos
 import eu.kanade.tachiyomi.source.rust.RustSourceTrust
 import eu.kanade.tachiyomi.source.rust.RustSources
 import eu.kanade.tachiyomi.util.system.toast
@@ -33,6 +39,7 @@ import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.stringResource
 import uniffi.sk_api.PackageInfo
 import uniffi.sk_api.Rejected
+import uniffi.sk_api.RepoInfo
 import uniffi.sk_api.SkException
 
 // KMK -->
@@ -51,6 +58,14 @@ class RustSourcesScreen : Screen() {
         val report by RustSources.report.collectAsState()
         var pending by remember { mutableStateOf<Pending?>(null) }
         var toTrust by remember { mutableStateOf<Rejected?>(null) }
+        var listings by remember { mutableStateOf<List<RepoListing>>(emptyList()) }
+        var addUrl by remember { mutableStateOf<String?>(null) }
+        var preview by remember { mutableStateOf<Pair<String, RepoInfo>?>(null) }
+        var busyEntry by remember { mutableStateOf<String?>(null) }
+        val refresh: () -> Unit = {
+            scope.launch { listings = withContext(Dispatchers.IO) { RustSourceRepos.refresh(context) } }
+        }
+        LaunchedEffect(Unit) { refresh() }
 
         val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             if (uri == null) return@rememberLauncherForActivityResult
@@ -82,6 +97,77 @@ class RustSourcesScreen : Screen() {
                         onPreferenceClick = { picker.launch(arrayOf("*/*")) },
                     )
                 }
+                item { PreferenceGroupHeader(title = stringResource(KMR.strings.rust_repos_header)) }
+                item {
+                    TextPreferenceWidget(
+                        title = stringResource(KMR.strings.rust_repos_add),
+                        subtitle = stringResource(KMR.strings.rust_repos_add_summary),
+                        onPreferenceClick = { addUrl = "" },
+                    )
+                }
+                listings.forEach { l ->
+                    item(key = "repo-${l.repo.url}") {
+                        TextPreferenceWidget(
+                            title = l.repo.name,
+                            subtitle = l.error?.let { stringResource(KMR.strings.rust_repos_error, it) }
+                                ?: stringResource(
+                                    KMR.strings.rust_repos_summary,
+                                    l.repo.serial.toInt(),
+                                    l.info?.sources?.size ?: 0,
+                                    l.repo.fingerprint.take(FINGERPRINT_SHORT),
+                                ),
+                            widget = {
+                                TextButton(
+                                    onClick = {
+                                        RustSourceRepos.remove(context, l.repo.url)
+                                        refresh()
+                                    },
+                                ) { Text(stringResource(KMR.strings.rust_repos_remove)) }
+                            },
+                        )
+                    }
+                }
+                val available = listings.flatMap { l -> l.info?.sources.orEmpty().map { l to it } }
+                if (available.isNotEmpty()) {
+                    item { PreferenceGroupHeader(title = stringResource(KMR.strings.rust_repos_available)) }
+                }
+                available.forEach { (l, entry) ->
+                    item(key = "avail-${l.repo.url}-${entry.name}-${entry.lang}") {
+                        val installed = report?.sources?.firstOrNull { it.name == entry.name && it.lang == entry.lang }
+                        val upToDate = installed != null && installed.version >= entry.version
+                        TextPreferenceWidget(
+                            title = "${entry.name} (${entry.lang.uppercase()})",
+                            subtitle = if (installed != null) {
+                                stringResource(KMR.strings.rust_repos_installed, installed.version.toInt(), entry.version.toInt())
+                            } else {
+                                "v${entry.version}"
+                            },
+                            widget = {
+                                if (!upToDate) {
+                                    TextButton(
+                                        enabled = busyEntry == null,
+                                        onClick = {
+                                            busyEntry = entry.packageUrl
+                                            scope.launch {
+                                                runCatching { withContext(Dispatchers.IO) { RustSources.installFromRepo(context, entry) } }
+                                                    .onSuccess { context.toast(context.stringResource(KMR.strings.rust_sources_installed_ok, entry.name)) }
+                                                    .onFailure { context.toast(context.stringResource(KMR.strings.rust_sources_invalid, it.readable())) }
+                                                busyEntry = null
+                                            }
+                                        },
+                                    ) {
+                                        Text(
+                                            stringResource(
+                                                if (installed == null) KMR.strings.rust_sources_install_now else KMR.strings.rust_repos_update,
+                                            ),
+                                        )
+                                    }
+                                }
+                            },
+                        )
+                    }
+                }
+                item { PreferenceGroupHeader(title = stringResource(KMR.strings.rust_sources_installed_header)) }
                 if (sources.isEmpty()) {
                     item {
                         TextPreferenceWidget(title = stringResource(KMR.strings.rust_sources_none))
@@ -131,6 +217,60 @@ class RustSourcesScreen : Screen() {
                     }
                 }
             }
+        }
+
+        addUrl?.let { url ->
+            AlertDialog(
+                onDismissRequest = { addUrl = null },
+                title = { Text(stringResource(KMR.strings.rust_repos_url_title)) },
+                text = {
+                    OutlinedTextField(
+                        value = url,
+                        onValueChange = { addUrl = it },
+                        singleLine = true,
+                        placeholder = { Text("https://example.org/index.skrepo") },
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        enabled = url.isNotBlank(),
+                        onClick = {
+                            addUrl = null
+                            scope.launch {
+                                runCatching { withContext(Dispatchers.IO) { RustSourceRepos.preview(url.trim()) } }
+                                    .onSuccess { preview = url.trim() to it }
+                                    .onFailure { context.toast(context.stringResource(KMR.strings.rust_sources_invalid, it.readable())) }
+                            }
+                        },
+                    ) { Text(stringResource(KMR.strings.rust_repos_continue)) }
+                },
+                dismissButton = {
+                    TextButton(onClick = { addUrl = null }) { Text(stringResource(MR.strings.action_cancel)) }
+                },
+            )
+        }
+
+        preview?.let { (url, info) ->
+            AlertDialog(
+                onDismissRequest = { preview = null },
+                title = { Text(stringResource(KMR.strings.rust_repos_confirm_title, info.name)) },
+                text = {
+                    Text(stringResource(KMR.strings.rust_repos_confirm_body, info.fingerprint, info.sources.size))
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            preview = null
+                            RustSourceTrust.trust(context, info.fingerprint)
+                            RustSourceRepos.add(context, RustRepo(url, info.name, info.fingerprint, info.serial.toLong()))
+                            refresh()
+                        },
+                    ) { Text(stringResource(KMR.strings.rust_repos_confirm)) }
+                },
+                dismissButton = {
+                    TextButton(onClick = { preview = null }) { Text(stringResource(MR.strings.action_cancel)) }
+                },
+            )
         }
 
         toTrust?.let { r ->

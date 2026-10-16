@@ -83,9 +83,26 @@ A chave privada (`chave.key`, a semente em hex) **não vai para o repositório**
 ### Verificado no aparelho
 Pacote adulterado (1 byte do módulo alterado): recusado na instalação ("o módulo não confere com o manifesto"). Pacote íntegro: o diálogo mostra a impressão digital `aca83acae150b852b62231082950406f`, a mesma que o `sk-pack` imprime; depois de confiar, a fonte instala e aparece em Navegar. Apagar a confiança e reabrir: a fonte some e o pacote aparece como não carregado. 8 testes do formato (round trip, hash, assinatura, chave trocada, lixo) rodam no PC.
 
+## Repositórios de fontes (`index.skrepo`)
+Um repositório é um arquivo assinado que lista pacotes. O app o baixa, mostra o que há, instala e atualiza.
+
+```text
+sk-pack index --key chave-do-repo.key --name "Meu repositório" --serial 3 --out index.skrepo \
+              fonte-a-1.sksource fonte-b-4.sksource      # os pacotes ficam ao lado do índice
+```
+Hospede `index.skrepo` e os `.sksource` na mesma pasta (qualquer servidor estático); as URLs dos pacotes no índice são relativas a ele. No app: **Fontes em Rust > Adicionar repositório**, cole o endereço do `index.skrepo`.
+
+- **Formato:** `SKREPO1`, o corpo em JSON (nome, chave pública, `serial`, lista com nome, idioma, versão, URL, SHA-256 e tamanho) e a assinatura Ed25519 de `sankofa-repo-v1\n` + bytes do corpo.
+- **Confiança:** ao adicionar, o app mostra a impressão digital do repositório e só segue com a sua confirmação; confiar no repositório também confia na chave dele como publicador de pacotes (a chave do repositório pode ser a mesma dos pacotes, como no teste).
+- **Cada abertura da tela** relê os índices e recusa: assinatura inválida, **chave diferente** da confirmada, e **série menor** que a última vista (impede reapresentar uma lista antiga). O pacote baixado ainda precisa bater com o SHA-256 do índice **e** ter assinatura de publicador válida e confiável.
+- **Atualizar:** o botão aparece quando o índice tem versão maior que a instalada.
+
+### Verificado no aparelho (servidor local pelo `adb reverse`)
+Adicionar o repositório mostrou a impressão digital `aca83aca…`; a fonte apareceu em Disponíveis, instalou (v1) e, com o índice na série 2 e o pacote v2, o botão virou Atualizar e atualizou para v2. Ao servir de volta o índice da série 1, o app recusou: "o repositório serviu um índice mais antigo (série 1 < 2)", e manteve a v2 instalada. Testes no PC: 5 do formato do índice (ida e volta, byte alterado, assinatura de outra chave, lixo, URLs relativas).
+
 ## O que ainda não existe
 - **Filtros** e **preferências por fonte** nas fontes em Rust.
-- **Repositório de fontes** (índice, descoberta e atualização automática). Hoje o pacote vem de um arquivo.
-- **Revogação remota** e rotação de chave.
+- **Revogação remota** e rotação de chave (hoje a chave de um repositório não pode mudar: o app recusa).
 - **Cookies persistentes e Cloudflare** no `sk-net` (o desafio precisa do WebView).
 - Segunda ABI (WIT/Component Model) se um dia valer a pena; a JSON-sobre-memória funciona em qualquer linguagem com saída WebAssembly (Rust, Zig, AssemblyScript, C).
+
