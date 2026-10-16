@@ -130,6 +130,10 @@ android {
     }
 
     sourceSets {
+        // KMK -->
+        // libimagedecoder.so rebuilt with 16 KB alignment (see native/image-decoder/build.ps1).
+        getByName("main").jniLibs.srcDir("../native/image-decoder/prebuilt")
+        // KMK <--
         getByName("preview").res.srcDirs("src/beta/res")
         getByName("benchmark").res.srcDirs("src/debug/res")
     }
@@ -145,6 +149,10 @@ android {
 
     packaging {
         jniLibs {
+            // KMK -->
+            // Take our 16 KB-aligned build instead of the one inside the image-decoder AAR.
+            pickFirsts += "lib/arm64-v8a/libimagedecoder.so"
+            // KMK <--
             keepDebugSymbols += listOf(
                 "libandroidx.graphics.path",
                 "libarchive-jni",
