@@ -8,6 +8,8 @@ The text of the matching release on GitHub is what the app shows in **About > Wh
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-16
+
 ### Added
 - Rust core inside the app (UniFFI): reads the app's own database, HTTPS client, and a host for sources written in
   Rust and compiled to WebAssembly.
