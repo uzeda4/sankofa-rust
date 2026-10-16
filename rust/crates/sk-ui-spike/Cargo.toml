@@ -12,4 +12,6 @@ crate-type = ["cdylib", "rlib"]
 eframe = { version = "0.36.2", default-features = false, features = ["wgpu", "android-native-activity", "default_fonts"] }
 log = "0.4.34"
 android_logger = "0.15.1"
+sk-net = { path = "../sk-net" }
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp"] }
 winit = { version = "0.30.13", features = ["android-native-activity"] }

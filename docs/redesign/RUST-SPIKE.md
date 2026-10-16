@@ -59,3 +59,25 @@ Decisões:
 - **Limitação conhecida** (marcada com `ponytail:` no código): CAs instaladas pelo usuário e proxies corporativos não são confiados.
 - **Ainda não tem:** cookies persistentes, DoH, cache em disco e limitação de taxa (o Kotlin tem os quatro em `NetworkHelper`/OkHttp). Entram no marco 1.
 - **Cloudflare:** a página abriu sem desafio, mas fontes protegidas vão exigir o WebView via `sk-android`.
+
+## Capas reais na grade (2026-10-16)
+Spike com 56 capas WebP da fonte da biblioteca (mangakakalot.gg): listagem pelo `sk-net`, download em 4 threads, decodificação com o crate `image` (WebP/JPEG/PNG puros em Rust), miniatura de 360 px e textura wgpu por capa; tilt 3D com a textura mapeada em um quad em perspectiva.
+
+| Medida (Adreno 616, 60 Hz) | Resultado |
+|---|---|
+| Capas exibidas | 56/56; a primeira em 0,1 s e todas em 0,5 s (arquivos locais; ver abaixo) |
+| Decodificação + miniatura | média de 28 ms por capa, em threads de fundo |
+| Quadros parado | p50 16,6 ms, p95 ~19 ms, máximo ~22 ms |
+| Quadros rolando (20 arrastes seguidos) | p50 16,6 ms, p95 18,5–19,3 ms, **p99 31–37 ms, máximo 37–52 ms**; 3 a 5 quadros acima de 20 ms a cada 120 |
+| Memória | PSS total 83 MB, 23 MB de gráficos para as 56 texturas |
+| Tilt | funciona com textura (mapeamento afim de 2 triângulos; ver `ponytail:` no código) |
+
+Leitura: a grade com imagens reais roda a 60 fps na maior parte do tempo, mas a rolagem rápida tem 2–4% de quadros de 30–50 ms. O custo vem do egui (layout e tesselação por quadro) e de uma textura por capa (uma chamada de desenho cada). Um atlas de texturas e layout em cache são o caminho para tirar esses engasgos; ainda não foi feito.
+
+### Descobertas que mudam o plano
+1. **CDN de capas exige `Referer`.** Sem ele a resposta é 403 (testado no aparelho). O `sk-net` ganhou `get_bytes_with(url, headers)`; o contrato de fonte em Rust precisa de cabeçalhos por pedido.
+2. **O aparelho bloqueou a rede do spike.** `dumpsys netpolicy` mostra `UID=10213 policy=REJECT_ALL` e "Restricted networking mode: true" para o app novo; o app Kotlin tem rede. Dentro do spike o DNS falha ("No address associated with hostname"), embora o mesmo binário de rede funcione pelo `adb shell`. Eu não mudo configurações do sistema; para este teste as capas foram baixadas no PC (com Referer), empurradas para a pasta do próprio app e apagadas depois. **O app Rust definitivo precisa ter a rede liberada nas configurações do telefone** (Configurações > Apps > o app > dados/rede), senão não baixa nada.
+3. **INTERNET** precisa estar no manifesto (o spike tinha esquecido).
+
+### Ainda não medido
+IME com acento (ç, ã) e acessibilidade (TalkBack); capas baixadas pelo app (bloqueado pelo item 2); bateria.

@@ -58,7 +58,17 @@ impl Client {
     }
 
     pub fn get_bytes(&self, url: &str) -> Result<Vec<u8>, Error> {
-        let mut resp = self.agent.get(url).call().map_err(|e| Error::Transport(e.to_string()))?;
+        self.get_bytes_with(url, &[])
+    }
+
+    /// Like [`Client::get_bytes`] with extra request headers; image CDNs of many sources return 403
+    /// unless `Referer` is the source site.
+    pub fn get_bytes_with(&self, url: &str, headers: &[(&str, &str)]) -> Result<Vec<u8>, Error> {
+        let mut req = self.agent.get(url);
+        for (name, value) in headers {
+            req = req.header(*name, *value);
+        }
+        let mut resp = req.call().map_err(|e| Error::Transport(e.to_string()))?;
         let status = resp.status().as_u16();
         if !(200..300).contains(&status) {
             return Err(Error::Status(status));
@@ -113,6 +123,22 @@ mod tests {
             println!("{host}: {err}");
             assert!(matches!(err, Error::Transport(_)), "{host} should fail TLS");
         }
+    }
+
+    #[test]
+    fn cover_cdn_needs_the_referer() {
+        if std::env::var("SK_TEST_NET").is_err() {
+            return;
+        }
+        let client = Client::new();
+        let Ok(html) = client.get_text("https://www.mangakakalot.gg/") else { return };
+        let Some(i) = html.find("https://img-r1.2xstorage.com/thumb/") else { return };
+        let url = &html[i..i + html[i..].find('"').unwrap()];
+        println!("cover: {url}");
+        assert!(matches!(client.get_bytes(url), Err(Error::Status(403))));
+        let bytes = client.get_bytes_with(url, &[("Referer", "https://www.mangakakalot.gg/")]).unwrap();
+        println!("cover with referer: {} bytes", bytes.len());
+        assert!(bytes.len() > 1000);
     }
 
     /// The source the library already uses. A Cloudflare challenge (403/503) is reported, not hidden,
