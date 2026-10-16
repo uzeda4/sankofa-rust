@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/*"]
+members = ["crates/*", "sources/mangadex"]
 # The host has no C compiler (GNU toolchain only); crates with C code build for Android with `-p`.
 default-members = ["crates/sk-model"]
 
@@ -13,3 +13,4 @@ license = "Apache-2.0"
 lto = "thin"
 opt-level = 3
 strip = true
+
