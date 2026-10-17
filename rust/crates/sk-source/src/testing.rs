@@ -59,6 +59,12 @@ impl Http for Curl {
             .filter_map(|l| l.split_once(':'))
             .map(|(k, v)| (k.trim().to_string(), v.trim().to_string()))
             .collect();
-        HttpReply { status: code.parse().unwrap_or(0), headers, body: String::from_utf8_lossy(&bytes).into_owned(), url: url.to_string(), error: None }
+        let (body, body_b64) = if req.binary {
+            use base64::Engine;
+            (String::new(), Some(base64::engine::general_purpose::STANDARD.encode(&bytes)))
+        } else {
+            (String::from_utf8_lossy(&bytes).into_owned(), None)
+        };
+        HttpReply { status: code.parse().unwrap_or(0), headers, body, body_b64, url: url.to_string(), error: None }
     }
 }

@@ -3117,6 +3117,7 @@ dependencies = [
 name = "sk-source"
 version = "0.1.0"
 dependencies = [
+ "base64 0.22.1",
  "ed25519-dalek",
  "md-5",
  "serde",
@@ -3178,6 +3179,17 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "sk-source-sdk",
+]
+
+[[package]]
+name = "sk-source-mangafire"
+version = "0.1.0"
+dependencies = [
+ "base64 0.22.1",
+ "fancy-regex",
+ "serde",
+ "sk-source",
  "sk-source-sdk",
 ]
 

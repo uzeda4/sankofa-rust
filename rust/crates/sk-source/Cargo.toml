@@ -5,6 +5,7 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
+base64 = { version = "0.22", optional = true }
 ed25519-dalek = "3.0.0"
 md-5 = "0.11"
 serde = { version = "1.0.229", features = ["derive"] }
@@ -17,7 +18,7 @@ wat = "1"
 
 [features]
 # `testing::Curl`: an `Http` over the `curl` binary, for running sources against live sites from the PC.
-testing = []
+testing = ["dep:base64"]
 
 [[test]]
 name = "mangadex"

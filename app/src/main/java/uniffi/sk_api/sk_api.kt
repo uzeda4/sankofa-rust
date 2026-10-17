@@ -653,22 +653,28 @@ internal interface UniffiForeignFutureCompleteVoid : com.sun.jna.Callback {
 internal interface UniffiCallbackInterfaceHttpBridgeMethod0 : com.sun.jna.Callback {
     fun callback(`uniffiHandle`: Long,`sourceId`: Long,`requestJson`: RustBuffer.ByValue,`uniffiOutReturn`: RustBuffer,uniffiCallStatus: UniffiRustCallStatus,)
 }
-@Structure.FieldOrder("uniffiFree", "uniffiClone", "request")
+internal interface UniffiCallbackInterfaceHttpBridgeMethod1 : com.sun.jna.Callback {
+    fun callback(`uniffiHandle`: Long,`sourceId`: Long,`url`: RustBuffer.ByValue,`name`: RustBuffer.ByValue,`uniffiOutReturn`: RustBuffer,uniffiCallStatus: UniffiRustCallStatus,)
+}
+@Structure.FieldOrder("uniffiFree", "uniffiClone", "request", "cookie")
 internal open class UniffiVTableCallbackInterfaceHttpBridge(
     @JvmField internal var `uniffiFree`: UniffiCallbackInterfaceFree? = null,
     @JvmField internal var `uniffiClone`: UniffiCallbackInterfaceClone? = null,
     @JvmField internal var `request`: UniffiCallbackInterfaceHttpBridgeMethod0? = null,
+    @JvmField internal var `cookie`: UniffiCallbackInterfaceHttpBridgeMethod1? = null,
 ) : Structure() {
     class UniffiByValue(
         `uniffiFree`: UniffiCallbackInterfaceFree? = null,
         `uniffiClone`: UniffiCallbackInterfaceClone? = null,
         `request`: UniffiCallbackInterfaceHttpBridgeMethod0? = null,
-    ): UniffiVTableCallbackInterfaceHttpBridge(`uniffiFree`,`uniffiClone`,`request`,), Structure.ByValue
+        `cookie`: UniffiCallbackInterfaceHttpBridgeMethod1? = null,
+    ): UniffiVTableCallbackInterfaceHttpBridge(`uniffiFree`,`uniffiClone`,`request`,`cookie`,), Structure.ByValue
 
    internal fun uniffiSetValue(other: UniffiVTableCallbackInterfaceHttpBridge) {
         `uniffiFree` = other.`uniffiFree`
         `uniffiClone` = other.`uniffiClone`
         `request` = other.`request`
+        `cookie` = other.`cookie`
     }
 
 }
@@ -725,6 +731,8 @@ internal object IntegrityCheckingUniffiLib {
     ): Int
     external fun uniffi_sk_api_checksum_method_httpbridge_request(
     ): Int
+    external fun uniffi_sk_api_checksum_method_httpbridge_cookie(
+    ): Int
     external fun ffi_sk_api_uniffi_contract_version(
     ): Int
 
@@ -753,6 +761,8 @@ internal object UniffiLib {
     external fun uniffi_sk_api_fn_init_callback_vtable_httpbridge(`vtable`: UniffiVTableCallbackInterfaceHttpBridge,
     ): Unit
     external fun uniffi_sk_api_fn_method_httpbridge_request(`ptr`: Long,`sourceId`: Long,`requestJson`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
+    ): RustBuffer.ByValue
+    external fun uniffi_sk_api_fn_method_httpbridge_cookie(`ptr`: Long,`sourceId`: Long,`url`: RustBuffer.ByValue,`name`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
     external fun uniffi_sk_api_fn_func_core_info(`dbPath`: RustBuffer.ByValue,uniffi_out_err: UniffiRustCallStatus, 
     ): RustBuffer.ByValue
@@ -939,6 +949,9 @@ private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
     if ((lib.uniffi_sk_api_checksum_method_httpbridge_request() and 0xFFFF) != 2036) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if ((lib.uniffi_sk_api_checksum_method_httpbridge_cookie() and 0xFFFF) != 15742) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -1432,6 +1445,11 @@ public interface HttpBridge {
      */
     fun `request`(`sourceId`: kotlin.Long, `requestJson`: kotlin.String): kotlin.String
     
+    /**
+     * The value of the cookie `name` the app holds for `url`, or an empty string.
+     */
+    fun `cookie`(`sourceId`: kotlin.Long, `url`: kotlin.String, `name`: kotlin.String): kotlin.String
+    
     companion object
 }
 
@@ -1560,6 +1578,25 @@ open class HttpBridgeImpl: Disposable, AutoCloseable, HttpBridge
     
 
     
+    /**
+     * The value of the cookie `name` the app holds for `url`, or an empty string.
+     */override fun `cookie`(`sourceId`: kotlin.Long, `url`: kotlin.String, `name`: kotlin.String): kotlin.String {
+            return FfiConverterString.lift(
+    callWithHandle {
+    uniffiRustCall() { _status ->
+    UniffiLib.uniffi_sk_api_fn_method_httpbridge_cookie(
+        it,
+        
+        FfiConverterLong.lower(`sourceId`),
+        FfiConverterString.lower(`url`),
+        FfiConverterString.lower(`name`),_status)
+}
+    }
+    )
+    }
+    
+
+    
 
     
 
@@ -1590,6 +1627,20 @@ internal object uniffiCallbackInterfaceHttpBridge {
             uniffiTraitInterfaceCall(uniffiCallStatus, makeCall, writeReturn)
         }
     }
+    internal object `cookie`: UniffiCallbackInterfaceHttpBridgeMethod1 {
+        override fun callback(`uniffiHandle`: Long,`sourceId`: Long,`url`: RustBuffer.ByValue,`name`: RustBuffer.ByValue,`uniffiOutReturn`: RustBuffer,uniffiCallStatus: UniffiRustCallStatus,) {
+            val uniffiObj = FfiConverterTypeHttpBridge.handleMap.get(uniffiHandle)
+            val makeCall = { ->
+                uniffiObj.`cookie`(
+                    FfiConverterLong.lift(`sourceId`),
+                    FfiConverterString.lift(`url`),
+                    FfiConverterString.lift(`name`),
+                )
+            }
+            val writeReturn = { value: kotlin.String -> uniffiOutReturn.setValue(FfiConverterString.lower(value)) }
+            uniffiTraitInterfaceCall(uniffiCallStatus, makeCall, writeReturn)
+        }
+    }
 
     internal object uniffiFree: UniffiCallbackInterfaceFree {
         override fun callback(handle: Long) {
@@ -1607,6 +1658,7 @@ internal object uniffiCallbackInterfaceHttpBridge {
         uniffiFree,
         uniffiClone,
         `request`,
+        `cookie`,
     )
 
     // Registers the foreign callback with the Rust side.
