@@ -3,6 +3,7 @@ package eu.kanade.tachiyomi.source.rust
 import android.net.Uri
 import android.os.SystemClock
 import eu.kanade.tachiyomi.network.interceptor.rateLimit
+import eu.kanade.tachiyomi.network.interceptor.rateLimitHost
 import eu.kanade.tachiyomi.source.ConfigurableSource
 import eu.kanade.tachiyomi.source.PreferenceScreen
 import eu.kanade.tachiyomi.source.model.FilterList
@@ -97,7 +98,12 @@ class RustSource(private val info: RustSourceInfo) : HttpSource(), ConfigurableS
             (meta["rate_limit"] as? JsonObject)?.let { r ->
                 val permits = (r["permits"] as? JsonPrimitive)?.intOrNull ?: return@let
                 val period = (r["period_ms"] as? JsonPrimitive)?.longOrNull ?: return@let
-                rateLimit(permits, period.milliseconds)
+                val hosts = (r["host"] as? JsonPrimitive)?.contentOrNull.orEmpty().split(',').map { it.trim() }.filter { it.isNotEmpty() }
+                if (hosts.isEmpty()) {
+                    rateLimit(permits, period.milliseconds)
+                } else {
+                    hosts.forEach { rateLimitHost("https://$it", permits, period.milliseconds) }
+                }
             }
             addInterceptor(RustImageInterceptor())
             // Every hop, redirects included: a public address must not send a source to a private one.
@@ -181,6 +187,16 @@ class RustSource(private val info: RustSourceInfo) : HttpSource(), ConfigurableS
 
     // ------------------------------------------------------------------ opening links
 
+    private val customUrls = (meta["custom_urls"] as? JsonPrimitive)?.booleanOrNull == true
+
+    /** Some sites open a title at an address that is not the stored one (a random suffix, an id). */
+    override fun getMangaUrl(manga: SManga): String = (if (customUrls) openUrl("manga_url") { put("manga", manga.toJson()) } else null) ?: super.getMangaUrl(manga)
+
+    override fun getChapterUrl(chapter: SChapter): String = (if (customUrls) openUrl("chapter_url") { put("chapter", chapter.toJson()) } else null) ?: super.getChapterUrl(chapter)
+
+    private fun openUrl(op: String, params: JsonObjectBuilder.() -> Unit): String? =
+        runCatching { callBlocking(op, params)["url"]?.takeIf { it !is JsonNull }?.text() }.getOrNull()
+
     override fun getUriType(uri: String): UriType {
         val host = Uri.parse(uri).host ?: return UriType.Unknown
         return if (host == Uri.parse(baseUrl).host) UriType.Manga else UriType.Unknown
@@ -213,7 +229,13 @@ class RustSource(private val info: RustSourceInfo) : HttpSource(), ConfigurableS
         val request = buildJsonObject {
             put("op", op)
             params()
-            put("ctx", buildJsonObject { put("prefs", RustPrefs.snapshot(getSourcePreferences(), prefDefs)) })
+            put(
+                "ctx",
+                buildJsonObject {
+                    put("prefs", RustPrefs.snapshot(getSourcePreferences(), prefDefs))
+                    RustFilterData.get(id)?.let { put("filter_data", it) }
+                },
+            )
         }.toString()
         val started = SystemClock.elapsedRealtime()
         val answer = callRustSource(id, request)

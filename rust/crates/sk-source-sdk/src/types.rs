@@ -16,6 +16,10 @@ pub struct RateLimit {
     /// Requests allowed per period.
     pub permits: u32,
     pub period_ms: u64,
+    /// Limit only requests to these hosts (`api.site.com,site.com`, each with its own count); empty means every request,
+    /// images included.
+    #[serde(default)]
+    pub host: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -54,6 +58,10 @@ pub struct Info {
     /// Cookies the app sets in its cookie jar before the first request (an age check, a reading mode).
     #[serde(default)]
     pub cookies: Vec<CookieDef>,
+    /// The source implements `Source::manga_url` / `Source::chapter_url` (the address to open in a browser differs from
+    /// what is stored).
+    #[serde(default)]
+    pub custom_urls: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -159,6 +167,9 @@ pub enum ImageOp {
     Merge { urls: Vec<String>, width: u32, height: u32 },
     /// Cut the image into `tiles` and put each source rectangle at its destination rectangle.
     Unscramble { tiles: Vec<Tile>, width: u32, height: u32 },
+    /// The picture was cut into `cols` x `rows` equal tiles and shuffled: the tile at position `i` (row by row) belongs
+    /// at position `order[i]`. The size of a tile comes from the downloaded picture.
+    Shuffle { cols: u32, rows: u32, order: Vec<u32> },
     /// Draw text on a plain background instead of downloading anything (author's notes and the like).
     Text { title: String, body: String },
 }

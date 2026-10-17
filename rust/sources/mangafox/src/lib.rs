@@ -82,7 +82,7 @@ impl Source for MangaFox {
             lang: "en".into(),
             base_url: BASE.into(),
             supports_latest: true,
-            rate_limit: Some(RateLimit { permits: 1, period_ms: 1000 }),
+            rate_limit: Some(RateLimit { permits: 1, period_ms: 1000, host: String::new() }),
             // The mobile site lists every page of a chapter at once with `readway=2`; `isAdult` skips the age gate.
             cookies: vec![CookieDef::new("m.fanfox.net", "readway", "2"), CookieDef::new("fanfox.net", "isAdult", "1")],
             ..Default::default()

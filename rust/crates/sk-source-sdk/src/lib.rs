@@ -24,7 +24,7 @@ pub use date::{civil_from_days, days_from_civil, millis, minus, parse_date, pars
 pub use filters::{FilterDef, Filters, Tri};
 pub use image::image_size;
 pub use http::{
-    get, http_get, http_get_json, log, now_ms, post, send_all, HttpRequest, HttpResponse, Request, Response, Result,
+    cookie, get, http_get, http_get_json, log, now_ms, post, send_all, HttpRequest, HttpResponse, Request, Response, Result,
 };
 #[cfg(not(target_arch = "wasm32"))]
 pub use http::set_mock_http;
@@ -83,6 +83,17 @@ pub trait Source {
         Ok(None)
     }
 
+    /// The address that opens `manga` in a browser, when it is not simply the site plus the stored address. Only called
+    /// when `Info::custom_urls`.
+    fn manga_url(&self, _manga: &Manga) -> Option<String> {
+        None
+    }
+
+    /// Same for a chapter.
+    fn chapter_url(&self, _chapter: &Chapter) -> Option<String> {
+        None
+    }
+
     /// Titles related to `manga`, when the site has such a list. Only called when `Info::supports_related`.
     fn related(&self, _manga: &Manga) -> Result<Vec<Manga>> {
         Ok(Vec::new())
@@ -105,6 +116,9 @@ struct Ctx {
     lang: String,
     #[serde(default)]
     prefs: HashMap<String, Value>,
+    /// What `Source::filter_data` returned last time (cached by the host), for searches that need it.
+    #[serde(default)]
+    filter_data: Option<Value>,
 }
 
 thread_local! {
@@ -114,6 +128,11 @@ thread_local! {
 /// The language this copy of the source was installed for (a package can be installed once per language).
 pub fn lang() -> String {
     CTX.with(|c| c.borrow().lang.clone())
+}
+
+/// The cached result of `Source::filter_data` (genre lists and the like), once the app has fetched it.
+pub fn filter_data() -> Option<Value> {
+    CTX.with(|c| c.borrow().filter_data.clone())
 }
 
 pub fn pref_bool(key: &str, default: bool) -> bool {
@@ -142,7 +161,15 @@ pub fn pref_list(key: &str) -> Vec<String> {
 
 /// Sets the context directly (tests on the PC; on the device the host sends it with each request).
 pub fn set_context(lang: &str, prefs: &[(&str, Value)]) {
-    CTX.with(|c| *c.borrow_mut() = Ctx { lang: lang.into(), prefs: prefs.iter().map(|(k, v)| (k.to_string(), v.clone())).collect() });
+    CTX.with(|c| {
+        let filter_data = c.borrow().filter_data.clone();
+        *c.borrow_mut() = Ctx { lang: lang.into(), prefs: prefs.iter().map(|(k, v)| (k.to_string(), v.clone())).collect(), filter_data };
+    });
+}
+
+/// Sets what `filter_data()` returns (tests on the PC).
+pub fn set_filter_data(data: Option<Value>) {
+    CTX.with(|c| c.borrow_mut().filter_data = data);
 }
 
 // ------------------------------------------------------------------ url helpers
@@ -207,6 +234,8 @@ enum Call {
     Pages { chapter: Chapter },
     ByUrl { url: String },
     Related { manga: Manga },
+    MangaUrl { manga: Manga },
+    ChapterUrl { chapter: Chapter },
 }
 
 /// Runs one JSON request against `source` and returns the JSON response. Used by [`export_source!`]; also handy for
@@ -241,6 +270,8 @@ pub fn dispatch<S: Source>(source: &S, request: &str) -> String {
         Ok(Call::Pages { chapter }) => wrap("pages", source.pages(&chapter)),
         Ok(Call::ByUrl { url }) => wrap("manga", source.by_url(&url)),
         Ok(Call::Related { manga }) => wrap("mangas", source.related(&manga)),
+        Ok(Call::MangaUrl { manga }) => json!({ "url": source.manga_url(&manga) }),
+        Ok(Call::ChapterUrl { chapter }) => json!({ "url": source.chapter_url(&chapter) }),
     };
     value.to_string()
 }

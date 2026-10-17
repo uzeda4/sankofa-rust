@@ -75,6 +75,9 @@ pub trait HttpBridge: Send + Sync {
     /// `request_json` is a `{method, url, headers, body, content_type, follow_redirects}` object; the answer is
     /// `{status, headers, body, url}` or `{error}`. `source_id` picks the source's own headers and rate limit.
     fn request(&self, source_id: i64, request_json: String) -> String;
+
+    /// The value of the cookie `name` the app holds for `url`, or an empty string.
+    fn cookie(&self, source_id: i64, url: String, name: String) -> String;
 }
 
 fn bridge() -> &'static RwLock<Option<Arc<dyn HttpBridge>>> {
@@ -102,6 +105,11 @@ struct NetHttp {
 }
 
 impl Http for NetHttp {
+    fn cookie(&self, url: &str, name: &str) -> Option<String> {
+        let b = bridge().read().unwrap().clone()?;
+        Some(b.cookie(self.id.load(Ordering::Relaxed), url.to_string(), name.to_string())).filter(|v| !v.is_empty())
+    }
+
     fn request(&self, req: &HttpRequest) -> HttpReply {
         if let Some(b) = bridge().read().unwrap().clone() {
             let json = serde_json::to_string(req).unwrap_or_default();

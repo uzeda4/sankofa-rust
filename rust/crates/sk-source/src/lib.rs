@@ -69,6 +69,11 @@ impl HttpReply {
 pub trait Http: Send + Sync {
     /// Sends one request. A non-2xx answer is a reply with that status, not an error.
     fn request(&self, req: &HttpRequest) -> HttpReply;
+
+    /// The value of cookie `name` held for `url`.
+    fn cookie(&self, _url: &str, _name: &str) -> Option<String> {
+        None
+    }
 }
 
 /// Requests of one `http_batch` that run at the same time.
@@ -172,6 +177,15 @@ impl WasmSource {
                     None => vec![HttpReply::failed("malformed request")],
                 };
                 write_to_guest(&mut caller, serde_json::to_string(&replies).unwrap_or_default().as_bytes()).unwrap_or(0)
+            })
+            .map_err(|e| e.to_string())?;
+        linker
+            .func_wrap("sk", "cookie", |mut caller: Caller<'_, HostState>, url_ptr: i32, url_len: i32, name_ptr: i32, name_len: i32| -> i64 {
+                let url = read_string(&mut caller, url_ptr, url_len).unwrap_or_default();
+                let name = read_string(&mut caller, name_ptr, name_len).unwrap_or_default();
+                let http = caller.data().http.clone();
+                let value = if is_blocked_url(&url) { None } else { http.cookie(&url, &name) };
+                write_to_guest(&mut caller, value.unwrap_or_default().as_bytes()).unwrap_or(0)
             })
             .map_err(|e| e.to_string())?;
         linker

@@ -57,7 +57,7 @@ impl Source for MangaDemon {
             base_url: BASE.into(),
             version_id: 2,
             supports_latest: true,
-            rate_limit: Some(RateLimit { permits: 2, period_ms: 1000 }),
+            rate_limit: Some(RateLimit { permits: 2, period_ms: 1000, host: String::new() }),
             ..Default::default()
         }
     }

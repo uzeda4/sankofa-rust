@@ -212,6 +212,7 @@ mod host {
         pub fn http(ptr: *const u8, len: i32) -> i64;
         pub fn http_batch(ptr: *const u8, len: i32) -> i64;
         pub fn now_ms() -> i64;
+        pub fn cookie(url_ptr: *const u8, url_len: i32, name_ptr: *const u8, name_len: i32) -> i64;
         pub fn log(ptr: *const u8, len: i32);
     }
 }
@@ -281,6 +282,21 @@ fn transport(reqs: &[HttpRequest]) -> Vec<HttpResponse> {
             .map(|r| f(r).unwrap_or_else(|e| HttpResponse { error: Some(e), ..Default::default() }))
             .collect(),
     })
+}
+
+/// The value of the cookie `name` the app holds for `url` (a login the user did in the site's WebView), if any.
+pub fn cookie(url: &str, name: &str) -> Option<String> {
+    #[cfg(target_arch = "wasm32")]
+    {
+        let packed = unsafe { host::cookie(url.as_ptr(), url.len() as i32, name.as_ptr(), name.len() as i32) };
+        let bytes = unsafe { take_guest_bytes(packed) }?;
+        String::from_utf8(bytes).ok().filter(|v| !v.is_empty())
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        let _ = (url, name);
+        None
+    }
 }
 
 /// Milliseconds since the Unix epoch (WebAssembly has no clock of its own).

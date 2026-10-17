@@ -82,6 +82,7 @@ class RustImageInterceptor : Interceptor {
                 bitmap = when (op.str("op")) {
                     "merge" -> merge(chain, base, op, alts)
                     "unscramble" -> unscramble(bitmap ?: decode(chain, base, request.url.toString().substringBefore('#'), alts), op)
+                    "shuffle" -> shuffle(bitmap ?: decode(chain, base, request.url.toString().substringBefore('#'), alts), op)
                     "text" -> text(op)
                     else -> bitmap
                 }
@@ -158,6 +159,24 @@ class RustImageInterceptor : Interceptor {
             val w = tile["w"].int() ?: 0
             val h = tile["h"].int() ?: 0
             canvas.drawBitmap(source, Rect(sx, sy, sx + w, sy + h), Rect(dx, dy, dx + w, dy + h), null)
+        }
+        source.recycle()
+        return result
+    }
+
+    /** Tiles cut from a regular grid and shuffled: put each back where `order` says. */
+    private fun shuffle(source: Bitmap, op: JsonObject): Bitmap {
+        val cols = op["cols"].int() ?: throw IOException("shuffle without columns")
+        val rows = op["rows"].int() ?: throw IOException("shuffle without rows")
+        val order = (op["order"] as JsonArray).map { it.int() ?: 0 }
+        val tileW = source.width / cols
+        val tileH = source.height / rows
+        val result = Bitmap.createBitmap(tileW * cols, tileH * rows, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(result)
+        order.forEachIndexed { w, j ->
+            val src = Rect((w % cols) * tileW, (w / cols) * tileH, (w % cols + 1) * tileW, (w / cols + 1) * tileH)
+            val dst = Rect((j % cols) * tileW, (j / cols) * tileH, (j % cols + 1) * tileW, (j / cols + 1) * tileH)
+            canvas.drawBitmap(source, src, dst, null)
         }
         source.recycle()
         return result

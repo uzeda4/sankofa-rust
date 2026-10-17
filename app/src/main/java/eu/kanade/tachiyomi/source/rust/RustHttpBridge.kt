@@ -15,6 +15,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.longOrNull
 import kotlinx.serialization.json.put
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -28,6 +29,10 @@ import uy.kohesive.injekt.api.get
  * handling, cookies, the user agent the user chose and the source's rate limit apply exactly as for extensions.
  */
 object RustHttpBridge : HttpBridge {
+
+    override fun cookie(sourceId: Long, url: String, name: String): String = runCatching {
+        Injekt.get<NetworkHelper>().cookieJar.get(url.toHttpUrl()).firstOrNull { it.name == name }?.value
+    }.getOrNull().orEmpty()
 
     override fun request(sourceId: Long, requestJson: String): String = try {
         val req = Json.parseToJsonElement(requestJson).jsonObject

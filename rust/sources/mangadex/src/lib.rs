@@ -22,7 +22,7 @@ impl Source for MangaDex {
             lang: "en".into(),
             base_url: "https://mangadex.org".into(),
             supports_latest: true,
-            rate_limit: Some(RateLimit { permits: 4, period_ms: 1000 }),
+            rate_limit: Some(RateLimit { permits: 4, period_ms: 1000, host: String::new() }),
             ..Default::default()
         }
     }

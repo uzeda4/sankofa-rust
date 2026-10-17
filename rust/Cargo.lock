@@ -3145,6 +3145,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-asurascans"
+version = "0.1.0"
+dependencies = [
+ "fancy-regex",
+ "serde",
+ "sk-source",
+ "sk-source-sdk",
+]
+
+[[package]]
 name = "sk-source-bench"
 version = "0.1.0"
 dependencies = [
@@ -3207,6 +3217,16 @@ dependencies = [
  "serde_json",
  "sk-html",
  "url",
+]
+
+[[package]]
+name = "sk-source-webtoons"
+version = "0.1.0"
+dependencies = [
+ "fancy-regex",
+ "serde",
+ "sk-source",
+ "sk-source-sdk",
 ]
 
 [[package]]
