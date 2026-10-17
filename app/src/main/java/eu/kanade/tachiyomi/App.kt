@@ -174,16 +174,7 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
                     logcat(LogPriority.INFO) { "Rust core v${it.version}: db schema ${it.schemaVersion}, ${it.favorites} favorites" }
                 }
                 RustSources.reload(this@App)
-                RustSources.sources.value.forEach { source ->
-                    logcat(LogPriority.INFO) { "Rust source: ${source.name} (${source.lang}), id ${source.id}" }
-                    runCatching { source.getPopularManga(1) }
-                        .onSuccess { page ->
-                            logcat(LogPriority.INFO) {
-                                "Rust source ${source.name}: ${page.mangas.size} popular, first '${page.mangas.firstOrNull()?.title}'"
-                            }
-                        }
-                        .onFailure { logcat(LogPriority.WARN, it) { "Rust source ${source.name} failed" } }
-                }
+                RustSources.sources.value.forEach { source -> RustSources.smokeTest(source) }
             }
         }
         // KMK <--

@@ -123,18 +123,20 @@ class AndroidSourceManager(
                         put(MERGED_SOURCE_ID, MergedSource())
                         // SY <--
                     }
-                    // KMK -->
-                    rustSources.forEach {
-                        mutableMap[it.id] = it
-                        registerStubSource(StubSource.from(it))
-                    }
-                    // KMK <--
                     extensions.forEach { extension ->
                         extension.sources.mapNotNull { it.toInternalSource(/* KMK --> */isHentaiEnabled/* KMK <-- */) }.forEach {
                             mutableMap[it.id] = it
                             registerStubSource(StubSource.from(it))
                         }
                     }
+                    // KMK -->
+                    // A source in Rust goes last: when it has the id of an installed extension (a conversion of it),
+                    // the library, history and downloads keep working and the Rust source answers.
+                    rustSources.forEach {
+                        mutableMap[it.id] = it
+                        registerStubSource(StubSource.from(it))
+                    }
+                    // KMK <--
                     sourcesMapFlow.value = mutableMap
                     _isInitialized.value = true
                 }

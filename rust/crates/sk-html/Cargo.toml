@@ -1,0 +1,14 @@
+[package]
+name = "sk-html"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "HTML parsing and jsoup-style selectors for Sankofa sources (pure Rust, builds for wasm32)"
+
+[dependencies]
+# Only the parser and tree are used; selectors are matched by this crate because the sites' sources rely on
+# jsoup's `:contains`, `:containsOwn` and `:matchesOwn`, which the CSS crate does not have.
+scraper = { version = "0.27", default-features = false }
+ego-tree = "0.11"
+url = "2"
+fancy-regex = "0.19"

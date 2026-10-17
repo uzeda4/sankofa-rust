@@ -1,0 +1,12 @@
+[package]
+name = "sk-theme-zeist"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "ZeistManga sites (Blogger blogs with a series/chapter feed) for Sankofa sources"
+
+[dependencies]
+fancy-regex = "0.19"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+sk-source-sdk = { version = "0.1.0", path = "../sk-source-sdk" }

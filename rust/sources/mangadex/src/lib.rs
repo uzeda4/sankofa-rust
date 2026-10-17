@@ -3,7 +3,7 @@
 
 use serde_json::Value;
 use sk_source_sdk::{
-    export_source, http_get_json, url_encode, Chapter, Info, Manga, MangaPage, Page, Result, Source,
+    export_source, http_get_json, url_encode, Chapter, Filters, Info, Manga, MangaPage, Page, RateLimit, Result, Source,
 };
 
 const API: &str = "https://api.mangadex.org";
@@ -22,7 +22,8 @@ impl Source for MangaDex {
             lang: "en".into(),
             base_url: "https://mangadex.org".into(),
             supports_latest: true,
-            id: 0,
+            rate_limit: Some(RateLimit { permits: 4, period_ms: 1000 }),
+            ..Default::default()
         }
     }
 
@@ -34,19 +35,19 @@ impl Source for MangaDex {
         list(page, "&order[latestUploadedChapter]=desc", "")
     }
 
-    fn search(&self, page: u32, query: &str) -> Result<MangaPage> {
+    fn search(&self, page: u32, query: &str, _filters: &Filters) -> Result<MangaPage> {
         list(page, "&order[relevance]=desc", &format!("&title={}", url_encode(query)))
     }
 
-    fn details(&self, url: &str) -> Result<Manga> {
-        let id = id_of(url)?;
+    fn details(&self, manga: &Manga) -> Result<Manga> {
+        let id = id_of(&manga.url)?;
         let json: Value =
             http_get_json(&format!("{API}/manga/{id}?includes[]=cover_art&includes[]=author&includes[]=artist"), HEADERS)?;
         Ok(to_manga(&json["data"]))
     }
 
-    fn chapters(&self, url: &str) -> Result<Vec<Chapter>> {
-        let id = id_of(url)?;
+    fn chapters(&self, manga: &Manga) -> Result<Vec<Chapter>> {
+        let id = id_of(&manga.url)?;
         // ponytail: first 500 English chapters; page through `offset` for longer series.
         let json: Value = http_get_json(
             &format!(
@@ -81,13 +82,14 @@ impl Source for MangaDex {
                         .and_then(|r| r["attributes"]["name"].as_str())
                         .map(str::to_string),
                     date_upload: a["publishAt"].as_str().map(iso_to_millis).unwrap_or(0),
+                    memo: None,
                 }
             })
             .collect())
     }
 
-    fn pages(&self, chapter_url: &str) -> Result<Vec<Page>> {
-        let id = chapter_url.trim_start_matches("/chapter/");
+    fn pages(&self, chapter: &Chapter) -> Result<Vec<Page>> {
+        let id = chapter.url.trim_start_matches("/chapter/");
         let json: Value = http_get_json(&format!("{API}/at-home/server/{id}"), HEADERS)?;
         let base = json["baseUrl"].as_str().ok_or("no baseUrl")?;
         let hash = json["chapter"]["hash"].as_str().ok_or("no chapter hash")?;
@@ -97,7 +99,7 @@ impl Source for MangaDex {
             .flatten()
             .filter_map(Value::as_str)
             .enumerate()
-            .map(|(i, file)| Page { index: i as u32, url: String::new(), image_url: format!("{base}/data/{hash}/{file}") })
+            .map(|(i, file)| Page::new(i as u32, format!("{base}/data/{hash}/{file}")))
             .collect())
     }
 }
@@ -146,6 +148,7 @@ fn to_manga(m: &Value) -> Manga {
             Some("hiatus") => 6,
             _ => 0,
         },
+        ..Default::default()
     }
 }
 

@@ -7,10 +7,11 @@
 use crate::SkError;
 use sk_source::package::{self, fingerprint, Package};
 use sk_source::repo;
-use sk_source::{Http, SharedSource, WasmSource};
+use sk_source::{Http, HttpReply, HttpRequest, SharedSource, WasmSource};
 use std::collections::HashMap;
 use std::path::Path;
-use std::sync::{Arc, Mutex, OnceLock};
+use std::sync::atomic::{AtomicI64, Ordering};
+use std::sync::{Arc, Mutex, OnceLock, RwLock};
 
 const EXTENSION: &str = "sksource";
 
@@ -27,6 +28,9 @@ pub struct RustSourceInfo {
     pub publisher: String,
     /// Publisher key fingerprint; empty for an unsigned `.wasm` loaded in a debug build.
     pub fingerprint: String,
+    /// The module's whole `info` answer as JSON (settings, rate limit, extra headers, flags); the app reads what it
+    /// needs from it so new fields never change this record.
+    pub info_json: String,
 }
 
 /// What the user is asked to trust before an install.
@@ -53,30 +57,71 @@ pub struct LoadReport {
     pub rejected: Vec<Rejected>,
 }
 
-fn registry() -> &'static Mutex<HashMap<i64, SharedSource>> {
-    static REGISTRY: OnceLock<Mutex<HashMap<i64, SharedSource>>> = OnceLock::new();
+/// A loaded source and the language it was installed for (sent to it with every request).
+struct Loaded {
+    source: SharedSource,
+    lang: String,
+}
+
+fn registry() -> &'static Mutex<HashMap<i64, Loaded>> {
+    static REGISTRY: OnceLock<Mutex<HashMap<i64, Loaded>>> = OnceLock::new();
     REGISTRY.get_or_init(Default::default)
 }
 
-/// Sources get their network from `sk-net`; non-2xx answers are returned as a status, not an error.
-struct NetHttp(sk_net::Client);
+/// The app's HTTP client, as Kotlin implements it: Cloudflare handling, cookies, rate limits and the user agent
+/// the user chose are all in there, so sources get them for free.
+#[uniffi::export(with_foreign)]
+pub trait HttpBridge: Send + Sync {
+    /// `request_json` is a `{method, url, headers, body, content_type, follow_redirects}` object; the answer is
+    /// `{status, headers, body, url}` or `{error}`. `source_id` picks the source's own headers and rate limit.
+    fn request(&self, source_id: i64, request_json: String) -> String;
+}
+
+fn bridge() -> &'static RwLock<Option<Arc<dyn HttpBridge>>> {
+    static BRIDGE: OnceLock<RwLock<Option<Arc<dyn HttpBridge>>>> = OnceLock::new();
+    BRIDGE.get_or_init(Default::default)
+}
+
+/// Installs the network the sources use. Call once at start-up; without it sources fall back to a plain client.
+#[uniffi::export]
+pub fn set_http_bridge(b: Arc<dyn HttpBridge>) {
+    *bridge().write().unwrap() = Some(b);
+}
+
+/// True when a source may request `url` (not a local or private address). The app asks this for every redirect hop.
+#[uniffi::export]
+pub fn is_url_allowed(url: String) -> bool {
+    !sk_source::is_blocked_url(&url)
+}
+
+/// What a source's requests go through: the app's client when it is installed, `sk-net` otherwise (GET only).
+struct NetHttp {
+    /// Known after the source answered `info`; requests made before that (none today) use 0.
+    id: Arc<AtomicI64>,
+    fallback: sk_net::Client,
+}
 
 impl Http for NetHttp {
-    fn get(&self, url: &str, headers: &[(String, String)]) -> Result<(u16, String), String> {
-        if sk_source::is_blocked_url(url) {
-            return Err("sources cannot reach local or private network addresses".into());
+    fn request(&self, req: &HttpRequest) -> HttpReply {
+        if let Some(b) = bridge().read().unwrap().clone() {
+            let json = serde_json::to_string(req).unwrap_or_default();
+            return serde_json::from_str(&b.request(self.id.load(Ordering::Relaxed), json))
+                .unwrap_or_else(|e| HttpReply::failed(format!("bad answer from the app's network: {e}")));
         }
-        let pairs: Vec<(&str, &str)> = headers.iter().map(|(k, v)| (k.as_str(), v.as_str())).collect();
-        match self.0.get_bytes_with(url, &pairs) {
-            Ok(bytes) => Ok((200, String::from_utf8_lossy(&bytes).into_owned())),
-            Err(sk_net::Error::Status(s)) => Ok((s, String::new())),
-            Err(e) => Err(e.to_string()),
+        if !req.method.is_empty() && !req.method.eq_ignore_ascii_case("GET") {
+            return HttpReply::failed("only GET works without the app's network");
+        }
+        let pairs: Vec<(&str, &str)> = req.headers.iter().map(|(k, v)| (k.as_str(), v.as_str())).collect();
+        match self.fallback.get_bytes_with(&req.url, &pairs) {
+            Ok(bytes) => HttpReply { status: 200, body: String::from_utf8_lossy(&bytes).into_owned(), url: req.url.clone(), ..Default::default() },
+            Err(sk_net::Error::Status(s)) => HttpReply { status: s, url: req.url.clone(), ..Default::default() },
+            Err(e) => HttpReply::failed(e.to_string()),
         }
     }
 }
 
-/// FNV-1a over `name/lang`, cleared to 63 bits so it is a valid positive `Long` on the Kotlin side.
-fn derive_id(name: &str, lang: &str) -> i64 {
+/// Id of modules from before `version_id` existed: FNV-1a over `name/lang`, cleared to 63 bits.
+fn legacy_id(name: &str, lang: &str) -> i64 {
     let mut h: u64 = 0xcbf29ce484222325;
     for b in format!("{name}/{lang}").bytes() {
         h = (h ^ b as u64).wrapping_mul(0x100000001b3);
@@ -216,7 +261,7 @@ fn slug(name: &str, lang: &str) -> String {
 
 /// Instantiates the module, asks it for its info and registers it.
 fn describe(pkg: &Package, file_name: &str, fp: &str) -> Result<RustSourceInfo, SkError> {
-    let (info, source) = instantiate(&pkg.wasm, file_name, fp, pkg.manifest.version, &pkg.manifest.publisher)?;
+    let (info, source) = instantiate(&pkg.wasm, file_name, fp, pkg.manifest.version, &pkg.manifest.publisher, &pkg.manifest.lang)?;
     registry().lock().unwrap().insert(info.id, source);
     Ok(info)
 }
@@ -227,20 +272,33 @@ fn instantiate(
     fp: &str,
     version: u32,
     publisher: &str,
-) -> Result<(RustSourceInfo, SharedSource), SkError> {
-    let http: Arc<dyn Http> = Arc::new(NetHttp(sk_net::Client::new()));
+    install_lang: &str,
+) -> Result<(RustSourceInfo, Loaded), SkError> {
+    let id_cell = Arc::new(AtomicI64::new(0));
+    let http: Arc<dyn Http> = Arc::new(NetHttp { id: id_cell.clone(), fallback: sk_net::Client::new() });
     let bad = |reason: String| SkError::Package { reason };
     let mut source = WasmSource::load(wasm, http).map_err(bad)?;
-    let reply = source.call(r#"{"op":"info"}"#).map_err(bad)?;
+    let ask = serde_json::json!({ "op": "info", "ctx": { "lang": install_lang } }).to_string();
+    let reply = source.call(&ask).map_err(bad)?;
     let v: serde_json::Value = serde_json::from_str(&reply).map_err(|e| bad(e.to_string()))?;
     let i = &v["info"];
-    let (Some(name), Some(lang)) = (i["name"].as_str(), i["lang"].as_str()) else {
-        return Err(bad("the source did not report a name and language".into()));
+    let Some(name) = i["name"].as_str() else {
+        return Err(bad("the source did not report a name".into()));
     };
+    // An unsigned module has no manifest; it speaks for itself.
+    let lang = if install_lang.is_empty() { i["lang"].as_str().unwrap_or_default() } else { install_lang };
+    if lang.is_empty() {
+        return Err(bad("the source did not report a language".into()));
+    }
     let id = match i["id"].as_i64() {
         Some(id) if id > 0 => id,
-        _ => derive_id(name, lang),
+        // Newer modules report `version_id`; derive the id the way extensions did.
+        _ => match i["version_id"].as_u64() {
+            Some(v) => sk_source::extension_id(name, lang, v as u32),
+            None => legacy_id(name, lang),
+        },
     };
+    id_cell.store(id, Ordering::Relaxed);
     let info = RustSourceInfo {
         id,
         name: name.to_string(),
@@ -251,8 +309,9 @@ fn instantiate(
         version,
         publisher: publisher.to_string(),
         fingerprint: fp.to_string(),
+        info_json: i.to_string(),
     };
-    Ok((info, Arc::new(Mutex::new(source))))
+    Ok((info, Loaded { source: Arc::new(Mutex::new(source)), lang: lang.to_string() }))
 }
 
 /// Loads the installed sources from `dir`, replacing what was loaded before.
@@ -277,7 +336,7 @@ pub fn load_rust_sources(dir: String, trusted: Vec<String>, allow_unsigned: bool
                 Ok(pkg) => {
                     let fp = fingerprint(&pkg.manifest.public_key);
                     if trusted.contains(&fp) {
-                        instantiate(&pkg.wasm, &file_name, &fp, pkg.manifest.version, &pkg.manifest.publisher)
+                        instantiate(&pkg.wasm, &file_name, &fp, pkg.manifest.version, &pkg.manifest.publisher, &pkg.manifest.lang)
                             .map_err(|e| (e.to_string(), String::new()))
                     } else {
                         Err(("the publisher is not trusted".to_string(), fp))
@@ -285,7 +344,7 @@ pub fn load_rust_sources(dir: String, trusted: Vec<String>, allow_unsigned: bool
                 }
             },
             "wasm" if allow_unsigned => {
-                instantiate(&bytes, &file_name, "", 0, "unsigned").map_err(|e| (e.to_string(), String::new()))
+                instantiate(&bytes, &file_name, "", 0, "unsigned", "").map_err(|e| (e.to_string(), String::new()))
             }
             _ => continue,
         };
@@ -305,19 +364,40 @@ pub fn load_rust_sources(dir: String, trusted: Vec<String>, allow_unsigned: bool
 /// Blocking, and serialized per source; call from a background dispatcher.
 #[uniffi::export]
 pub fn call_rust_source(id: i64, request: String) -> Result<String, SkError> {
-    let source = registry()
+    let (source, lang) = registry()
         .lock()
         .unwrap()
         .get(&id)
-        .cloned()
+        .map(|l| (l.source.clone(), l.lang.clone()))
         .ok_or_else(|| SkError::Net { reason: format!("no Rust source with id {id}") })?;
+    let request = with_language(&request, &lang);
     let mut guard = source.lock().unwrap();
     guard.call(&request).map_err(|reason| SkError::Net { reason })
 }
 
+/// Adds the installed language to the request's `ctx` (the app only knows the user's settings).
+fn with_language(request: &str, lang: &str) -> String {
+    let Ok(mut v) = serde_json::from_str::<serde_json::Value>(request) else { return request.to_string() };
+    if let Some(obj) = v.as_object_mut() {
+        let ctx = obj.entry("ctx").or_insert_with(|| serde_json::json!({}));
+        if let Some(c) = ctx.as_object_mut() {
+            c.insert("lang".into(), lang.into());
+        }
+    }
+    v.to_string()
+}
+
 #[cfg(test)]
 mod tests {
-    use super::slug;
+    use super::{slug, with_language};
+
+    #[test]
+    fn the_installed_language_rides_in_ctx() {
+        let r = with_language(r#"{"op":"popular","page":1,"ctx":{"prefs":{"a":1}}}"#, "pt-BR");
+        assert!(r.contains(r#""lang":"pt-BR""#) && r.contains(r#""prefs""#), "{r}");
+        assert!(with_language(r#"{"op":"info"}"#, "en").contains(r#""ctx":{"lang":"en"}"#));
+        assert_eq!(with_language("not json", "en"), "not json");
+    }
 
     #[test]
     fn file_names_are_safe_and_stable() {

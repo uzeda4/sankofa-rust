@@ -6,23 +6,98 @@
 //! * `sk_call(ptr, len) -> i64`: takes a JSON request, returns `(ptr << 32) | len` of a JSON response that
 //!   lives in guest memory (the host frees it with `sk_free`).
 //!
-//! The host provides `sk.http_get(url, headers) -> response` and `sk.log(msg)`; sources never open sockets.
+//! The host provides `sk.http(request) -> response`, `sk.http_batch(requests) -> responses` (run in parallel),
+//! `sk.now_ms()`, `sk.log(msg)` and the older `sk.http_get(url, headers)`; sources never open sockets.
 //! Execution is fuel-metered, so a looping source cannot hang the app.
 
 pub mod package;
 pub mod repo;
+#[cfg(feature = "testing")]
+pub mod testing;
 
 use std::sync::{Arc, Mutex};
 use wasmi::{Caller, Engine, Extern, Linker, Memory, Module, Store, TypedFunc};
 
-/// HTTP as seen by sources. Implemented over `sk-net` by the app; faked in tests.
-pub trait Http: Send + Sync {
-    /// Returns `(status, body)` for a GET. `headers` are `(name, value)` pairs.
-    fn get(&self, url: &str, headers: &[(String, String)]) -> Result<(u16, String), String>;
+/// A request a source asked for (the JSON the guest sends to `sk.http`).
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
+pub struct HttpRequest {
+    #[serde(default)]
+    pub method: String,
+    pub url: String,
+    #[serde(default)]
+    pub headers: Vec<(String, String)>,
+    #[serde(default)]
+    pub body: Option<String>,
+    #[serde(default)]
+    pub content_type: Option<String>,
+    #[serde(default = "yes")]
+    pub follow_redirects: bool,
+    /// Answer with the body as base64 in `body_b64` (images, partial reads) instead of text in `body`.
+    #[serde(default)]
+    pub binary: bool,
+    /// Read at most this many bytes of the body (a server that ignores `Range` must not send a whole image).
+    #[serde(default)]
+    pub max_bytes: Option<u64>,
 }
 
-/// Default instructions one call may execute before it is cut off (roughly a few seconds on a phone).
-const DEFAULT_FUEL: u64 = 400_000_000;
+fn yes() -> bool {
+    true
+}
+
+/// What the host answers: `error` is set instead of a status when the request could not be made.
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
+pub struct HttpReply {
+    pub status: u16,
+    pub headers: Vec<(String, String)>,
+    pub body: String,
+    /// The body as base64, when the request asked for `binary`.
+    #[serde(default)]
+    pub body_b64: Option<String>,
+    /// Final URL after redirects.
+    pub url: String,
+    pub error: Option<String>,
+}
+
+impl HttpReply {
+    pub fn failed(error: impl Into<String>) -> Self {
+        Self { error: Some(error.into()), ..Default::default() }
+    }
+}
+
+/// HTTP as seen by sources. Implemented over the app's own client (Cloudflare, cookies, rate limits) on the device;
+/// faked in tests.
+pub trait Http: Send + Sync {
+    /// Sends one request. A non-2xx answer is a reply with that status, not an error.
+    fn request(&self, req: &HttpRequest) -> HttpReply;
+}
+
+/// Requests of one `http_batch` that run at the same time.
+const BATCH_PARALLELISM: usize = 6;
+
+/// Applies the private-network guard, then asks the transport.
+fn guarded(http: &dyn Http, req: &HttpRequest) -> HttpReply {
+    if is_blocked_url(&req.url) {
+        return HttpReply::failed("sources cannot reach local or private network addresses");
+    }
+    http.request(req)
+}
+
+fn run_batch(http: &Arc<dyn Http>, reqs: &[HttpRequest]) -> Vec<HttpReply> {
+    let mut out: Vec<HttpReply> = Vec::with_capacity(reqs.len());
+    for chunk in reqs.chunks(BATCH_PARALLELISM) {
+        std::thread::scope(|scope| {
+            let handles: Vec<_> = chunk.iter().map(|r| scope.spawn(|| guarded(http.as_ref(), r))).collect();
+            for h in handles {
+                out.push(h.join().unwrap_or_else(|_| HttpReply::failed("request thread panicked")));
+            }
+        });
+    }
+    out
+}
+
+/// Default instructions one call may execute before it is cut off. Parsing a 700 KB page costs about 2 billion,
+/// and a looping source is stopped after a few seconds on a phone.
+const DEFAULT_FUEL: u64 = 6_000_000_000;
 /// Largest request or response accepted in either direction.
 const MAX_PAYLOAD: usize = 16 * 1024 * 1024;
 
@@ -57,6 +132,7 @@ impl WasmSource {
                 }
             })
             .map_err(|e| e.to_string())?;
+        // ABI v1: GET with headers, answers `{"status":..,"body":..}`.
         linker
             .func_wrap(
                 "sk",
@@ -67,13 +143,44 @@ impl WasmSource {
                         .and_then(|s| serde_json::from_str(&s).ok())
                         .unwrap_or_default();
                     let http = caller.data().http.clone();
-                    let reply = match http.get(&url, &headers) {
-                        Ok((status, body)) => serde_json::json!({ "status": status, "body": body }),
-                        Err(error) => serde_json::json!({ "status": 0, "error": error }),
+                    let req = HttpRequest { method: "GET".into(), url, headers, follow_redirects: true, ..Default::default() };
+                    let reply = match guarded(http.as_ref(), &req) {
+                        HttpReply { error: Some(error), .. } => serde_json::json!({ "status": 0, "error": error }),
+                        r => serde_json::json!({ "status": r.status, "body": r.body }),
                     };
                     write_to_guest(&mut caller, reply.to_string().as_bytes()).unwrap_or(0)
                 },
             )
+            .map_err(|e| e.to_string())?;
+        // ABI v2: one request, full control.
+        linker
+            .func_wrap("sk", "http", |mut caller: Caller<'_, HostState>, ptr: i32, len: i32| -> i64 {
+                let http = caller.data().http.clone();
+                let reply = match read_string(&mut caller, ptr, len).and_then(|s| serde_json::from_str::<HttpRequest>(&s).ok()) {
+                    Some(req) => guarded(http.as_ref(), &req),
+                    None => HttpReply::failed("malformed request"),
+                };
+                write_to_guest(&mut caller, serde_json::to_string(&reply).unwrap_or_default().as_bytes()).unwrap_or(0)
+            })
+            .map_err(|e| e.to_string())?;
+        // ABI v2: several requests, answered in order after running in parallel.
+        linker
+            .func_wrap("sk", "http_batch", |mut caller: Caller<'_, HostState>, ptr: i32, len: i32| -> i64 {
+                let http = caller.data().http.clone();
+                let replies = match read_string(&mut caller, ptr, len).and_then(|s| serde_json::from_str::<Vec<HttpRequest>>(&s).ok()) {
+                    Some(reqs) => run_batch(&http, &reqs),
+                    None => vec![HttpReply::failed("malformed request")],
+                };
+                write_to_guest(&mut caller, serde_json::to_string(&replies).unwrap_or_default().as_bytes()).unwrap_or(0)
+            })
+            .map_err(|e| e.to_string())?;
+        linker
+            .func_wrap("sk", "now_ms", |_: Caller<'_, HostState>| -> i64 {
+                std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .map(|d| d.as_millis() as i64)
+                    .unwrap_or(0)
+            })
             .map_err(|e| e.to_string())?;
 
         let instance = linker
@@ -110,6 +217,11 @@ impl WasmSource {
         self.memory.read(&self.store, out_ptr, &mut buf).map_err(|e| e.to_string())?;
         let _ = self.free.call(&mut self.store, (out_ptr as i32, out_len as i32));
         String::from_utf8(buf).map_err(|e| e.to_string())
+    }
+
+    /// Instructions the last call executed (to size the budget and to compare sources).
+    pub fn fuel_used(&self) -> u64 {
+        self.fuel_per_call.saturating_sub(self.store.get_fuel().unwrap_or(0))
     }
 
     /// Messages the source wrote with `sk.log` since the last call to this method.
@@ -179,6 +291,16 @@ pub fn is_blocked_url(url: &str) -> bool {
     }
 }
 
+/// The id an extension had: the first 8 bytes of MD5(`name.lowercase()/lang/version_id`) with the sign bit cleared.
+/// A source converted from an extension with the same name, language and version id therefore keeps its library
+/// entries, history and chapters.
+pub fn extension_id(name: &str, lang: &str, version_id: u32) -> i64 {
+    use md5::{Digest, Md5};
+    let digest = Md5::digest(format!("{}/{lang}/{version_id}", name.to_lowercase()).as_bytes());
+    let id = digest[..8].iter().fold(0u64, |acc, b| (acc << 8) | *b as u64);
+    (id & (i64::MAX as u64)) as i64
+}
+
 /// A source shared between threads (the app calls from a pool).
 pub type SharedSource = Arc<Mutex<WasmSource>>;
 
@@ -213,8 +335,8 @@ mod tests {
 
     struct FakeHttp;
     impl Http for FakeHttp {
-        fn get(&self, url: &str, headers: &[(String, String)]) -> Result<(u16, String), String> {
-            Ok((200, format!("{url}|{}", headers.len())))
+        fn request(&self, req: &HttpRequest) -> HttpReply {
+            HttpReply { status: 200, body: format!("{} {}|{}", req.method, req.url, req.headers.len()), url: req.url.clone(), ..Default::default() }
         }
     }
 
@@ -272,6 +394,14 @@ mod tests {
         ] {
             assert!(!is_blocked_url(url), "{url} should be allowed");
         }
+    }
+
+    #[test]
+    fn a_converted_source_gets_the_id_its_extension_had() {
+        // Reference values computed with Python's hashlib.md5, the formula of `HttpSource.generateId`.
+        assert_eq!(extension_id("Mangakakalot", "en", 1), 2_528_986_671_771_677_900);
+        assert_eq!(extension_id("Asura Scans", "en", 1), 6_247_824_327_199_706_550);
+        assert_eq!(extension_id("Webtoons.com", "en", 2), 8_510_171_328_472_873_347);
     }
 
     #[test]

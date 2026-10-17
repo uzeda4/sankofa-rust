@@ -4,6 +4,15 @@ version.workspace = true
 edition.workspace = true
 license.workspace = true
 
+[features]
+default = ["html"]
+# HTML parsing with jsoup-style selectors (`sk_source_sdk::html`). JSON-only sources can turn it off.
+html = ["dep:sk-html"]
+
 [dependencies]
 serde = { version = "1.0.229", features = ["derive"] }
+base64 = "0.22"
+percent-encoding = "2"
 serde_json = "1.0.154"
+sk-html = { version = "0.1.0", path = "../sk-html", optional = true }
+url = "2"
