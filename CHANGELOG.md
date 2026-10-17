@@ -8,6 +8,21 @@ The text of the matching release on GitHub is what the app shows in **About > Wh
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-17
+
+### Added
+- The official Rust source repository comes pre-added and trusted (its key is pinned in the app): open
+  Settings > Browse > Rust sources and the sources are listed, ready to install. Removing it keeps it removed.
+- 36 sources in Rust in the official repository, among them MangaDex, MangaFire, Webtoons, Asura Scans, Arena Scans,
+  Asmodeus Scans, Kissmanga.in, Manga Demon, MangaFox, Mangakakalot, MurimScan, Read Comics Online and Luscious, in the
+  languages each one serves, with icons.
+- Rust sources: WebAssembly ABI v2 (selector helpers, cookies, rate limits per host, custom URLs) and shared theme
+  crates for sites that run the same engine (Madara, Zeist).
+- Rust sources screen: language filter for the available list, "Update all", "Install all shown" and "Uninstall all".
+
+### Fixed
+- Debug builds showed Komikku's yellow launcher icon; every build now uses the Sankofa mark.
+
 ## [0.1.0] - 2026-10-16
 
 ### Added
