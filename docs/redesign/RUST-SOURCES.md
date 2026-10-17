@@ -83,6 +83,12 @@ A chave privada (`chave.key`, a semente em hex) **não vai para o repositório**
 ### Verificado no aparelho
 Pacote adulterado (1 byte do módulo alterado): recusado na instalação ("o módulo não confere com o manifesto"). Pacote íntegro: o diálogo mostra a impressão digital `aca83acae150b852b62231082950406f`, a mesma que o `sk-pack` imprime; depois de confiar, a fonte instala e aparece em Navegar. Apagar a confiança e reabrir: a fonte some e o pacote aparece como não carregado. 8 testes do formato (round trip, hash, assinatura, chave trocada, lixo) rodam no PC.
 
+## Repositório oficial
+- **Endereço:** `https://uzeda4.github.io/sankofa-rust/index.skrepo` (GitHub Pages, ramo `gh-pages` deste repositório; conteúdo: `index.skrepo`, os pacotes `.sksource` e uma página de apresentação).
+- **Impressão digital que o app deve mostrar:** `aca83acae150b852b62231082950406f`. Se for outra, **não continue**.
+- Fontes: MangaDex (Rust) v2.
+- Para publicar uma versão nova: gere o pacote e o índice com `sk-pack` (**série maior que a anterior**), copie os dois arquivos para o ramo `gh-pages` e envie. O app só aceita série igual ou maior.
+
 ## Repositórios de fontes (`index.skrepo`)
 Um repositório é um arquivo assinado que lista pacotes. O app o baixa, mostra o que há, instala e atualiza.
 
@@ -97,7 +103,10 @@ Hospede `index.skrepo` e os `.sksource` na mesma pasta (qualquer servidor estát
 - **Cada abertura da tela** relê os índices e recusa: assinatura inválida, **chave diferente** da confirmada, e **série menor** que a última vista (impede reapresentar uma lista antiga). O pacote baixado ainda precisa bater com o SHA-256 do índice **e** ter assinatura de publicador válida e confiável.
 - **Atualizar:** o botão aparece quando o índice tem versão maior que a instalada.
 
-### Verificado no aparelho (servidor local pelo `adb reverse`)
+### Verificado no aparelho (servidor local pelo `adb reverse`; depois com o repositório oficial)
+Depois de publicado no GitHub Pages: o app leu o índice por HTTPS, mostrou a impressão digital `aca83aca…`, e instalou a MangaDex (Rust) v2 (série 3).
+
+Teste com o servidor local:
 Adicionar o repositório mostrou a impressão digital `aca83aca…`; a fonte apareceu em Disponíveis, instalou (v1) e, com o índice na série 2 e o pacote v2, o botão virou Atualizar e atualizou para v2. Ao servir de volta o índice da série 1, o app recusou: "o repositório serviu um índice mais antigo (série 1 < 2)", e manteve a v2 instalada. Testes no PC: 5 do formato do índice (ida e volta, byte alterado, assinatura de outra chave, lixo, URLs relativas).
 
 ## O que ainda não existe

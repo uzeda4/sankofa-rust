@@ -19,7 +19,9 @@ Mihon/Tachiyomi and TachiyomiSY) with three goals:
   Kotlin app through UniFFI. The interface is still Jetpack Compose.
 - **Sources written in Rust.** Besides Kotlin extensions, the app runs sources compiled to WebAssembly, installed from
   signed packages or from a signed repository index. A source cannot open sockets or files and cannot reach your local
-  network. See [docs/redesign/RUST-SOURCES.md](docs/redesign/RUST-SOURCES.md) to write one.
+  network. See [docs/redesign/RUST-SOURCES.md](docs/redesign/RUST-SOURCES.md) to write one. The official repository is
+  `https://uzeda4.github.io/sankofa-rust/index.skrepo` (Settings > Browse > Rust sources > Add repository; check that the
+  fingerprint shown is `aca83acae150b852b62231082950406f`).
 
 Everything Komikku does today (library, categories, trackers, downloads, backups, Kotlin extensions) is still here.
 
