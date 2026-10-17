@@ -1,8 +1,12 @@
 package eu.kanade.tachiyomi.source.rust
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.edit
 import eu.kanade.tachiyomi.BuildConfig
+import eu.kanade.tachiyomi.network.NetworkHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,6 +22,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
 import logcat.LogPriority
+import okhttp3.Request
 import tachiyomi.core.common.util.system.logcat
 import uniffi.sk_api.LoadReport
 import uniffi.sk_api.PackageInfo
@@ -121,11 +126,51 @@ object RustSources {
             RustSourceTrust.fingerprints(context).toList(),
         )
         reload(context)
+        RustSourceIcons.cache(context, listOf(entry))
     }
 
     fun uninstall(context: Context, fileName: String) {
         uninstallSource(directory(context).absolutePath, fileName)
         reload(context)
+    }
+}
+
+/**
+ * Icons of the sources a repository lists (PNG). They are downloaded when a repository is read or a source is installed
+ * from it, kept in `files/rust-source-icons` by source name, and shown in the Rust sources screen and in Browse.
+ */
+object RustSourceIcons {
+
+    private const val MAX_BYTES = 512 * 1024
+    private val bitmaps = ConcurrentHashMap<String, ImageBitmap>()
+
+    private fun file(context: Context, name: String) =
+        File(File(context.filesDir, "rust-source-icons"), name.lowercase().replace(Regex("[^a-z0-9]+"), "-").trim('-') + ".png")
+
+    /** Downloads the icons not on disk yet. Blocking; a failed download is skipped and retried next time. */
+    fun cache(context: Context, entries: List<RepoEntryInfo>) {
+        val client = Injekt.get<NetworkHelper>().client
+        entries.filter { it.iconUrl.startsWith("https://") }.distinctBy { it.name }.forEach { entry ->
+            val target = file(context, entry.name)
+            if (target.exists()) return@forEach
+            runCatching {
+                client.newCall(Request.Builder().url(entry.iconUrl).build()).execute().use { response ->
+                    check(response.isSuccessful) { "HTTP ${response.code}" }
+                    val bytes = response.body.source().readByteArray()
+                    check(bytes.size <= MAX_BYTES && BitmapFactory.decodeByteArray(bytes, 0, bytes.size) != null) { "not a usable picture" }
+                    target.parentFile?.mkdirs()
+                    target.writeBytes(bytes)
+                }
+            }.onFailure { logcat(LogPriority.WARN, it) { "Rust source icon ${entry.name}" } }
+        }
+    }
+
+    /** The icon of an installed Rust source, once it was downloaded. */
+    fun forSource(context: Context, sourceId: Long): ImageBitmap? {
+        val name = RustSources.sources.value.firstOrNull { it.id == sourceId }?.name ?: return null
+        bitmaps[name]?.let { return it }
+        val file = file(context, name).takeIf { it.exists() } ?: return null
+        return BitmapFactory.decodeFile(file.absolutePath)?.asImageBitmap()?.also { bitmaps[name] = it }
     }
 }
 
@@ -225,7 +270,11 @@ object RustSourceRepos {
     fun preview(url: String): RepoInfo = fetchRepoIndex(url, "", 0uL)
 
     /** Re-reads every repository, refusing a changed key or an older index; remembers the newest serial. Blocking. */
-    fun refresh(context: Context): List<RepoListing> = list(context).map { repo ->
+    fun refresh(context: Context): List<RepoListing> = refreshListings(context).also { listings ->
+        RustSourceIcons.cache(context, listings.flatMap { it.info?.sources.orEmpty() })
+    }
+
+    private fun refreshListings(context: Context): List<RepoListing> = list(context).map { repo ->
         runCatching { fetchRepoIndex(repo.url, repo.fingerprint, repo.serial.toULong()) }
             .onSuccess { info -> if (info.serial.toLong() > repo.serial) add(context, repo.copy(serial = info.serial.toLong())) }
             .fold(

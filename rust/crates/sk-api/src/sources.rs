@@ -186,6 +186,8 @@ pub struct RepoEntryInfo {
     pub package_url: String,
     pub sha256: String,
     pub size: u64,
+    /// Absolute URL of the source's icon, empty when the repository lists none.
+    pub icon_url: String,
 }
 
 #[derive(Debug, uniffi::Record)]
@@ -229,6 +231,7 @@ pub fn fetch_repo_index(url: String, expected_fingerprint: String, min_serial: u
                 package_url: repo::resolve_url(&url, &e.package),
                 sha256: e.sha256.clone(),
                 size: e.size,
+                icon_url: e.icon.as_deref().map(|i| repo::resolve_url(&url, i)).unwrap_or_default(),
             })
             .collect(),
         name: index.name,

@@ -2003,6 +2003,11 @@ data class RepoEntryInfo (
     var `sha256`: kotlin.String
     , 
     var `size`: kotlin.ULong
+    , 
+    /**
+     * Absolute URL of the source's icon, empty when the repository lists none.
+     */
+    var `iconUrl`: kotlin.String
     
 ){
     
@@ -2025,6 +2030,7 @@ public object FfiConverterTypeRepoEntryInfo: FfiConverterRustBuffer<RepoEntryInf
             FfiConverterString.read(buf),
             FfiConverterString.read(buf),
             FfiConverterULong.read(buf),
+            FfiConverterString.read(buf),
         )
     }
 
@@ -2034,7 +2040,8 @@ public object FfiConverterTypeRepoEntryInfo: FfiConverterRustBuffer<RepoEntryInf
             FfiConverterUInt.allocationSize(value.`version`) +
             FfiConverterString.allocationSize(value.`packageUrl`) +
             FfiConverterString.allocationSize(value.`sha256`) +
-            FfiConverterULong.allocationSize(value.`size`)
+            FfiConverterULong.allocationSize(value.`size`) +
+            FfiConverterString.allocationSize(value.`iconUrl`)
     )
 
     override fun write(value: RepoEntryInfo, buf: ByteBuffer) {
@@ -2044,6 +2051,7 @@ public object FfiConverterTypeRepoEntryInfo: FfiConverterRustBuffer<RepoEntryInf
             FfiConverterString.write(value.`packageUrl`, buf)
             FfiConverterString.write(value.`sha256`, buf)
             FfiConverterULong.write(value.`size`, buf)
+            FfiConverterString.write(value.`iconUrl`, buf)
     }
 }
 

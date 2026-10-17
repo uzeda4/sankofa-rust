@@ -90,7 +90,8 @@ Pacote adulterado (1 byte do módulo alterado): recusado na instalação ("o mó
 ## Repositório oficial
 - **Endereço:** `https://uzeda4.github.io/sankofa-rust/index.skrepo` (GitHub Pages, ramo `gh-pages` deste repositório; conteúdo: `index.skrepo`, os pacotes `.sksource` e uma página de apresentação).
 - **Impressão digital que o app deve mostrar:** `aca83acae150b852b62231082950406f`. Se for outra, **não continue**.
-- Fontes: MangaDex (Rust) v2.
+- Fontes (série 4): MangaDex (Rust) v2 e as 12 convertidas das extensões (Arena Scans, Asmodeus Scans, Asura Scans, Kissmanga.in, Luscious ×12 idiomas, Manga Demon, MangaFire ×7, MangaFox, Mangakakalot, MurimScan, Read Comics Online, Webtoons.com ×7): 36 pacotes, cada um com o ícone da extensão original (`rust/sources/<fonte>/icon.png`).
+- `rust/tools/publish-sources.ps1 -Key <chave> -Out <checkout do gh-pages> -Serial <n>` empacota e assina tudo, copia os ícones (`icons/`) e gera o `index.skrepo`; depois é só commit e push no `gh-pages`. O índice lista o ícone de cada fonte (`--icon "Nome=icons/x.png"` no `sk-pack index`); o app baixa os ícones ao ler o repositório ou instalar, mostra na tela de Fontes em Rust e em Navegar.
 - Para publicar uma versão nova: gere o pacote e o índice com `sk-pack` (**série maior que a anterior**), copie os dois arquivos para o ramo `gh-pages` e envie. O app só aceita série igual ou maior.
 
 ## Repositórios de fontes (`index.skrepo`)

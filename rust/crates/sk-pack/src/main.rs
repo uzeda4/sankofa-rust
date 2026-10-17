@@ -5,7 +5,7 @@
 //! sk-pack pack --key <key-file> --wasm <module.wasm> --name <name> --lang <lang> --version <n> \
 //!              --publisher <name> --out <file.sksource>
 //! sk-pack inspect <file.sksource>
-//! sk-pack index --key <key-file> --name <repo name> --serial <n> --out <index.skrepo> <a.sksource> [<b.sksource> ...]
+//! sk-pack index --key <key-file> --name <repo name> --serial <n> --out <index.skrepo> //!               [--icon "<source name>=<icon path relative to the index>" ...] <a.sksource> [<b.sksource> ...]
 //! ```
 //! The key file holds the 32-byte Ed25519 seed as hex. Keep it out of the repository: whoever has it can
 //! publish sources your users trust.
@@ -98,10 +98,15 @@ fn inspect(path: &str) -> Result<String, String> {
 
 /// Builds a signed repository index from packages; each entry's URL is the file name, relative to the index.
 fn index(args: &[String]) -> Result<String, String> {
-    let (mut f, mut files) = (HashMap::new(), Vec::new());
+    let (mut f, mut files, mut icons) = (HashMap::new(), Vec::new(), HashMap::new());
     let mut it = args.iter();
     while let Some(a) = it.next() {
         match a.strip_prefix("--") {
+            Some("icon") => {
+                let v = it.next().ok_or("--icon needs `name=path`")?;
+                let (name, path) = v.split_once('=').ok_or("--icon needs `name=path`")?;
+                icons.insert(name.to_string(), path.to_string());
+            }
             Some(k) => {
                 f.insert(k, it.next().ok_or(format!("--{k} needs a value"))?.as_str());
             }
@@ -117,6 +122,7 @@ fn index(args: &[String]) -> Result<String, String> {
         let bytes = fs::read(file).map_err(|e| format!("{file}: {e}"))?;
         let m = decode_and_verify(&bytes).map_err(|e| format!("{file}: {e}"))?.manifest;
         sources.push(repo::Entry {
+            icon: icons.get(&m.name).cloned(),
             name: m.name,
             lang: m.lang,
             version: m.version,

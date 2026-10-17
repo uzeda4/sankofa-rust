@@ -1,0 +1,57 @@
+# Packs every Rust source for every language it serves, signs the packages and the repository index, and leaves
+# them (with the icons) in a checkout of the `gh-pages` branch. It does not commit or push.
+#   .\tools\publish-sources.ps1 -Key D:\keys\rust-sources.key -Out D:\sankofa-pages -Serial 4
+# Build the modules first: cargo build --release --target wasm32-unknown-unknown -p sk-source-<name> ...
+param(
+    [Parameter(Mandatory)][string]$Key,
+    [Parameter(Mandatory)][string]$Out,
+    [Parameter(Mandatory)][int]$Serial,
+    [string]$RepoName = 'Sankofa Rust sources',
+    [string]$Publisher = 'Sankofa'
+)
+$ErrorActionPreference = 'Stop'
+$root = Resolve-Path "$PSScriptRoot\.."
+$pack = "$root\target\release\sk-pack.exe"
+if (-not (Test-Path $pack)) { throw "build the packer first: cargo build -p sk-pack --release" }
+$wasmDir = "$root\target\wasm32-unknown-unknown\release"
+
+# crate folder, name the source reports (the app matches installed sources by it), version, languages
+$all = @('en', 'ja', 'es', 'it', 'de', 'fr', 'zh', 'ko', 'other', 'th', 'all', 'pt-BR')
+$sources = @(
+    @{ Dir = 'arenascans'; Name = 'Arena Scans'; Version = 1; Langs = @('en') },
+    @{ Dir = 'asmotoon'; Name = 'Asmodeus Scans'; Version = 1; Langs = @('en') },
+    @{ Dir = 'asurascans'; Name = 'Asura Scans'; Version = 1; Langs = @('en') },
+    @{ Dir = 'kissmangain'; Name = 'Kissmanga.in'; Version = 1; Langs = @('en') },
+    @{ Dir = 'luscious'; Name = 'Luscious'; Version = 1; Langs = $all },
+    @{ Dir = 'mangademon'; Name = 'Manga Demon'; Version = 1; Langs = @('en') },
+    @{ Dir = 'mangafire'; Name = 'MangaFire'; Version = 1; Langs = @('en', 'ja', 'pt', 'es', 'es-419', 'fr', 'pt-BR') },
+    @{ Dir = 'mangafox'; Name = 'MangaFox'; Version = 1; Langs = @('en') },
+    @{ Dir = 'mangakakalot'; Name = 'Mangakakalot'; Version = 1; Langs = @('en') },
+    @{ Dir = 'murimscan'; Name = 'MurimScan'; Version = 1; Langs = @('en') },
+    @{ Dir = 'readcomicsonline'; Name = 'Read Comics Online'; Version = 1; Langs = @('en') },
+    @{ Dir = 'webtoons'; Name = 'Webtoons.com'; Version = 1; Langs = @('en', 'de', 'th', 'fr', 'es', 'id', 'zh-Hant') }
+)
+
+New-Item -ItemType Directory -Force "$Out\icons" | Out-Null
+$kept = @('mangadex-rust-2.sksource')   # the first source, published before this script; stays as it is
+$icons = @()
+foreach ($s in $sources) {
+    $wasm = "$wasmDir\sk_source_$($s.Dir).wasm"
+    if (-not (Test-Path $wasm)) { throw "missing $wasm" }
+    Copy-Item "$root\sources\$($s.Dir)\icon.png" "$Out\icons\$($s.Dir).png" -Force
+    $icons += '--icon'
+    $icons += "$($s.Name)=icons/$($s.Dir).png"
+    foreach ($lang in $s.Langs) {
+        $file = "$($s.Dir)-$($lang.ToLower())-$($s.Version).sksource"
+        & $pack pack --key $Key --wasm $wasm --name $s.Name --lang $lang --version $s.Version --publisher $Publisher --out "$Out\$file" | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw "pack failed for $file" }
+        $kept += $file
+    }
+}
+# older packages of these sources are not listed any more
+Get-ChildItem "$Out\*.sksource" | Where-Object { $kept -notcontains $_.Name } | Remove-Item
+Push-Location $Out
+try {
+    & $pack index --key $Key --name $RepoName --serial $Serial --out index.skrepo @icons ($kept | Sort-Object)
+    if ($LASTEXITCODE -ne 0) { throw 'index failed' }
+} finally { Pop-Location }

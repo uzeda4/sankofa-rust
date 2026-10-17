@@ -139,6 +139,7 @@ class RustSourcesScreen : Screen() {
                         val installed = report?.sources?.firstOrNull { it.name == entry.name && it.lang == entry.lang }
                         val upToDate = installed != null && installed.version >= entry.version
                         TextPreferenceWidget(
+                            icon = entry.iconUrl.ifEmpty { null },
                             title = "${entry.name} (${entry.lang.uppercase()})",
                             subtitle = if (installed != null) {
                                 stringResource(KMR.strings.rust_repos_installed, installed.version.toInt(), entry.version.toInt())
@@ -180,6 +181,7 @@ class RustSourcesScreen : Screen() {
                     item(key = source.id) {
                         val info = report?.sources?.firstOrNull { it.id == source.id }
                         TextPreferenceWidget(
+                            icon = available.firstOrNull { (_, e) -> e.name == source.name && e.iconUrl.isNotEmpty() }?.second?.iconUrl,
                             title = "${source.name} (${source.lang.uppercase()})",
                             subtitle = if (info == null || info.fingerprint.isEmpty()) {
                                 stringResource(KMR.strings.rust_sources_unsigned)

@@ -27,6 +27,9 @@ pub struct Entry {
     /// SHA-256 of the `.sksource` file, hex.
     pub sha256: String,
     pub size: u64,
+    /// Absolute URL, or relative to the index URL, of the source's icon (a PNG). Older indexes have none.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub icon: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -118,6 +121,7 @@ mod tests {
                 package: "demo.sksource".into(),
                 sha256: "ab".repeat(32),
                 size: 10,
+                icon: Some("icons/demo.png".into()),
             }],
         }
     }

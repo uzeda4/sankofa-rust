@@ -2,6 +2,7 @@ package eu.kanade.presentation.more.settings.widget
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Preview
 import androidx.compose.material3.Icon
@@ -10,6 +11,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -18,6 +20,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import eu.kanade.presentation.theme.TachiyomiPreviewTheme
 import tachiyomi.presentation.core.util.secondaryItemAlpha
 
@@ -27,7 +31,7 @@ fun TextPreferenceWidget(
     title: String? = null,
     subtitle: CharSequence? = null,
     // KMK -->
-    /** Can be either [ImageVector] or [Painter] */
+    /** Can be an [ImageVector], a [Painter] or the address (String) of a picture shown untinted */
     icon: Any? = null,
     // KMK <--
     iconTint: Color = MaterialTheme.colorScheme.primary,
@@ -77,6 +81,12 @@ fun TextPreferenceWidget(
                     painter = icon,
                     tint = iconTint,
                     contentDescription = null,
+                )
+            } else if (icon != null && icon is String) {
+                AsyncImage(
+                    model = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp).clip(MaterialTheme.shapes.small),
                 )
                 // KMK <--
             }
