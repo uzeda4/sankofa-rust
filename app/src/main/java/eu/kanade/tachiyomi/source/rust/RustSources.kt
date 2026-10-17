@@ -118,20 +118,21 @@ object RustSources {
     }
 
     /** Downloads a package listed in a repository and installs it (signature and trusted publisher required). */
-    fun installFromRepo(context: Context, entry: RepoEntryInfo) {
+    fun installFromRepo(context: Context, entry: RepoEntryInfo, reload: Boolean = true) {
         installRepoPackage(
             entry.packageUrl,
             entry.sha256,
             directory(context).absolutePath,
             RustSourceTrust.fingerprints(context).toList(),
         )
-        reload(context)
+        if (reload) reload(context)
         RustSourceIcons.cache(context, listOf(entry))
     }
 
-    fun uninstall(context: Context, fileName: String) {
+    /** [reload] false when removing several: the caller reloads once at the end. */
+    fun uninstall(context: Context, fileName: String, reload: Boolean = true) {
         uninstallSource(directory(context).absolutePath, fileName)
-        reload(context)
+        if (reload) reload(context)
     }
 }
 

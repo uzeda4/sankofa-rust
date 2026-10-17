@@ -49,6 +49,7 @@ import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.stringResource
 import uniffi.sk_api.PackageInfo
 import uniffi.sk_api.Rejected
+import uniffi.sk_api.RepoEntryInfo
 import uniffi.sk_api.RepoInfo
 import uniffi.sk_api.SkException
 import java.util.Locale
@@ -74,10 +75,32 @@ class RustSourcesScreen : Screen() {
         var preview by remember { mutableStateOf<Pair<String, RepoInfo>?>(null) }
         var busyEntry by remember { mutableStateOf<String?>(null) }
         var languageFilter by remember { mutableStateOf(RustSourceRepos.languageFilter(context)) }
+        var confirmInstallAll by remember { mutableStateOf(false) }
+        var confirmRemoveAll by remember { mutableStateOf(false) }
+        val available = listings.flatMap { l -> l.info?.sources.orEmpty().map { l to it } }
+        fun installedOf(e: RepoEntryInfo) = report?.sources?.firstOrNull { it.name == e.name && it.lang == e.lang }
+        val toInstall = available.map { it.second }
+            .filter { (languageFilter.isEmpty() || it.lang in languageFilter) && installedOf(it) == null }
+        val toUpdate = available.map { it.second }.filter { e -> installedOf(e)?.let { it.version < e.version } == true }
+        val toRemove = report?.sources.orEmpty().filter { s -> available.any { (_, e) -> e.name == s.name && e.lang == s.lang } }
         val refresh: () -> Unit = {
             scope.launch { listings = withContext(Dispatchers.IO) { RustSourceRepos.refresh(context) } }
         }
         LaunchedEffect(Unit) { refresh() }
+
+        /** Installs or updates [entries] one after another and reloads once; says how many worked. */
+        fun installAll(entries: List<RepoEntryInfo>) {
+            busyEntry = "bulk"
+            scope.launch {
+                var failed = 0
+                withContext(Dispatchers.IO) {
+                    entries.forEach { e -> runCatching { RustSources.installFromRepo(context, e, reload = false) }.onFailure { failed++ } }
+                    RustSources.reload(context)
+                }
+                context.toast(context.stringResource(KMR.strings.rust_manage_done, entries.size - failed, failed))
+                busyEntry = null
+            }
+        }
 
         val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             if (uri == null) return@rememberLauncherForActivityResult
@@ -139,8 +162,29 @@ class RustSourcesScreen : Screen() {
                         )
                     }
                 }
-                val available = listings.flatMap { l -> l.info?.sources.orEmpty().map { l to it } }
                 if (available.isNotEmpty()) {
+                    item { PreferenceGroupHeader(title = stringResource(KMR.strings.rust_manage_header)) }
+                    item(key = "manage-update") {
+                        TextPreferenceWidget(
+                            title = stringResource(KMR.strings.rust_manage_update_all),
+                            subtitle = stringResource(KMR.strings.rust_manage_update_all_summary, toUpdate.size),
+                            onPreferenceClick = if (toUpdate.isNotEmpty() && busyEntry == null) ({ installAll(toUpdate) }) else null,
+                        )
+                    }
+                    item(key = "manage-install") {
+                        TextPreferenceWidget(
+                            title = stringResource(KMR.strings.rust_manage_install_all),
+                            subtitle = stringResource(KMR.strings.rust_manage_install_all_summary, toInstall.size),
+                            onPreferenceClick = if (toInstall.isNotEmpty() && busyEntry == null) ({ confirmInstallAll = true }) else null,
+                        )
+                    }
+                    item(key = "manage-remove") {
+                        TextPreferenceWidget(
+                            title = stringResource(KMR.strings.rust_manage_remove_all),
+                            subtitle = stringResource(KMR.strings.rust_manage_remove_all_summary, toRemove.size),
+                            onPreferenceClick = if (toRemove.isNotEmpty() && busyEntry == null) ({ confirmRemoveAll = true }) else null,
+                        )
+                    }
                     item { PreferenceGroupHeader(title = stringResource(KMR.strings.rust_repos_available)) }
                 }
                 val languages = available.map { it.second.lang }.distinct().sortedBy { languageName(context, it).lowercase() }
@@ -261,6 +305,47 @@ class RustSourcesScreen : Screen() {
                     }
                 }
             }
+        }
+
+        if (confirmInstallAll) {
+            AlertDialog(
+                onDismissRequest = { confirmInstallAll = false },
+                text = { Text(stringResource(KMR.strings.rust_manage_confirm_install, toInstall.size)) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            confirmInstallAll = false
+                            installAll(toInstall)
+                        },
+                    ) { Text(stringResource(KMR.strings.rust_sources_install_now)) }
+                },
+                dismissButton = {
+                    TextButton(onClick = { confirmInstallAll = false }) { Text(stringResource(MR.strings.action_cancel)) }
+                },
+            )
+        }
+
+        if (confirmRemoveAll) {
+            AlertDialog(
+                onDismissRequest = { confirmRemoveAll = false },
+                text = { Text(stringResource(KMR.strings.rust_manage_confirm_remove, toRemove.size)) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            confirmRemoveAll = false
+                            scope.launch {
+                                withContext(Dispatchers.IO) {
+                                    toRemove.forEach { runCatching { RustSources.uninstall(context, it.fileName, reload = false) } }
+                                    RustSources.reload(context)
+                                }
+                            }
+                        },
+                    ) { Text(stringResource(KMR.strings.rust_sources_uninstall)) }
+                },
+                dismissButton = {
+                    TextButton(onClick = { confirmRemoveAll = false }) { Text(stringResource(MR.strings.action_cancel)) }
+                },
+            )
         }
 
         addUrl?.let { url ->
