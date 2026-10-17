@@ -1,9 +1,15 @@
 package eu.kanade.presentation.more.settings.screen.browse
 
+import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -19,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import eu.kanade.presentation.components.AppBar
@@ -44,6 +51,7 @@ import uniffi.sk_api.PackageInfo
 import uniffi.sk_api.Rejected
 import uniffi.sk_api.RepoInfo
 import uniffi.sk_api.SkException
+import java.util.Locale
 
 // KMK -->
 /** Installs, trusts and removes sources written in Rust. See `docs/redesign/RUST-SOURCES.md`. */
@@ -65,6 +73,7 @@ class RustSourcesScreen : Screen() {
         var addUrl by remember { mutableStateOf<String?>(null) }
         var preview by remember { mutableStateOf<Pair<String, RepoInfo>?>(null) }
         var busyEntry by remember { mutableStateOf<String?>(null) }
+        var languageFilter by remember { mutableStateOf(RustSourceRepos.languageFilter(context)) }
         val refresh: () -> Unit = {
             scope.launch { listings = withContext(Dispatchers.IO) { RustSourceRepos.refresh(context) } }
         }
@@ -134,7 +143,37 @@ class RustSourcesScreen : Screen() {
                 if (available.isNotEmpty()) {
                     item { PreferenceGroupHeader(title = stringResource(KMR.strings.rust_repos_available)) }
                 }
-                available.forEach { (l, entry) ->
+                val languages = available.map { it.second.lang }.distinct().sortedBy { languageName(context, it).lowercase() }
+                if (languages.size > 1) {
+                    item(key = "avail-languages") {
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            item {
+                                FilterChip(
+                                    selected = languageFilter.isEmpty(),
+                                    onClick = {
+                                        languageFilter = emptySet()
+                                        RustSourceRepos.setLanguageFilter(context, languageFilter)
+                                    },
+                                    label = { Text(stringResource(KMR.strings.rust_repos_lang_all)) },
+                                )
+                            }
+                            items(languages) { lang ->
+                                FilterChip(
+                                    selected = lang in languageFilter,
+                                    onClick = {
+                                        languageFilter = if (lang in languageFilter) languageFilter - lang else languageFilter + lang
+                                        RustSourceRepos.setLanguageFilter(context, languageFilter)
+                                    },
+                                    label = { Text(languageName(context, lang)) },
+                                )
+                            }
+                        }
+                    }
+                }
+                available.filter { languageFilter.isEmpty() || it.second.lang in languageFilter }.forEach { (l, entry) ->
                     item(key = "avail-${l.repo.url}-${entry.name}-${entry.lang}") {
                         val installed = report?.sources?.firstOrNull { it.name == entry.name && it.lang == entry.lang }
                         val upToDate = installed != null && installed.version >= entry.version
@@ -346,6 +385,13 @@ class RustSourcesScreen : Screen() {
 
     /** UniFFI prints errors as "reason=..."; show just the reason. */
     private fun Throwable.readable(): String = (this as? SkException.Package)?.reason ?: message.orEmpty()
+
+    /** `en` as "English", `es-419` as "Spanish (Latin America)", the special codes by name. */
+    private fun languageName(context: Context, lang: String): String = when (lang) {
+        "all" -> context.stringResource(KMR.strings.rust_repos_lang_multi)
+        "other" -> context.stringResource(KMR.strings.rust_repos_lang_other)
+        else -> Locale.forLanguageTag(lang).getDisplayName(Locale.getDefault()).replaceFirstChar { it.uppercase() }.ifBlank { lang }
+    }
 
     private companion object {
         const val FINGERPRINT_SHORT = 8

@@ -129,6 +129,9 @@ The signature is valid. A source sees what you search and read through it, so on
     <string name="rust_repos_summary">Serial %1$d · %2$d sources · %3$s</string>
     <string name="rust_repos_error">Could not read: %1$s</string>
     <string name="rust_repos_available">Available</string>
+    <string name="rust_repos_lang_all">All</string>
+    <string name="rust_repos_lang_multi">Multi-language</string>
+    <string name="rust_repos_lang_other">Other</string>
     <string name="rust_repos_installed">Installed v%1$d · repository has v%2$d</string>
     <string name="rust_repos_update">Update</string>
     <string name="rust_sources_installed_header">Installed</string>

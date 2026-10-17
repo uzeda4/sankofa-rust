@@ -251,6 +251,7 @@ object RustSourceRepos {
 
     private const val PREFS = "rust_source_repos"
     private const val KEY = "repos"
+    private const val LANGS_KEY = "language_filter"
 
     fun list(context: Context): List<RustRepo> = runCatching {
         Json.decodeFromString<List<RustRepo>>(
@@ -261,6 +262,14 @@ object RustSourceRepos {
     fun add(context: Context, repo: RustRepo) = save(context, list(context).filterNot { it.url == repo.url } + repo)
 
     fun remove(context: Context, url: String) = save(context, list(context).filterNot { it.url == url })
+
+    /** The languages the user narrowed the available sources to; empty shows every language. */
+    fun languageFilter(context: Context): Set<String> =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getStringSet(LANGS_KEY, emptySet()).orEmpty()
+
+    fun setLanguageFilter(context: Context, langs: Set<String>) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit { putStringSet(LANGS_KEY, langs) }
+    }
 
     private fun save(context: Context, repos: List<RustRepo>) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit { putString(KEY, Json.encodeToString(repos)) }
