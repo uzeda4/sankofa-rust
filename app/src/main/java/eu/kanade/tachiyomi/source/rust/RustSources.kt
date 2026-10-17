@@ -253,12 +253,34 @@ object RustSourceRepos {
     private const val PREFS = "rust_source_repos"
     private const val KEY = "repos"
     private const val LANGS_KEY = "language_filter"
+    private const val SEEDED_KEY = "official_seeded"
 
-    fun list(context: Context): List<RustRepo> = runCatching {
-        Json.decodeFromString<List<RustRepo>>(
-            context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY, null) ?: "[]",
-        )
-    }.getOrDefault(emptyList())
+    /** The project's own repository; its key is pinned here, so it is added (and trusted) without asking. */
+    val OFFICIAL = RustRepo(
+        url = "https://uzeda4.github.io/sankofa-rust/index.skrepo",
+        name = "Sankofa Rust sources",
+        fingerprint = "aca83acae150b852b62231082950406f",
+    )
+
+    fun list(context: Context): List<RustRepo> {
+        seedOfficial(context)
+        return runCatching {
+            Json.decodeFromString<List<RustRepo>>(
+                context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY, null) ?: "[]",
+            )
+        }.getOrDefault(emptyList())
+    }
+
+    /** Once per install: a repository the user removes afterwards stays removed, one added by hand keeps its serial. */
+    private fun seedOfficial(context: Context) {
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        if (prefs.getBoolean(SEEDED_KEY, false)) return
+        prefs.edit { putBoolean(SEEDED_KEY, true) }
+        if (list(context).none { it.url == OFFICIAL.url }) {
+            RustSourceTrust.trust(context, OFFICIAL.fingerprint)
+            add(context, OFFICIAL)
+        }
+    }
 
     fun add(context: Context, repo: RustRepo) = save(context, list(context).filterNot { it.url == repo.url } + repo)
 
