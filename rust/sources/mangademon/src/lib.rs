@@ -122,9 +122,9 @@ impl Source for MangaDemon {
         ]
     }
 
-    fn update(&self, manga: &Manga, _fetch_details: bool, _fetch_chapters: bool) -> Result<Update> {
+    fn update(&self, manga: &Manga, fetch_details: bool, fetch_chapters: bool) -> Result<Update> {
         let doc = get(&absolute(BASE, &manga.url)).send()?.html();
-        Ok(Update { manga: Some(parse_details(&doc, manga)), chapters: Some(parse_chapters(&doc)) })
+        Ok(Update { manga: fetch_details.then(|| parse_details(&doc, manga)), chapters: fetch_chapters.then(|| parse_chapters(&doc)) })
     }
 
     fn details(&self, manga: &Manga) -> Result<Manga> {
@@ -181,7 +181,17 @@ fn parse_details(doc: &Document, previous: &Manga) -> Manga {
     manga.thumbnail_url = info.select_first("div#manga-page img").map(|i| i.abs_url("src"));
     manga.genre = info.select("div.genres-list > li").each_text();
     manga.description = info.select_first("div#manga-info-rightColumn > div > div.white-font").map(|d| d.text());
-    let stat = |label: &str| info.select(&format!("div#manga-info-stats > div:has(> li:eq(0):contains({label})) > li:eq(1)")).text();
+    // `div#manga-info-stats > div:has(> li:eq(0):contains(label)) > li:eq(1)`, walked by hand: as a selector it costs
+    // three times a whole page parse on a title with thousands of chapters
+    let stats = info.select_first("div#manga-info-stats");
+    let stat = |label: &str| {
+        let rows = stats.iter().flat_map(|s| s.children()).filter(|d| d.tag_name() == "div");
+        let mut found = rows.filter_map(|row| {
+            let cells: Vec<_> = row.children().into_iter().filter(|c| c.tag_name() == "li").collect();
+            (cells.first()?.text().contains(label)).then(|| cells.get(1).map(|c| c.text()).unwrap_or_default())
+        });
+        found.next().unwrap_or_default()
+    };
     let author = stat("Author");
     manga.author = Some(author).filter(|a| !a.to_lowercase().contains("updating"));
     let status = stat("Status").to_lowercase();

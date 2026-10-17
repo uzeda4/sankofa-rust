@@ -21,9 +21,9 @@ import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
-import okhttp3.Interceptor
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Protocol
 import okhttp3.Request
@@ -186,8 +186,15 @@ class RustImageInterceptor : Interceptor {
     private fun text(op: JsonObject): Bitmap {
         val width = 1080
         val pad = 56
-        val title = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.BLACK; textSize = 56f; isFakeBoldText = true }
-        val body = TextPaint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.BLACK; textSize = 44f }
+        val title = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.BLACK
+            textSize = 56f
+            isFakeBoldText = true
+        }
+        val body = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.BLACK
+            textSize = 44f
+        }
         val inner = width - pad * 2
         fun layout(text: String, paint: TextPaint) =
             StaticLayout.Builder.obtain(text, 0, text.length, paint, inner).setLineSpacing(8f, 1f).setAlignment(Layout.Alignment.ALIGN_NORMAL).build()

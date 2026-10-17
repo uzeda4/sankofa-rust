@@ -3,22 +3,20 @@ package eu.kanade.tachiyomi.source.rust
 import android.content.Context
 import androidx.core.content.edit
 import eu.kanade.tachiyomi.BuildConfig
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.serialization.Serializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
-import uy.kohesive.injekt.Injekt
-import uy.kohesive.injekt.api.get
 import logcat.LogPriority
 import tachiyomi.core.common.util.system.logcat
 import uniffi.sk_api.LoadReport
@@ -31,6 +29,8 @@ import uniffi.sk_api.installSourcePackage
 import uniffi.sk_api.loadRustSources
 import uniffi.sk_api.setHttpBridge
 import uniffi.sk_api.uninstallSource
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import uniffi.sk_api.installFromRepo as installRepoPackage
@@ -67,7 +67,7 @@ object RustSources {
         }.onSuccess { report ->
             _report.value = report
             _sources.value = report.sources.map(::RustSource)
-            logcat(LogPriority.INFO) { "Rust sources loaded: ${report.sources.joinToString { "${it.name} (${it.lang}) #${it.id}" }}; rejected: ${report.rejected.size}" }
+            logcat(LogPriority.INFO) { "Rust sources loaded: ${report.sources.joinToString { "${it.name} (${it.lang}) #${it.id}" }}; rejected: ${report.rejected.joinToString { "${it.fileName}: ${it.reason}" }}" }
         }.onFailure { logcat(LogPriority.WARN, it) { "Rust sources unavailable" } }
     }
 

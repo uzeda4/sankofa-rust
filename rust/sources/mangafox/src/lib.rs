@@ -270,7 +270,8 @@ mod tests {
 
     #[test]
     fn the_id_is_the_one_the_extension_had_on_the_device() {
-        assert_eq!(sk_source::extension_id("MangaFox", "en", 1), 6_484_561_431_658_238_800);
+        let info = MangaFox.info();
+        assert_eq!(sk_source::extension_id(&info.name, &info.lang, info.version_id), 6_484_561_431_658_238_800);
     }
 
     #[test]

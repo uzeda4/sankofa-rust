@@ -295,6 +295,8 @@ fn instantiate(
     };
     // An unsigned module has no manifest; it speaks for itself.
     let lang = if install_lang.is_empty() { i["lang"].as_str().unwrap_or_default() } else { install_lang };
+    // a raw module for a package installed per language (Webtoons, MangaFire) has no language to be installed for: debug builds use English
+    let lang = if lang.is_empty() && fp.is_empty() { "en" } else { lang };
     if lang.is_empty() {
         return Err(bad("the source did not report a language".into()));
     }

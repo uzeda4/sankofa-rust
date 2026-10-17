@@ -12,10 +12,17 @@ impl Http for File {
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let wasm = std::fs::read(&args[1]).unwrap();
-    let mut s = WasmSource::load(&wasm, Arc::new(File(args[2].clone()))).unwrap();
+    // `live` as the second argument runs against the real sites through curl (needs `--features testing`)
+    #[cfg(feature = "testing")]
+    let http: Arc<dyn Http> = if args[2] == "live" { Arc::new(sk_source::testing::Curl::default()) } else { Arc::new(File(args[2].clone())) };
+    #[cfg(not(feature = "testing"))]
+    let http: Arc<dyn Http> = Arc::new(File(args[2].clone()));
+    let mut s = WasmSource::load(&wasm, http).unwrap();
     s.set_fuel_per_call(u64::MAX / 2);
     let t = std::time::Instant::now();
-    let r = s.call(r#"{"op":"popular","page":1}"#).unwrap();
-    println!("{} ms; {r}", t.elapsed().as_millis());
+    // a context (language, settings) can be sent with every call: the fourth argument is the request, the fifth the `ctx`
+    let op = args.get(3).map(String::as_str).unwrap_or(r#"{"op":"popular","page":1}"#);
+    let r = s.call(op).unwrap();
+    println!("{} ms; {}", t.elapsed().as_millis(), &r[..r.len().min(300)]);
     println!("fuel used: {}", s.fuel_used());
 }

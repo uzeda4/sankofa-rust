@@ -20,7 +20,9 @@ fn ids_are_the_ones_the_extensions_had_on_the_device() {
         ("pt-BR", 7_842_137_233_968_841_729),
         ("es", 8_098_539_940_032_331_958),
     ] {
-        assert_eq!(sk_source::extension_id("MangaFire", lang, 1), id, "{lang}");
+        set_context(lang, &[]);
+        let info = MangaFire.info();
+        assert_eq!(sk_source::extension_id(&info.name, &info.lang, info.version_id), id, "{lang}");
     }
 }
 

@@ -24,7 +24,9 @@ fn mock_owned(body: String) {
 fn ids_are_the_ones_the_extensions_had_on_the_device() {
     // generated for en, de, th, fr, es; the other two keep fixed ids
     for (lang, id) in [("en", 2_522_335_540_328_470_744_i64), ("de", 1_486_822_823_904_297_379), ("th", 3_330_861_233_813_615_504), ("fr", 8_251_758_253_314_457_060), ("es", 8_664_735_734_660_636_295)] {
-        assert_eq!(sk_source::extension_id("Webtoons.com", lang, 1), id, "{lang}");
+        set_context(lang, &[]);
+        let info = Webtoons.info();
+        assert_eq!(sk_source::extension_id(&info.name, &info.lang, info.version_id), id, "{lang}");
     }
     set_context("id", &[]);
     assert_eq!(Webtoons.info().id, 8_749_627_068_478_740_298);

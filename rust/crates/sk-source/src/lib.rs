@@ -46,6 +46,7 @@ fn yes() -> bool {
 
 /// What the host answers: `error` is set instead of a status when the request could not be made.
 #[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
 pub struct HttpReply {
     pub status: u16,
     pub headers: Vec<(String, String)>,

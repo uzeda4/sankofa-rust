@@ -539,6 +539,11 @@ impl VolumeDto {
     }
 }
 
+thread_local! {
+    // compiled once: a pattern compiled per chapter costs more than everything else on a title with thousands of them
+    static NUMBER_IN_NAME: Regex = Regex::new(r"(?i)\b(?:ch(?:\.|apter)?|ep(?:\.|isode)?)\s?(\d+(?:\.\d+)?)").expect("a valid pattern");
+}
+
 #[derive(Deserialize)]
 struct ChapterDto {
     id: i64,
@@ -557,8 +562,7 @@ impl ChapterDto {
             None => (self.number, format!("Ch. {n}")),
             Some(name) => {
                 // "Chapter 12.5: …": the number the title itself states wins over the listed one
-                let re = Regex::new(r"(?i)\b(?:ch(?:\.|apter)?|ep(?:\.|isode)?)\s?(\d+(?:\.\d+)?)").expect("a valid pattern");
-                match re.captures(name).ok().flatten().and_then(|c| c[1].parse::<f32>().ok()) {
+                match NUMBER_IN_NAME.with(|re| re.captures(name).ok().flatten().and_then(|c| c[1].parse::<f32>().ok())) {
                     None => (self.number, format!("Ch. {n} - {name}")),
                     Some(found) => (found, name.to_string()),
                 }

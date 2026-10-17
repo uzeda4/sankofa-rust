@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/*", "sources/mangadex", "sources/mangakakalot", "sources/murimscan", "sources/arenascans", "sources/asmotoon", "sources/mangafox", "sources/mangademon", "sources/webtoons", "sources/asurascans", "sources/mangafire", "sources/bench"]
+members = ["crates/*", "sources/mangadex", "sources/mangakakalot", "sources/murimscan", "sources/arenascans", "sources/asmotoon", "sources/mangafox", "sources/mangademon", "sources/webtoons", "sources/asurascans", "sources/mangafire", "sources/kissmangain", "sources/readcomicsonline", "sources/luscious", "sources/bench"]
 # The host has no C compiler (GNU toolchain only); crates with C code build for Android with `-p`.
 default-members = ["crates/sk-model"]
 

@@ -22,7 +22,7 @@ pub struct RateLimit {
     pub host: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Info {
     pub name: String,
     /// Language code or `all`. A package installed for several languages reports the one it was installed for
@@ -62,6 +62,28 @@ pub struct Info {
     /// what is stored).
     #[serde(default)]
     pub custom_urls: bool,
+}
+
+impl Default for Info {
+    /// `version_id` is 1 here as it is when a module's answer leaves it out, so `..Default::default()` keeps the id an extension of the same name had.
+    fn default() -> Self {
+        Self {
+            name: String::new(),
+            lang: String::new(),
+            base_url: String::new(),
+            mirrors: Vec::new(),
+            supports_latest: false,
+            id: 0,
+            version_id: 1,
+            supports_filter_fetching: false,
+            supports_related: false,
+            rate_limit: None,
+            prefs: Vec::new(),
+            headers: Vec::new(),
+            cookies: Vec::new(),
+            custom_urls: false,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

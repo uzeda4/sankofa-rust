@@ -326,7 +326,10 @@ fn parse_chapter_date<T: Theme>(s: &str) -> i64 {
 
 /// `(a|one|N) unit ago`, counted back from `now_ms` (seconds and milliseconds dropped, like the extension).
 fn relative(s: &str, now_ms: i64) -> i64 {
-    let Ok(Some(c)) = Regex::new(r"(a|one|\d+)\s*(\w+)\s+ago").unwrap().captures(s) else { return 0 };
+    thread_local! {
+        static AGO: Regex = Regex::new(r"(a|one|\d+)\s*(\w+)\s+ago").unwrap();
+    }
+    let Ok(Some(c)) = AGO.with(|re| re.captures(s)) else { return 0 };
     let amount = match &c[1] {
         "a" | "one" => 1,
         n => match n.parse::<i64>() {

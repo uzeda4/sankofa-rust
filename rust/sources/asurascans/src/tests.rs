@@ -18,7 +18,8 @@ fn mock(f: impl Fn(&str) -> Option<&'static str> + 'static) {
 
 #[test]
 fn the_id_is_the_one_the_extension_had_on_the_device() {
-    assert_eq!(sk_source::extension_id("Asura Scans", "en", 1), 6_247_824_327_199_706_550);
+    let info = AsuraScans.info();
+    assert_eq!(sk_source::extension_id(&info.name, &info.lang, info.version_id), 6_247_824_327_199_706_550);
 }
 
 #[test]

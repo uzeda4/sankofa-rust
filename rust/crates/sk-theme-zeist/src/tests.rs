@@ -111,3 +111,10 @@ fn helpers() {
     assert_eq!(parse_status::<Test>(" Em lançamento "), 1);
     assert_eq!(parse_status::<Test>("Dropado"), 5);
 }
+
+#[test]
+fn a_page_with_neither_feed_layout_is_labelled_with_its_title() {
+    let doc = Document::parse("<main><h1>The Lone Necromancer</h1></main>", "https://blog.test/p.html");
+    let url = chapter_feed_url::<Test>(&doc, "The Lone Necromancer").unwrap();
+    assert!(url.contains("/-/Chapter/The%20Lone%20Necromancer"), "{url}");
+}

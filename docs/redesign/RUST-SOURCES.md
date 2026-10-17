@@ -10,7 +10,7 @@ O Sankofa Rust aceita dois tipos de fonte:
 As duas aparecem juntas em Navegar > Fontes; a fonte em Rust herda o mesmo caminho de imagens do app (`HttpSource`), com cookies, Cloudflare e `Referer`.
 
 ## Como escrever uma fonte
-1. Crie um crate `cdylib` que dependa de `sk-source-sdk` (em `rust/crates/sk-source-sdk`).
+1. Crie um crate `cdylib` que dependa de `sk-source-sdk` (em `rust/crates/sk-source-sdk`). Para um site de um tema conhecido (MangaThemesia, Madara, Zeist, Keyoapp, MangaBox), dependa do crate do tema (`sk-theme-*`) e só declare o que muda: ~10-50 linhas.
 2. Implemente `Source` e exporte com `export_source!`:
 
 ```rust
@@ -20,45 +20,49 @@ use sk_source_sdk::*;
 struct MySource;
 
 impl Source for MySource {
-    fn info(&self) -> Info { Info { name: "Minha fonte".into(), lang: "en".into(), base_url: "https://exemplo.org".into(), supports_latest: false, id: 0 } }
-    fn popular(&self, page: u32) -> Result<MangaPage> { /* http_get(...) e parse */ }
-    fn details(&self, url: &str) -> Result<Manga> { /* ... */ }
-    fn chapters(&self, url: &str) -> Result<Vec<Chapter>> { /* ... */ }
-    fn pages(&self, chapter_url: &str) -> Result<Vec<Page>> { /* ... */ }
+    fn info(&self) -> Info { Info { name: "Minha fonte".into(), lang: "en".into(), base_url: "https://exemplo.org".into(), ..Default::default() } }
+    fn popular(&self, page: u32) -> Result<MangaPage> { /* get(...).send()?.html() e seletores */ }
+    fn details(&self, manga: &Manga) -> Result<Manga> { /* ... */ }
+    fn chapters(&self, manga: &Manga) -> Result<Vec<Chapter>> { /* ... */ }
+    fn pages(&self, chapter: &Chapter) -> Result<Vec<Page>> { /* ... */ }
 }
 export_source!(MySource);
 ```
 3. Compile: `cargo build --release --target wasm32-unknown-unknown` (uma vez: `rustup target add wasm32-unknown-unknown`).
-4. Assine e empacote (próxima seção) e instale pelo app em **Configurações > Navegar > Fontes em Rust > Instalar de um arquivo**.
+4. No PC, teste com HTML salvo do site (`set_mock_http`, `include_str!`); no aparelho de desenvolvimento, `rust/tools/push-sources.ps1` copia os `.wasm` para o app de depuração e o app roda um teste de fumaça (popular, últimos, busca, título, capítulo, primeira imagem) no log (`Rust smoke`).
+5. Assine e empacote (próxima seção) e instale pelo app em **Configurações > Navegar > Fontes em Rust > Instalar de um arquivo**.
 
-Referência completa: `rust/sources/mangadex` (popular, últimos, busca, detalhes, capítulos e páginas, 235 KB).
+Referências: `rust/sources/mangadex` (API JSON), `rust/sources/arenascans` (tema), `rust/sources/mangafire` (assinatura de pedidos, idiomas, preferências), `rust/sources/luscious` (GraphQL, 12 idiomas), `docs/redesign/EXTENSIONS-TO-RUST.md` (análise e plano de conversão das extensões).
 
 ## Contrato da fonte (`Source`)
 | Método | Obrigatório | Retorno |
 |---|---|---|
-| `info()` | sim | nome, idioma, `base_url`, `supports_latest`, `id` (0 = o app deriva de nome+idioma) |
+| `info()` | sim | `Info`: nome, idioma, `base_url`, espelhos (`mirrors`, viram a configuração "Domínio"), `supports_latest`, `supports_filter_fetching`, `supports_related`, `custom_urls`, `version_id` (1 por padrão), `id` (0 = o app deriva como as extensões faziam), `rate_limit` (inclusive por host), `prefs`, `headers`, `cookies` |
 | `popular(page)` | sim | `MangaPage { mangas, has_next }` |
-| `latest(page)`, `search(page, query)` | não | idem; o padrão devolve erro "não suportado" |
-| `details(url)` | sim | `Manga` (autor, artista, descrição, gêneros, `status` como no `SManga`) |
-| `chapters(url)` | sim | `Vec<Chapter>` (nome, número, scanlator, data em ms) |
-| `pages(chapter_url)` | sim | `Vec<Page>` com `image_url` |
+| `latest(page)`, `search(page, query, filters)` | não | idem; o padrão devolve erro "não suportado" |
+| `filters(data)`, `filter_data()` | não | definição dos filtros (texto, seleção, caixa, tri-estado, grupo, ordenação) e dados baixados do site (gêneros), guardados pelo app por um dia |
+| `details(manga)`, `chapters(manga)` | sim | `Manga` (autor, artista, descrição, gêneros, `status` como no `SManga`) e `Vec<Chapter>` |
+| `update(manga, detalhes, capítulos)` | não | os dois numa só ida à rede (padrão: chama os dois) |
+| `pages(chapter)` | sim | `Vec<Page>` com `image_url`, `headers`, `ops` (edições de imagem) e `mirrors` |
+| `by_url(url)`, `related(manga)` | não | abrir um link do site; títulos relacionados |
+| `manga_url(manga)`, `chapter_url(chapter)` | não | endereço para abrir no navegador quando difere do guardado |
 
-`url` é qualquer texto que identifique o item dentro da fonte (caminho ou id); o app o devolve sem alterar.
+`Manga.url` e `Chapter.url` são texto que a fonte escolhe (caminho, id) e o app devolve sem alterar; `memo` guarda o que a fonte quiser de volta (ids achados na página, um slug). Os caminhos guardados seguem o formato da extensão original para a biblioteca e o histórico continuarem ligados (`path_of` decodifica como o `setUrlWithoutDomain`).
 
-## ABI (para quem não usa o SDK)
+`ImageOp` (`Merge`, `Unscramble`, `Shuffle`, `Text`): a fonte descreve, o app executa no `Bitmap` (um interpretador sem JIT seria lento demais para pixels).
+
+## ABI (para quem não usa o SDK) — versão 2
 O módulo exporta `memory`, `sk_alloc(len) -> ptr`, `sk_free(ptr, len)` e `sk_call(ptr, len) -> i64`.
-`sk_call` recebe um JSON de pedido na memória do módulo e devolve `(ptr << 32) | len` de um JSON de resposta (o host o libera com `sk_free`).
+`sk_call` recebe um JSON de pedido e devolve `(ptr << 32) | len` de um JSON de resposta (o host o libera com `sk_free`). Todo pedido leva `ctx`: `{"lang":"en","prefs":{...},"filter_data":...}` (o idioma em que a cópia foi instalada, as preferências do usuário e os dados de filtro em cache).
 
-Pedidos: `{"op":"info"}`, `{"op":"popular","page":1}`, `{"op":"latest","page":1}`, `{"op":"search","page":1,"query":"..."}`, `{"op":"details","url":"..."}`, `{"op":"chapters","url":"..."}`, `{"op":"pages","url":"..."}`.
-Respostas: `{"info":...}`, `{"page":{"mangas":[...],"has_next":true}}`, `{"manga":...}`, `{"chapters":[...]}`, `{"pages":[...]}` ou `{"error":"mensagem"}`.
+Pedidos (`op`): `info`, `filters`, `filter_data`, `popular`, `latest`, `search` (com `query` e `filters`), `update`, `details`, `chapters`, `pages`, `by_url`, `related`, `manga_url`, `chapter_url`.
+Respostas: `{"info":...,"abi":2}`, `{"page":{...}}`, `{"manga":...}`, `{"update":{...}}`, `{"chapters":[...]}`, `{"pages":[...]}`, ... ou `{"error":"mensagem"}`.
 
-O host oferece ao módulo, no namespace `sk`:
-- `http_get(url_ptr, url_len, headers_ptr, headers_len) -> i64`: GET; `headers` é um JSON `[["Nome","valor"],...]`; devolve `(ptr << 32) | len` de `{"status":200,"body":"..."}` ou `{"status":0,"error":"..."}`, alocado pelo `sk_alloc` do módulo.
-- `log(ptr, len)`: escreve uma linha no log do host.
+O host oferece ao módulo, no namespace `sk`: `http` e `http_batch` (um ou vários pedidos, método, cabeçalhos, corpo, binário, sem redirecionamento, limite de bytes), `http_get`, `cookie(url, nome)`, `now_ms()` e `log`. A rede é a do app (OkHttp: Cloudflare, cookies, limite de taxa, User-Agent).
 
 ## Segurança e limites
-- Uma fonte **não abre sockets nem arquivos**: tudo passa por `http_get`, que **recusa endereços locais e de rede privada** (`localhost`, `127.*`, `10.*`, `172.16-31.*`, `192.168.*`, `169.254.*`, IPv6 local, nomes `.local`/`.lan`/`.internal`, só `http(s)`), para uma fonte não poder sondar o roteador ou outros aparelhos da sua rede. Limite conhecido: confere o endereço escrito, não o que um nome público resolve (DNS rebinding).
-- Cada chamada tem um orçamento de 400 milhões de instruções (cerca de alguns segundos num telefone); estourou, a chamada é interrompida com erro, o app continua.
+- Uma fonte **não abre sockets nem arquivos**: tudo passa por `http`, que **recusa endereços locais e de rede privada** (`localhost`, `127.*`, `10.*`, `172.16-31.*`, `192.168.*`, `169.254.*`, IPv6 local, nomes `.local`/`.lan`/`.internal`, só `http(s)`), para uma fonte não poder sondar o roteador ou outros aparelhos da sua rede. Limite conhecido: confere o endereço escrito, não o que um nome público resolve (DNS rebinding).
+- Cada chamada tem um orçamento de 6 bilhões de instruções (alguns segundos num telefone; uma página com milhares de capítulos cabe); estourou, a chamada é interrompida com erro, o app continua. Seletores com `:has`/`:eq` sobre páginas enormes são o caminho mais comum para estourar.
 - Pedido e resposta limitados a 16 MB.
 - Os módulos são carregados da pasta privada do app, que só o próprio app e o `adb` de um app depurável escrevem. Um instalador com confiança por assinatura (como o das extensões) ainda não existe.
 

@@ -450,7 +450,12 @@ fn chapter_feed_url<T: Theme>(doc: &Document, title: &str) -> Result<String> {
         return old_chapter_feed_url::<T>(doc);
     }
     let label = match doc.select_first(T::CHAPTER_SCRIPT_SELECTOR) {
-        None => return old_chapter_feed_url::<T>(doc).or_else(|_| new_chapter_feed_url::<T>(doc)),
+        // the Kotlin theme ran all of this inside one `runCatching { } .getOrElse { mangaTitle }`: a page with neither layout
+        // is labelled with the title
+        None => match old_chapter_feed_url::<T>(doc).or_else(|_| new_chapter_feed_url::<T>(doc)) {
+            Ok(url) => return Ok(url),
+            Err(_) => title.to_string(),
+        },
         Some(script) => Regex::new(T::CHAPTER_FEED_REGEX)
             .ok()
             .and_then(|re| {

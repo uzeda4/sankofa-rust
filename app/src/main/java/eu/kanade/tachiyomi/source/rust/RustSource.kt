@@ -2,6 +2,7 @@ package eu.kanade.tachiyomi.source.rust
 
 import android.net.Uri
 import android.os.SystemClock
+import eu.kanade.tachiyomi.network.NetworkHelper
 import eu.kanade.tachiyomi.network.interceptor.rateLimit
 import eu.kanade.tachiyomi.network.interceptor.rateLimitHost
 import eu.kanade.tachiyomi.source.ConfigurableSource
@@ -34,16 +35,15 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.longOrNull
 import kotlinx.serialization.json.put
-import eu.kanade.tachiyomi.network.NetworkHelper
+import logcat.LogPriority
 import okhttp3.Cookie
 import okhttp3.Headers
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
+import tachiyomi.core.common.util.system.logcat
 import uniffi.sk_api.RustSourceInfo
 import uniffi.sk_api.callRustSource
 import uniffi.sk_api.isUrlAllowed
-import logcat.LogPriority
-import tachiyomi.core.common.util.system.logcat
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import java.io.IOException
@@ -69,7 +69,19 @@ class RustSource(private val info: RustSourceInfo) : HttpSource(), ConfigurableS
                     put("key", "mirror")
                     put("title", "Domain")
                     put("default", info.baseUrl)
-                    put("entries", buildJsonArray { it.forEach { m -> add(buildJsonArray { add(JsonPrimitive(m)); add(JsonPrimitive(m)) }) } })
+                    put(
+                        "entries",
+                        buildJsonArray {
+                            it.forEach { m ->
+                                add(
+                                    buildJsonArray {
+                                        add(JsonPrimitive(m))
+                                        add(JsonPrimitive(m))
+                                    },
+                                )
+                            }
+                        },
+                    )
                 }
             },
         ) + (meta["prefs"] as? JsonArray).orEmpty(),

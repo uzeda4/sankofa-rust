@@ -69,7 +69,12 @@ object RustHttpBridge : HttpBridge {
                     "headers",
                     buildJsonArray {
                         response.headers.forEach { (name, value) ->
-                            add(buildJsonArray { add(JsonPrimitive(name)); add(JsonPrimitive(value)) })
+                            add(
+                                buildJsonArray {
+                                    add(JsonPrimitive(name))
+                                    add(JsonPrimitive(value))
+                                },
+                            )
                         }
                     },
                 )
