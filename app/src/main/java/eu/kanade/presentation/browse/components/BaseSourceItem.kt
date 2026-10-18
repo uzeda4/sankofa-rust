@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import eu.kanade.domain.source.model.installedExtension
+import eu.kanade.tachiyomi.source.rust.RustSources
 import eu.kanade.tachiyomi.util.system.LocaleHelper
 import tachiyomi.domain.source.model.Source
 import tachiyomi.i18n.MR
@@ -90,6 +91,15 @@ private val defaultContent: @Composable RowScope.(
             }
 
             // KMK -->
+            // A source written in Rust (WebAssembly), as opposed to an APK extension.
+            if (RustSources.byId(source.id) != null) {
+                Text(
+                    text = "RUST",
+                    color = MaterialTheme.colorScheme.tertiary,
+                    maxLines = 1,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
             if (source.installedExtension?.isNsfw == true) {
                 Text(
                     text = stringResource(MR.strings.ext_nsfw_short).uppercase(),

@@ -10,7 +10,13 @@ The text of the matching release on GitHub is what the app shows in **About > Wh
 
 ## [0.1.2] - 2026-10-17
 
+### Added
+- Sources in Rust carry a "RUST" tag in Browse, so they are told apart from APK extensions with the same name.
+- Browse > Extensions has a "Rust sources" entry, apart from the APK extensions, that opens the Rust source repository.
+
 ### Fixed
+- Luscious in Rust sent no language to the site (a bare "+"): every Luscious source listed all languages. It now sends
+  its own language plus the ones ticked in the filters (Luscious v2 in the repository, serial 5; use "Update all").
 - A source in Rust and the APK extension it was ported from were shown as one item in Browse (the Rust one hid the
   extension). Sources in Rust now have an id of their own, so both can be installed and listed side by side.
   Titles saved in the library from a Rust source before this version no longer match it: add them again or use Migrate.

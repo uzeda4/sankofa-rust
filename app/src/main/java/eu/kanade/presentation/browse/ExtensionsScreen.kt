@@ -32,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,11 +51,14 @@ import eu.kanade.presentation.browse.components.ExtensionIcon
 import eu.kanade.presentation.components.WarningBanner
 import eu.kanade.presentation.manga.components.DotSeparatorNoSpaceText
 import eu.kanade.presentation.more.settings.screen.browse.ExtensionStoresScreen
+import eu.kanade.presentation.more.settings.screen.browse.RustSourcesScreen
+import eu.kanade.presentation.more.settings.widget.TextPreferenceWidget
 import eu.kanade.presentation.theme.TachiyomiPreviewTheme
 import eu.kanade.presentation.util.animateItemFastScroll
 import eu.kanade.presentation.util.rememberRequestPackageInstallsPermissionState
 import eu.kanade.tachiyomi.extension.model.Extension
 import eu.kanade.tachiyomi.extension.model.InstallStep
+import eu.kanade.tachiyomi.source.rust.RustSources
 import eu.kanade.tachiyomi.ui.browse.extension.ExtensionUiModel
 import eu.kanade.tachiyomi.ui.browse.extension.ExtensionsScreenModel
 import eu.kanade.tachiyomi.util.system.LocaleHelper
@@ -118,6 +122,13 @@ fun ExtensionScreen(
                             icon = Icons.Outlined.Settings,
                             onClick = { navigator.push(ExtensionStoresScreen()) },
                         ),
+                        // KMK -->
+                        EmptyScreenAction(
+                            stringRes = KMR.strings.rust_sources_title,
+                            icon = Icons.Outlined.GetApp,
+                            onClick = { navigator.push(RustSourcesScreen()) },
+                        ),
+                        // KMK <--
                     ),
                 )
             }
@@ -164,6 +175,17 @@ private fun ExtensionContent(
     FastScrollLazyColumn(
         contentPadding = contentPadding + topSmallPaddingValues,
     ) {
+        // KMK -->
+        // Sources in Rust come from their own repository, apart from the APK extensions below.
+        item(key = "rust-sources-entry") {
+            TextPreferenceWidget(
+                title = stringResource(KMR.strings.rust_sources_title),
+                subtitle = stringResource(KMR.strings.rust_sources_summary, RustSources.sources.collectAsState().value.size),
+                icon = Icons.Outlined.GetApp,
+                onPreferenceClick = { navigator?.push(RustSourcesScreen()) },
+            )
+        }
+        // KMK <--
         if (!installGranted && state.installer?.requiresSystemPermission == true) {
             item(key = "extension-permissions-warning") {
                 WarningBanner(

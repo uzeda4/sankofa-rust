@@ -56,7 +56,7 @@ fn default_lists_send_the_extensions_filters() {
         assert_eq!(v["input"]["page"], 3);
         assert_eq!(
             v["input"]["filters"],
-            json!([{"name": "selection", "value": "all"}, {"name": "audience_ids", "value": "+1+10+2+3+5+6+8+9"}, {"name": "language_ids", "value": "+"}])
+            json!([{"name": "selection", "value": "all"}, {"name": "audience_ids", "value": "+1+10+2+3+5+6+8+9"}, {"name": "language_ids", "value": "+1"}])
         );
         Some(r#"{"data":{"album":{"list":{"info":{"page":3,"has_next_page":true},"items":[{"url":"/albums/a_1/","title":"A","cover":{"url":"https://c.test/1.jpg"}}]}}}}"#.into())
     });
@@ -83,7 +83,7 @@ fn search_turns_filters_into_the_sites_syntax() {
         for part in [
             r#"{"name":"album_type","value":"manga"}"#,
             r#"{"name":"audience_ids","value":"+1+2"}"#,
-            r#"{"name":"language_ids","value":"+2+3"}"#,
+            r#"{"name":"language_ids","value":"+1+2+3"}"#,
             r#"{"name":"tagged","value":"+dark_fantasy-yuri"}"#,
             r#"{"name":"genre_ids","value":"+25+45-27"}"#,
             r#"{"name":"search_query","value":"hello"}"#,

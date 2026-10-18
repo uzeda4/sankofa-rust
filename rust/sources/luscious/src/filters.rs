@@ -254,9 +254,9 @@ pub fn album_list_filters(lang: &str, filters: &Filters, query: &str) -> Result<
     put("audience_ids", interests);
 
     if site_lang(lang) != IGNORE {
-        // the extension sent "+" followed by the other languages ticked: just "+" when none is
+        // the source's own language, then the other languages ticked ("+1" or "+1+2+3"); a bare "+" lists every language
         let ticked = plus_list(filters, "languages", &LANGUAGES, false);
-        put("language_ids", if ticked.is_empty() { "+".into() } else { ticked });
+        put("language_ids", format!("+{}{ticked}", site_lang(lang)));
     }
 
     let tags = filters.text("tags");
