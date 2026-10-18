@@ -36,3 +36,6 @@ local.properties
 client_secrets.json
 google-services.json
 /rust/target/
+
+# Python bytecode of the porting tools
+__pycache__/
