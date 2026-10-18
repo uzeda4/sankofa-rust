@@ -41,7 +41,7 @@ impl Source for Webtoons {
                 _ => 0,
             },
             supports_latest: true,
-            rate_limit: Some(RateLimit { permits: 1, period_ms: 1000, host: "m.webtoons.com".into() }),
+            rate_limit: Some(RateLimit { permits: 1, period_ms: 1000, host: "m.webtoons.com".into(), skip_path: String::new() }),
             cookies: vec![
                 CookieDef::new("webtoons.com", "ageGatePass", "true"),
                 CookieDef::new("webtoons.com", "locale", &locale),

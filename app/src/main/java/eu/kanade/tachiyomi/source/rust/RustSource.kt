@@ -111,8 +111,9 @@ class RustSource(private val info: RustSourceInfo) : HttpSource(), ConfigurableS
                 val permits = (r["permits"] as? JsonPrimitive)?.intOrNull ?: return@let
                 val period = (r["period_ms"] as? JsonPrimitive)?.longOrNull ?: return@let
                 val hosts = (r["host"] as? JsonPrimitive)?.contentOrNull.orEmpty().split(',').map { it.trim() }.filter { it.isNotEmpty() }
+                val skipPath = (r["skip_path"] as? JsonPrimitive)?.contentOrNull.orEmpty()
                 if (hosts.isEmpty()) {
-                    rateLimit(permits, period.milliseconds)
+                    if (skipPath.isEmpty()) rateLimit(permits, period.milliseconds) else rateLimit(permits, period.milliseconds, skipPath)
                 } else {
                     hosts.forEach { rateLimitHost("https://$it", permits, period.milliseconds) }
                 }

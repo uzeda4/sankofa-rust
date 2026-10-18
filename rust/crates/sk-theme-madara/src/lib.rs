@@ -35,6 +35,18 @@ pub trait Theme: 'static {
     const LANG: &'static str = "en";
     const BASE_URL: &'static str;
     const VERSION_ID: u32 = 1;
+    const RATE_LIMIT: Option<RateLimit> = None;
+    /// Requests whose path starts with this are not rate limited (`/wp-content/uploads/`: the pictures).
+    const RATE_LIMIT_SKIP_PATH: &'static str = "";
+    const SUPPORTS_LATEST: bool = true;
+    const SUPPORTS_FILTER_FETCHING: bool = true;
+
+    /// The site lists titles in plain archive pages (`/manga/page/2/?m_orderby=views`) and has no `madara_load_more`
+    /// endpoint (the Kotlin `MadaraNoAjax`).
+    const NO_AJAX: bool = false;
+    const NEXT_PAGE_SELECTOR: &'static str = "div.nav-previous, a.nextpostslink, #navigation-ajax";
+    const ORDER_QUERY_PARAMETER: &'static str = "m_orderby";
+    const SEARCH_QUERY_PARAMETER: &'static str = "s";
 
     const MANGA_SUB_STRING: &'static str = "manga";
     const GENRE_DIRECTORY: &'static str = "manga-genre";
@@ -125,9 +137,13 @@ impl<T: Theme> Source for Site<T> {
             lang: T::LANG.into(),
             base_url: T::BASE_URL.into(),
             version_id: T::VERSION_ID,
-            supports_latest: true,
-            supports_filter_fetching: true,
+            supports_latest: T::SUPPORTS_LATEST,
+            supports_filter_fetching: T::SUPPORTS_FILTER_FETCHING,
             supports_related: true,
+            rate_limit: T::RATE_LIMIT.map(|mut r| {
+                r.skip_path = T::RATE_LIMIT_SKIP_PATH.into();
+                r
+            }),
             ..Default::default()
         }
     }
@@ -284,7 +300,50 @@ enum Browse {
     Search,
 }
 
+/// A page of the archive without the ajax endpoint: `/<manga>/page/<n>/?m_orderby=<order>` or a genre's own path.
+fn archive_page<T: Theme>(page: u32, mode: Browse, query: &str, filters: &Filters) -> Result<MangaPage> {
+    let order = match mode {
+        Browse::Popular => "views",
+        Browse::Latest => "latest",
+        Browse::Search => ORDER_BY.get(filters.index("order")).map(|o| o.1).unwrap_or(""),
+    };
+    let mut path = format!("/{}/", T::MANGA_SUB_STRING);
+    if mode == Browse::Search {
+        if let Some(genre) = genre_routes(filter_data().as_ref()).into_iter().find(|g| filters.included("genres").contains(&g.slug.as_str())) {
+            path = genre.path;
+        }
+    }
+    let mut url = Url::parse(&format!("{}{path}", base::<T>())).map_err(|e| e.to_string())?;
+    if page > 1 {
+        url.path_segments_mut().map_err(|_| "bad base address")?.pop_if_empty().extend(["page", &page.to_string(), ""]);
+    }
+    let searching = mode == Browse::Search && !query.trim().is_empty();
+    if searching {
+        // a text search is the site's own search page, not an archive
+        let mut s = Url::parse(&format!("{}/", base::<T>())).map_err(|e| e.to_string())?;
+        if page > 1 {
+            if T::SUPPORTS_POST_ID {
+                return Ok(MangaPage { mangas: Vec::new(), has_next: false });
+            }
+            s.path_segments_mut().map_err(|_| "bad base address")?.pop_if_empty().extend(["page", &page.to_string(), ""]);
+        }
+        s.query_pairs_mut().append_pair(T::SEARCH_QUERY_PARAMETER, query.trim()).append_pair("post_type", "wp-manga");
+        let doc = get(s.as_str()).send()?.html();
+        let mangas = parse_archive::<T>(&doc);
+        let has_next = !T::SUPPORTS_POST_ID && doc.select_first(T::NEXT_PAGE_SELECTOR).is_some();
+        return Ok(MangaPage { mangas, has_next });
+    }
+    if !order.is_empty() {
+        url.query_pairs_mut().append_pair(T::ORDER_QUERY_PARAMETER, order);
+    }
+    let doc = get(url.as_str()).send()?.html();
+    Ok(MangaPage { mangas: parse_archive::<T>(&doc), has_next: doc.select_first(T::NEXT_PAGE_SELECTOR).is_some() })
+}
+
 fn ajax_list<T: Theme>(page: u32, mode: Browse, query: &str, filters: &Filters) -> Result<MangaPage> {
+    if T::NO_AJAX {
+        return archive_page::<T>(page, mode, query, filters);
+    }
     let mut form = Form::default();
     form.add("action", "madara_load_more");
     form.add("page", &page.saturating_sub(1).to_string());

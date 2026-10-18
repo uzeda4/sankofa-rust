@@ -60,6 +60,9 @@ Respostas: `{"info":...,"abi":2}`, `{"page":{...}}`, `{"manga":...}`, `{"update"
 
 O host oferece ao módulo, no namespace `sk`: `http` e `http_batch` (um ou vários pedidos, método, cabeçalhos, corpo, binário, sem redirecionamento, limite de bytes), `http_get`, `cookie(url, nome)`, `now_ms()` e `log`. A rede é a do app (OkHttp: Cloudflare, cookies, limite de taxa, User-Agent).
 
+## Conversão em lote
+As fontes em inglês do repositório do Keiyoushi que são só configuração de um tema (Madara, MangaThemesia, MangaCatalog, Yiimanga) são geradas por `rust/tools/port/port.py` e conferidas no site real por `rust/crates/sk-check`; o que foi e o que não foi convertido está em [KEIYOUSHI-EN.md](KEIYOUSHI-EN.md).
+
 ## Segurança e limites
 - Uma fonte **não abre sockets nem arquivos**: tudo passa por `http`, que **recusa endereços locais e de rede privada** (`localhost`, `127.*`, `10.*`, `172.16-31.*`, `192.168.*`, `169.254.*`, IPv6 local, nomes `.local`/`.lan`/`.internal`, só `http(s)`), para uma fonte não poder sondar o roteador ou outros aparelhos da sua rede. Limite conhecido: confere o endereço escrito, não o que um nome público resolve (DNS rebinding).
 - Cada chamada tem um orçamento de 6 bilhões de instruções (alguns segundos num telefone; uma página com milhares de capítulos cabe); estourou, a chamada é interrompida com erro, o app continua. Seletores com `:has`/`:eq` sobre páginas enormes são o caminho mais comum para estourar.

@@ -1,0 +1,12 @@
+[package]
+name = "sk-source-readtokyoghoulretokyoghoulmangaonline"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+sk-source-sdk = { version = "0.1.0", path = "../../crates/sk-source-sdk" }
+sk-theme-mangacatalog = { version = "0.1.0", path = "../../crates/sk-theme-mangacatalog" }

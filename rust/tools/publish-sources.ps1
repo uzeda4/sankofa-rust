@@ -32,15 +32,25 @@ $sources = @(
     @{ Dir = 'webtoons'; Name = 'Webtoons.com'; Version = 1; Langs = @('en', 'de', 'th', 'fr', 'es', 'id', 'zh-Hant') }
 )
 
+# Sources ported from the Keiyoushi repository by tools/port (see collect.py): smaller modules, built with `--profile wasm`.
+$ported = "$PSScriptRoot\ported-sources.json"
+if (Test-Path $ported) {
+    foreach ($p in (Get-Content $ported -Raw | ConvertFrom-Json).publish) {
+        $sources += @{ Dir = $p.dir; Name = $p.name; Version = $p.version; Langs = @($p.langs); Profile = 'wasm' }
+    }
+}
+
 New-Item -ItemType Directory -Force "$Out\icons" | Out-Null
 $kept = @('mangadex-rust-2.sksource')   # the first source, published before this script; stays as it is
 $icons = @()
 foreach ($s in $sources) {
-    $wasm = "$wasmDir\sk_source_$($s.Dir).wasm"
+    $wasm = if ($s.Profile) { "$root\target\wasm32-unknown-unknown\$($s.Profile)\sk_source_$($s.Dir).wasm" } else { "$wasmDir\sk_source_$($s.Dir).wasm" }
     if (-not (Test-Path $wasm)) { throw "missing $wasm" }
-    Copy-Item "$root\sources\$($s.Dir)\icon.png" "$Out\icons\$($s.Dir).png" -Force
-    $icons += '--icon'
-    $icons += "$($s.Name)=icons/$($s.Dir).png"
+    if (Test-Path "$root\sources\$($s.Dir)\icon.png") {   # an extension may have no icon: the app shows its default one
+        Copy-Item "$root\sources\$($s.Dir)\icon.png" "$Out\icons\$($s.Dir).png" -Force
+        $icons += '--icon'
+        $icons += "$($s.Name)=icons/$($s.Dir).png"
+    }
     foreach ($lang in $s.Langs) {
         $file = "$($s.Dir)-$($lang.ToLower())-$($s.Version).sksource"
         & $pack pack --key $Key --wasm $wasm --name $s.Name --lang $lang --version $s.Version --publisher $Publisher --out "$Out\$file" | Out-Null

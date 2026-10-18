@@ -3184,6 +3184,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-check"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "sk-source",
+]
+
+[[package]]
 name = "sk-db"
 version = "0.1.0"
 dependencies = [
@@ -3235,6 +3243,54 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-akazascans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-allporncomic"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-allporncomicio"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-anisascans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-apcomics"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-aquamanga"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
 name = "sk-source-arenascans"
 version = "0.1.0"
 dependencies = [
@@ -3253,6 +3309,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-asterscans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
 name = "sk-source-asurascans"
 version = "0.1.0"
 dependencies = [
@@ -3260,6 +3324,22 @@ dependencies = [
  "serde",
  "sk-source",
  "sk-source-sdk",
+]
+
+[[package]]
+name = "sk-source-athreascans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-auntmanhwa"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
 ]
 
 [[package]]
@@ -3273,10 +3353,258 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-boratscans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-bunmanga"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-cocomic"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-cucumbermanga"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-dailymanhwa"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-decadencescans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-dragontea"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-ero18x"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-evascans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-fourporncomic"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-yiimanga",
+]
+
+[[package]]
+name = "sk-source-gakamangas"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-galaxydegenscans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-galaxymanga"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-gingertoon"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-gourmetscans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-hadesscans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-hentai1io"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-hentai20lol"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-yiimanga",
+]
+
+[[package]]
+name = "sk-source-hentaidesi"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-hentaixcomic"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-hentaixyuri"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-hm2d"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-hunlightcomics"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-jinmangas"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-kaliscanorg"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-kingofshojo"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
 name = "sk-source-kissmangain"
 version = "0.1.0"
 dependencies = [
  "sk-source",
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-ksgroupscans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-lagoonscans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-lhtranslation"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-likemangain"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-linkmanga"
+version = "0.1.0"
+dependencies = [
  "sk-source-sdk",
  "sk-theme-madara",
 ]
@@ -3288,6 +3616,38 @@ dependencies = [
  "serde",
  "sk-source",
  "sk-source-sdk",
+]
+
+[[package]]
+name = "sk-source-madarascans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-mahouirexnohentaikarte"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manga18free"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manga18x"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
 ]
 
 [[package]]
@@ -3308,6 +3668,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-mangadistrict"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-mangaeclipse"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
 name = "sk-source-mangafire"
 version = "0.1.0"
 dependencies = [
@@ -3319,11 +3695,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-mangaforfreecom"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
 name = "sk-source-mangafox"
 version = "0.1.0"
 dependencies = [
  "sk-source",
  "sk-source-sdk",
+]
+
+[[package]]
+name = "sk-source-mangafree"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
 ]
 
 [[package]]
@@ -3336,6 +3728,222 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-mangakiss"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-mangamaniacs"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-mangaowlio"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-mangaparktv"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-mangareadorg"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-mangasushi"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-mangatrend"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-manhuahot"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhuanext"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhuaplus"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhuatop"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhuaus"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhuazonghe"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhwa18today"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhwa18tx"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-yiimanga",
+]
+
+[[package]]
+name = "sk-source-manhwa68"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhwacomics"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhwaddict"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-yiimanga",
+]
+
+[[package]]
+name = "sk-source-manhwaden"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhwagalaxy"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-yiimanga",
+]
+
+[[package]]
+name = "sk-source-manhwaget"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhwahubto"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhwamanhua"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhwaonline"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-yiimanga",
+]
+
+[[package]]
+name = "sk-source-manhwareads"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manhwatop"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-milftoon"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
 name = "sk-source-murimscan"
 version = "0.1.0"
 dependencies = [
@@ -3345,11 +3953,171 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-myreadingcomic"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-yiimanga",
+]
+
+[[package]]
+name = "sk-source-nexcomic"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-octopusmanga"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-orchisasia"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-paritehaber"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-petrotechsociety"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-pornhwaz"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-ravenscans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-razure"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-readblackclovermangaonline"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangacatalog",
+]
+
+[[package]]
+name = "sk-source-readchainsawmanmangaonline"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangacatalog",
+]
+
+[[package]]
 name = "sk-source-readcomicsonline"
 version = "0.1.0"
 dependencies = [
  "sk-source",
  "sk-source-sdk",
+]
+
+[[package]]
+name = "sk-source-readfairytailedenszeromangaonline"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangacatalog",
+]
+
+[[package]]
+name = "sk-source-readjujutsukaisenmangaonline"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangacatalog",
+]
+
+[[package]]
+name = "sk-source-readkingdommangaonline"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangacatalog",
+]
+
+[[package]]
+name = "sk-source-readnanatsunotaizai7deadlysinsmangaonline"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangacatalog",
+]
+
+[[package]]
+name = "sk-source-readonepiecemangaonline"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangacatalog",
+]
+
+[[package]]
+name = "sk-source-readsololevelingmangamanhwaonline"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangacatalog",
+]
+
+[[package]]
+name = "sk-source-readtokyoghoulretokyoghoulmangaonline"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangacatalog",
+]
+
+[[package]]
+name = "sk-source-rizzcomicunoriginal"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-s2manga"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
 ]
 
 [[package]]
@@ -3365,6 +4133,78 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-seraphicdeviltry"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-sleepytranslations"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-spmanhwa"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-toongod"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-toonizy"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-topmanhua"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-topmanhuanet"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-tritiniascans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-wearehunger"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
 name = "sk-source-webtoons"
 version = "0.1.0"
 dependencies = [
@@ -3372,6 +4212,62 @@ dependencies = [
  "serde",
  "sk-source",
  "sk-source-sdk",
+]
+
+[[package]]
+name = "sk-source-webtoonscan"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-wildtoon"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-wuxiaworld"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-yaoihub"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-yaoiscan"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-yaoiscanme"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-yiimanga",
+]
+
+[[package]]
+name = "sk-source-zinmanga"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
 ]
 
 [[package]]
@@ -3410,6 +4306,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-theme-mangacatalog"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+]
+
+[[package]]
 name = "sk-theme-mangathemesia"
 version = "0.1.0"
 dependencies = [
@@ -3417,6 +4320,13 @@ dependencies = [
  "fancy-regex",
  "serde",
  "serde_json",
+ "sk-source-sdk",
+]
+
+[[package]]
+name = "sk-theme-yiimanga"
+version = "0.1.0"
+dependencies = [
  "sk-source-sdk",
 ]
 

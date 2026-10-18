@@ -20,6 +20,9 @@ pub struct RateLimit {
     /// images included.
     #[serde(default)]
     pub host: String,
+    /// Requests whose path starts with this are not limited (`/wp-content/uploads/`: the pictures of a WordPress site).
+    #[serde(default)]
+    pub skip_path: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -1,0 +1,1139 @@
+{
+ "publish": [
+  {
+   "dir": "akazascans",
+   "name": "Akaza Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "ok"
+  },
+  {
+   "dir": "allporncomic",
+   "name": "AllPornComic",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "allporncomicio",
+   "name": "AllPornComic.io",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "anisascans",
+   "name": "Anisa Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "apcomics",
+   "name": "AP Comics",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "asterscans",
+   "name": "Aster Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "ok"
+  },
+  {
+   "dir": "boratscans",
+   "name": "Borat Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "bunmanga",
+   "name": "Bun Manga",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "cocomic",
+   "name": "Cocomic",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "cucumbermanga",
+   "name": "Cucumber Manga",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "dragontea",
+   "name": "DragonTea",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "ero18x",
+   "name": "Ero18x",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "fourporncomic",
+   "name": "4PornComic",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "yiimanga",
+   "check": "ok"
+  },
+  {
+   "dir": "gakamangas",
+   "name": "GakaMangas",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "galaxydegenscans",
+   "name": "GalaxyDegenScans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "gourmetscans",
+   "name": "Gourmet Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "hentai1io",
+   "name": "Hentai1.io",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "hentai20lol",
+   "name": "Hentai20 (Unoriginal)",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "yiimanga",
+   "check": "ok"
+  },
+  {
+   "dir": "hentaidesi",
+   "name": "Hentai Desi",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "ok"
+  },
+  {
+   "dir": "hentaixcomic",
+   "name": "HentaiXComic",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "hentaixyuri",
+   "name": "HentaiXYuri",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "hm2d",
+   "name": "HM2D",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "hunlightcomics",
+   "name": "Hunlight Comics",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "jinmangas",
+   "name": "Jinmangas",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "kaliscanorg",
+   "name": "KaliScan.org (unoriginal)",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "kingofshojo",
+   "name": "King of Shojo",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "ok"
+  },
+  {
+   "dir": "ksgroupscans",
+   "name": "KSGroupScans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "lagoonscans",
+   "name": "Lagoon Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "ok"
+  },
+  {
+   "dir": "lhtranslation",
+   "name": "LHTranslation",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "likemangain",
+   "name": "MangaYY",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "linkmanga",
+   "name": "LinkManga",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "manga18free",
+   "name": "Manga18Free",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "manga18x",
+   "name": "Manga 18x",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "mangadistrict",
+   "name": "Manga District",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "mangaeclipse",
+   "name": "Manga Eclipse",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "mangaforfreecom",
+   "name": "Mangaforfree.com",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "mangafree",
+   "name": "Mangafree",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "mangamaniacs",
+   "name": "MangaManiacs",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "mangaowlio",
+   "name": "MangaOwl.io (unoriginal)",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "mangaparktv",
+   "name": "MangaPark.tv (unoriginal)",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "mangasushi",
+   "name": "Mangasushi",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "mangatrend",
+   "name": "Manga Trend",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "ok"
+  },
+  {
+   "dir": "manhuahot",
+   "name": "ManhuaHot",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "manhuaplus",
+   "name": "Manhua Plus",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "manhuatop",
+   "name": "ManhuaTop",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "manhuaus",
+   "name": "ManhuaUS",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "manhuazonghe",
+   "name": "Manhua Zonghe",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "manhwa18today",
+   "name": "Manhwa18.today",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "manhwa18tx",
+   "name": "Manhwa18TX",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "yiimanga",
+   "check": "ok"
+  },
+  {
+   "dir": "manhwa68",
+   "name": "Manhwa68",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "manhwacomics",
+   "name": "Manhwa Comics",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "manhwaddict",
+   "name": "Manhwaddict",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "yiimanga",
+   "check": "ok"
+  },
+  {
+   "dir": "manhwaden",
+   "name": "ManhwaDen",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "manhwagalaxy",
+   "name": "ManhwaGalaxy",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "yiimanga",
+   "check": "ok"
+  },
+  {
+   "dir": "manhwahubto",
+   "name": "ManhwaHub.to",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "manhwaonline",
+   "name": "ManhwaOnline",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "yiimanga",
+   "check": "ok"
+  },
+  {
+   "dir": "manhwareads",
+   "name": "Manhwa Reads",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "manhwatop",
+   "name": "Manhwatop",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "myreadingcomic",
+   "name": "MyReadingComic",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "yiimanga",
+   "check": "ok"
+  },
+  {
+   "dir": "octopusmanga",
+   "name": "OctopusManga",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "orchisasia",
+   "name": "Orchisasia",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "paritehaber",
+   "name": "Paritehaber",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "petrotechsociety",
+   "name": "Petrotechsociety",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "pornhwaz",
+   "name": "Pornhwaz",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "ravenscans",
+   "name": "Raven Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "ok"
+  },
+  {
+   "dir": "readchainsawmanmangaonline",
+   "name": "Read Chainsaw Man Manga Online",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangacatalog",
+   "check": "ok"
+  },
+  {
+   "dir": "readfairytailedenszeromangaonline",
+   "name": "Read Fairy Tail & Edens Zero Manga Online",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangacatalog",
+   "check": "ok"
+  },
+  {
+   "dir": "readjujutsukaisenmangaonline",
+   "name": "Read Jujutsu Kaisen Manga Online",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangacatalog",
+   "check": "ok"
+  },
+  {
+   "dir": "readkingdommangaonline",
+   "name": "Read Kingdom Manga Online",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangacatalog",
+   "check": "ok"
+  },
+  {
+   "dir": "readnanatsunotaizai7deadlysinsmangaonline",
+   "name": "Read Nanatsu no Taizai 7 Deadly Sins Manga Online",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangacatalog",
+   "check": "ok"
+  },
+  {
+   "dir": "readonepiecemangaonline",
+   "name": "Read One Piece Manga Online",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangacatalog",
+   "check": "ok"
+  },
+  {
+   "dir": "readsololevelingmangamanhwaonline",
+   "name": "Read Solo Leveling Manga Manhwa Online",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangacatalog",
+   "check": "ok"
+  },
+  {
+   "dir": "readtokyoghoulretokyoghoulmangaonline",
+   "name": "Read Tokyo Ghoul Re & Tokyo Ghoul Manga Online",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangacatalog",
+   "check": "ok"
+  },
+  {
+   "dir": "s2manga",
+   "name": "S2Manga",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "seraphicdeviltry",
+   "name": "SeraphicDeviltry",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "sleepytranslations",
+   "name": "Sleepy Translations",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "toongod",
+   "name": "ToonGod",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "toonizy",
+   "name": "Toonizy",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "topmanhuanet",
+   "name": "TopManhua.net",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "tritiniascans",
+   "name": "TritiniaScans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "wearehunger",
+   "name": "KokoMangas",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "webtoonscan",
+   "name": "WebtoonScan",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "wildtoon",
+   "name": "Wildtoon",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "wuxiaworld",
+   "name": "WuxiaWorld",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "yaoihub",
+   "name": "Yaoihub",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "yaoiscan",
+   "name": "YaoiScan",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "yaoiscanme",
+   "name": "YaoiScan (Unoriginal)",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "yiimanga",
+   "check": "ok"
+  },
+  {
+   "dir": "zinmanga",
+   "name": "Zinmanga",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  }
+ ],
+ "left_out": [
+  {
+   "dir": "aquamanga",
+   "name": "Aqua Manga",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "dead",
+   "why": "HTTP 404 for https://aquareader.org/manga/?m_orderby=views"
+  },
+  {
+   "dir": "athreascans",
+   "name": "Athrea Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "dead",
+   "why": "https://athreascans.com/manga/?page=1&order=popular: curl: curl: (28) Operation timed out after 40017 milliseconds with 0 bytes received"
+  },
+  {
+   "dir": "auntmanhwa",
+   "name": "Aunt Manhwa",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "broken",
+   "why": "the page has no title (the site changed?)"
+  },
+  {
+   "dir": "dailymanhwa",
+   "name": "Daily Manhwa",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "dead",
+   "why": "HTTP 525 for https://www.dailymanhwa.com/wp-admin/admin-ajax.php"
+  },
+  {
+   "dir": "decadencescans",
+   "name": "Decadence Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "dead",
+   "why": "https://reader.decadencescans.com/wp-admin/admin-ajax.php: curl: curl: (28) Operation timed out after 40009 milliseconds with 0 bytes received"
+  },
+  {
+   "dir": "evascans",
+   "name": "Eva Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "broken",
+   "why": "popular is empty"
+  },
+  {
+   "dir": "galaxymanga",
+   "name": "Galaxy Manga",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "broken",
+   "why": "popular is empty"
+  },
+  {
+   "dir": "gingertoon",
+   "name": "GingeRTooN",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "broken",
+   "why": "popular is empty"
+  },
+  {
+   "dir": "hadesscans",
+   "name": "Hades Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "broken",
+   "why": "popular is empty"
+  },
+  {
+   "dir": "madarascans",
+   "name": "Madara Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "broken",
+   "why": "popular is empty"
+  },
+  {
+   "dir": "mahouirexnohentaikarte",
+   "name": "Mahouirexnohentaikarte",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "dead",
+   "why": "HTTP 404 for https://mahouirexnohentaikarte.com/wp-admin/admin-ajax.php"
+  },
+  {
+   "dir": "mangakiss",
+   "name": "Manga Kiss",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "dead",
+   "why": "HTTP 522 for https://mangakiss.org/wp-admin/admin-ajax.php"
+  },
+  {
+   "dir": "mangareadorg",
+   "name": "MangaRead.org",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "broken",
+   "why": "source trapped: all fuel consumed by WebAssembly"
+  },
+  {
+   "dir": "manhuanext",
+   "name": "Manhuanext",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "broken",
+   "why": "no chapters"
+  },
+  {
+   "dir": "manhwaget",
+   "name": "ManhwaGet",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "broken",
+   "why": "https://manhwaget.com/wp-admin/admin-ajax.php: curl: curl: (35) schannel: next InitializeSecurityContext failed: SEC_E_INTERNAL_ERROR (0x80090304) - A autoridad"
+  },
+  {
+   "dir": "manhwamanhua",
+   "name": "ManhwaManhua",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "dead",
+   "why": "https://manhwamanhua.com/wp-admin/admin-ajax.php: curl: curl: (35) schannel: failed to receive handshake, SSL/TLS connection failed"
+  },
+  {
+   "dir": "milftoon",
+   "name": "Milftoon",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "broken",
+   "why": "popular is empty"
+  },
+  {
+   "dir": "nexcomic",
+   "name": "NexComic",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "dead",
+   "why": "HTTP 404 for https://nexcomic.com/manga/?page=1&order=popular"
+  },
+  {
+   "dir": "razure",
+   "name": "Razure",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "broken",
+   "why": "popular is empty"
+  },
+  {
+   "dir": "readblackclovermangaonline",
+   "name": "Read Black Clover Manga Online",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangacatalog",
+   "check": "dead",
+   "why": "https://ww10.readblackclover.com/manga/black-clover/: curl: curl: (6) Could not resolve host: ww10.readblackclover.com"
+  },
+  {
+   "dir": "rizzcomicunoriginal",
+   "name": "Rizz Comic (unoriginal)",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia",
+   "check": "dead",
+   "why": "HTTP 500 for https://rizzcomic.com/manga/?page=1&order=popular"
+  },
+  {
+   "dir": "spmanhwa",
+   "name": "Spmanhwa",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "broken",
+   "why": "https://spmanhwa.online/wp-admin/admin-ajax.php: curl: curl: (56) Recv failure: Connection was reset"
+  },
+  {
+   "dir": "topmanhua",
+   "name": "Top Manhua",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "broken",
+   "why": "HTTP 400"
+  }
+ ]
+}

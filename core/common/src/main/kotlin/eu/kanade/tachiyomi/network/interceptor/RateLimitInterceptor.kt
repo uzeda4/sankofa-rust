@@ -53,12 +53,21 @@ fun OkHttpClient.Builder.rateLimit(
 fun OkHttpClient.Builder.rateLimit(permits: Int, period: Duration = 1.seconds) =
     addInterceptor(RateLimitInterceptor(null, permits, period))
 
+// KMK -->
+/** Same limit, but requests whose path starts with [skipPathPrefix] (a site's pictures, say) go through unlimited. */
+fun OkHttpClient.Builder.rateLimit(permits: Int, period: Duration, skipPathPrefix: String) =
+    addInterceptor(RateLimitInterceptor(null, permits, period, skipPathPrefix))
+// KMK <--
+
 /** We can probably accept domains or wildcards by comparing with [endsWith], etc. */
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 internal class RateLimitInterceptor(
     private val host: String?,
     private val permits: Int,
     period: Duration,
+    // KMK -->
+    private val skipPathPrefix: String? = null,
+    // KMK <--
 ) : Interceptor {
 
     private val requestQueue = ArrayDeque<Long>(permits)
@@ -70,6 +79,9 @@ internal class RateLimitInterceptor(
         if (call.isCanceled()) throw IOException("Canceled")
 
         val request = chain.request()
+        // KMK -->
+        if (!skipPathPrefix.isNullOrEmpty() && request.url.encodedPath.startsWith(skipPathPrefix)) return chain.proceed(request)
+        // KMK <--
         when (host) {
             null, request.url.host -> {} // need rate limit
             else -> return chain.proceed(request)

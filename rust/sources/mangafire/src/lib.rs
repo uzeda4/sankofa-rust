@@ -95,7 +95,7 @@ impl Source for MangaFire {
             lang: lang(),
             base_url: BASE.into(),
             supports_latest: true,
-            rate_limit: Some(RateLimit { permits: 2, period_ms: 1000, host: String::new() }),
+            rate_limit: Some(RateLimit { permits: 2, period_ms: 1000, host: String::new(), skip_path: String::new() }),
             prefs: vec![
                 PrefDef::multi_list(CONTENT_RATING_PREF, "Content Rating (All by default)", &ratings, &[]),
                 PrefDef::switch(SHOW_AS_VOLUMES, "Prefer Volume Release", "Requires Chapter List Refresh to Apply", false),

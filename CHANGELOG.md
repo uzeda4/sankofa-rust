@@ -11,6 +11,10 @@ The text of the matching release on GitHub is what the app shows in **About > Wh
 ## [0.1.2] - 2026-10-17
 
 ### Added
+- **88 new sources in Rust** (English sources of the Keiyoushi extension repository, ported by a generator and checked
+  against the live sites), in the official repository: 64 Madara sites, 8 MangaThemesia, 8 MangaCatalog and 8 Yiimanga
+  (15 of them behind Cloudflare). New themes `sk-theme-mangacatalog` and `sk-theme-yiimanga`, and Madara sites that list
+  without ajax. What was converted and what was not: `docs/redesign/KEIYOUSHI-EN.md`.
 - Sources in Rust carry a "RUST" tag in Browse, so they are told apart from APK extensions with the same name.
 - Browse > Extensions has a "Rust sources" entry, apart from the APK extensions, that opens the Rust source repository.
 

@@ -303,7 +303,9 @@ object RustSourceRepos {
 
     /** Re-reads every repository, refusing a changed key or an older index; remembers the newest serial. Blocking. */
     fun refresh(context: Context): List<RepoListing> = refreshListings(context).also { listings ->
-        RustSourceIcons.cache(context, listings.flatMap { it.info?.sources.orEmpty() })
+        // Pictures come after the list: with a hundred sources, downloading them one by one would hold the screen up.
+        val entries = listings.flatMap { it.info?.sources.orEmpty() }
+        kotlin.concurrent.thread(name = "rust-source-icons", isDaemon = true) { RustSourceIcons.cache(context, entries) }
     }
 
     private fun refreshListings(context: Context): List<RepoListing> = list(context).map { repo ->

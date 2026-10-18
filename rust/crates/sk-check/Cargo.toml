@@ -1,0 +1,9 @@
+[package]
+name = "sk-check"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+sk-source = { version = "0.1.0", path = "../sk-source" }
+serde_json = "1"

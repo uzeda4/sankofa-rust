@@ -37,7 +37,7 @@ impl Source for AsuraScans {
             supports_related: true,
             custom_urls: true,
             // Everything but the covers: the site and its API, not the picture servers.
-            rate_limit: Some(RateLimit { permits: 2, period_ms: 2000, host: "asurascans.com,api.asurascans.com".into() }),
+            rate_limit: Some(RateLimit { permits: 2, period_ms: 2000, host: "asurascans.com,api.asurascans.com".into(), skip_path: String::new() }),
             prefs: vec![PrefDef::switch(HIDE_PREMIUM, "Hide premium chapters", "Hides the chapters that require a subscription to view", true)],
             ..Default::default()
         }
