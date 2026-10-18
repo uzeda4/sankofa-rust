@@ -79,7 +79,11 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let wasm = std::fs::read(&args[1]).expect("module");
     let lang = args.get(2).cloned().unwrap_or_else(|| "en".into());
-    let ctx = json!({ "lang": lang });
+    // SK_MIRROR=https://other.site tests a source against one of its mirrors (the "Domain" setting of the app).
+    let ctx = match std::env::var("SK_MIRROR") {
+        Ok(m) => json!({ "lang": lang, "prefs": { "mirror": m } }),
+        Err(_) => json!({ "lang": lang }),
+    };
     let mut s = WasmSource::load(&wasm, Arc::new(Curl)).expect("load");
     let mut out = json!({ "module": args[1] });
     let result: Result<(), String> = (|| {
@@ -94,8 +98,13 @@ fn main() {
         let upd = call(&mut s, json!({ "op": "update", "manga": first, "fetch_details": true, "fetch_chapters": true, "ctx": ctx }))?;
         let chapters = upd["update"]["chapters"].as_array().cloned().unwrap_or_default();
         out["chapters"] = json!(chapters.len());
-        let chapter = chapters.first().ok_or("no chapters")?.clone();
-        let pages = call(&mut s, json!({ "op": "pages", "chapter": chapter, "ctx": ctx }))?;
+        // the newest chapter may be locked behind a paywall: try the oldest too
+        let first = chapters.first().ok_or("no chapters")?.clone();
+        let last = chapters.last().cloned().unwrap_or_else(|| first.clone());
+        let pages = match call(&mut s, json!({ "op": "pages", "chapter": first, "ctx": ctx })) {
+            Ok(p) => p,
+            Err(_) => call(&mut s, json!({ "op": "pages", "chapter": last, "ctx": ctx }))?,
+        };
         let n = pages["pages"].as_array().map(Vec::len).unwrap_or(0);
         out["pages"] = json!(n);
         if n == 0 {

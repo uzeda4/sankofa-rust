@@ -8,6 +8,22 @@ The text of the matching release on GitHub is what the app shows in **About > Wh
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-18
+
+### Added
+- A search button in Settings > Browse > Rust sources: type part of a name to narrow the list of sources to download
+  ("Install all shown" follows it).
+- 8 more sources in Rust, the APK extensions installed on the phone that were not Rust yet: Tapas, HentaiFox (en, ja,
+  zh, ko, all), MadaraDex, MangaGG, Manganato, Mangabat, Rage Scans and Grabber Zone (repository serial 8: 138 sources).
+  What was and was not converted: `docs/redesign/KEIYOUSHI-EN.md`.
+
+### Fixed
+- Mangakakalot: mangakakalot.gg now answers a Cloudflare challenge on every page; the default address is the mirror
+  mangakakalove.com, which serves titles, chapters and pictures without one (the other address stays a choice in the
+  source's "Domain" setting). Mangakakalot v2 in the repository: use "Update all".
+- Madara sites that list chapters in pages (MangaGG, Top Manhua and others) failed with HTTP 400: the request had no form
+  body. The generated sources are v2.
+
 ## [0.1.2] - 2026-10-17
 
 ### Added

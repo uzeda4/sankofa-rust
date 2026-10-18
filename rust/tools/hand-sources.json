@@ -1,0 +1,88 @@
+{
+ "publish": [
+  {
+   "dir": "mangagg",
+   "name": "MangaGG",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara (hand)",
+   "check": "ok"
+  },
+  {
+   "dir": "ragescans",
+   "name": "Rage Scans",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangathemesia (hand)",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "manganato",
+   "name": "Manganato",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangabox (hand)",
+   "check": "cloudflare"
+  },
+  {
+   "dir": "mangabat",
+   "name": "Mangabat",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "mangabox (hand)",
+   "check": "ok"
+  },
+  {
+   "dir": "madaradex",
+   "name": "MadaraDex",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara (hand)",
+   "check": "ok"
+  },
+  {
+   "dir": "tapas",
+   "name": "Tapas",
+   "version": 1,
+   "langs": [
+    "en"
+   ],
+   "theme": "own",
+   "check": "ok"
+  },
+  {
+   "dir": "grabberzone",
+   "name": "Grabber Zone",
+   "version": 1,
+   "langs": [
+    "all"
+   ],
+   "theme": "madara (hand)",
+   "check": "ok"
+  },
+  {
+   "dir": "hentaifox",
+   "name": "HentaiFox",
+   "version": 1,
+   "langs": [
+    "en",
+    "ja",
+    "zh",
+    "ko",
+    "all"
+   ],
+   "theme": "galleryadults (own port)",
+   "check": "ok"
+  }
+ ]
+}

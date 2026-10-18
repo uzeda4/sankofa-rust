@@ -4,15 +4,41 @@ Conversão em lote das fontes em inglês do repositório `keiyoushi/extensions` 
 
 ## Resultado
 
-- **88 fontes novas** no repositório (15 delas atrás de Cloudflare: o teste no PC não passa pelo desafio, o app passa).
-- 23 geradas mas **deixadas de fora**: o site está fora do ar ou a página não é mais lida (lista abaixo).
+- **90 fontes geradas** pelo gerador (14 delas atrás de Cloudflare: o teste no PC não passa pelo desafio, o app passa) e **8 portadas à mão** (as extensões instaladas no aparelho que ainda não eram Rust).
+- 21 geradas mas **deixadas de fora**: o site está fora do ar ou a página não é mais lida (lista abaixo).
 - As outras **não foram convertidas**: cada uma precisa de porte manual (tabela abaixo).
+
+## Extensões APK instaladas no aparelho
+
+| Extensão | Fonte em Rust |
+|---|---|
+| Mangakakalot | Mangakakalot (v2: endereço padrão é o espelho sem muro do Cloudflare) |
+| Manganato | Manganato (porte à mão sobre `sk-theme-mangabox`) |
+| Mangabat | Mangabat (idem) |
+| MangaDex | MangaDex (Rust) |
+| MangaFire | MangaFire |
+| MangaFox | MangaFox |
+| Mangademon | Mangademon |
+| Murim Scan | Murim Scan |
+| Arena Scans / Asmotoon / Asura Scans | as três |
+| Kissmanga.in | Kissmanga.in |
+| Luscious | Luscious |
+| Webtoons | Webtoons |
+| ReadComicsOnline | ReadComicsOnline |
+| LHTranslation | LHTranslation (gerada) |
+| Rage Scans | Rage Scans (à mão; sem a remoção de `#comments` dos detalhes) |
+| MangaGG | MangaGG (à mão) |
+| MadaraDex | MadaraDex (à mão; cookie `mdx_fp` e atualização de `mdx_auth`) |
+| Grabber Zone | Grabber Zone (à mão) |
+| Tapas | Tapas (à mão; API JSON e nota do autor como imagem) |
+| HentaiFox | HentaiFox (à mão: en, ja, zh, ko, all; sem filtros por etiqueta) |
+| ReadComicOnline, Noxen Scans | **não convertidas**: as extensões foram removidas do repositório do Keiyoushi (404), não há código para portar |
 
 ## Por família de site
 
 | Família (tema) | Extensões EN | Publicadas | Fora (site morto/quebrado) | Sem conversão automática |
 |---|---:|---:|---:|---|
-| madara | 104 | 64 | 14 | 26 com código próprio além do tema |
+| madara | 104 | 66 | 12 | 26 com código próprio além do tema |
 | mangathemesia | 24 | 8 | 8 | 8 com código próprio além do tema |
 | keyoapp | 17 | 0 | 0 | tema ainda sem motor em Rust |
 | mangacatalog | 13 | 8 | 1 | 4 com código próprio além do tema |
@@ -45,15 +71,15 @@ Conversão em lote das fontes em inglês do repositório `keiyoushi/extensions` 
 | mangataro | 1 | 0 | 0 | tema ainda sem motor em Rust |
 | pam | 1 | 0 | 0 | tema ainda sem motor em Rust |
 | wpcomics | 1 | 0 | 0 | tema ainda sem motor em Rust |
-| (código próprio, sem tema) | 231 | 0 | 0 | uma a uma; as 12 já portadas à mão são as do aparelho |
+| (código próprio, sem tema) | 231 | 1 | 0 | uma a uma |
 
 As famílias sem motor (iken, vinetheme, mangahub, yiimadara, keyoapp antigo, galleryadults...) são o próximo passo natural: escrever o tema uma vez converte todas as fontes dele.
 
 ## Como funciona
 
 - `rust/tools/port/port.py` lê o índice e o código Kotlin de cada extensão e só traduz as que são **configuração pura** de um tema (constantes, seletores, limite de taxa). Qualquer lógica própria (`override fun` com corpo, classes auxiliares, `when (lang)`) manda a fonte para a lista manual, com o motivo.
-- Cada fonte vira um crate de ~20 linhas em `rust/sources/<nome>/` sobre o tema (`sk-theme-madara`, `-mangathemesia`, `-mangacatalog`, `-yiimanga`), com o ícone da extensão.
-- `rust/crates/sk-check` abre o módulo contra o **site real** (popular, detalhes, capítulos, páginas e busca) e classifica: `ok`, `cloudflare`, `dead` (fora do ar) ou `broken`. `rust/tools/port/collect.py` publica `ok` e `cloudflare`.
+- Cada fonte vira um crate de ~20 linhas em `rust/sources/<nome>/` sobre o tema (`sk-theme-madara`, `-mangathemesia`, `-mangacatalog`, `-yiimanga`), com o ícone da extensão. As escritas à mão estão em `rust/tools/hand-sources.json`.
+- `rust/crates/sk-check` abre o módulo contra o **site real** (popular, detalhes, capítulos, páginas e busca) e classifica: `ok`, `cloudflare`, `dead` (fora do ar) ou `broken`; `SK_MIRROR=<endereço>` testa um espelho. `rust/tools/port/collect.py` publica `ok` e `cloudflare`.
 - `rust/tools/publish-sources.ps1` empacota e assina tudo (módulos do perfil `wasm`: `cargo build --profile wasm --target wasm32-unknown-unknown -p sk-source-<nome>`).
 
 ```text
@@ -63,9 +89,9 @@ rust/target/release/sk-check <modulo.wasm> en            # uma linha JSON por fo
 python rust/tools/port/collect.py --reports *.json --check check.jsonl --out rust/tools/ported-sources.json
 ```
 
-## Publicadas
+## Publicadas (geradas)
 
-**madara** (64): AP Comics, AllPornComic, AllPornComic.io, Anisa Scans, Borat Scans (CF), Bun Manga (CF), Cocomic, Cucumber Manga, DragonTea (CF), Ero18x (CF), GakaMangas, GalaxyDegenScans, Gourmet Scans (CF), HM2D, Hentai1.io, HentaiXComic, HentaiXYuri, Hunlight Comics, Jinmangas, KSGroupScans, KaliScan.org (unoriginal), KokoMangas, LHTranslation, LinkManga, Manga 18x (CF), Manga District, Manga Eclipse, Manga18Free, MangaManiacs, MangaOwl.io (unoriginal), MangaPark.tv (unoriginal), MangaYY, Mangaforfree.com, Mangafree, Mangasushi, Manhua Plus, Manhua Zonghe (CF), ManhuaHot, ManhuaTop, ManhuaUS (CF), Manhwa Comics, Manhwa Reads, Manhwa18.today (CF), Manhwa68 (CF), ManhwaDen, ManhwaHub.to, Manhwatop, OctopusManga, Orchisasia, Paritehaber, Petrotechsociety, Pornhwaz, S2Manga, SeraphicDeviltry, Sleepy Translations, ToonGod (CF), Toonizy, TopManhua.net (CF), TritiniaScans, WebtoonScan (CF), WuxiaWorld, YaoiScan (CF), Yaoihub, Zinmanga
+**madara** (66): AP Comics, AllPornComic, AllPornComic.io, Anisa Scans, Borat Scans (CF), Bun Manga, Cocomic, Cucumber Manga, Decadence Scans, DragonTea (CF), Ero18x (CF), GakaMangas, GalaxyDegenScans, Gourmet Scans (CF), HM2D, Hentai1.io, HentaiXComic, HentaiXYuri, Hunlight Comics, Jinmangas, KSGroupScans, KaliScan.org (unoriginal), KokoMangas, LHTranslation, LinkManga, Manga 18x (CF), Manga District, Manga Eclipse, Manga18Free, MangaManiacs, MangaOwl.io (unoriginal), MangaPark.tv (unoriginal), MangaYY, Mangaforfree.com, Mangafree, Mangasushi, Manhua Plus, Manhua Zonghe (CF), ManhuaHot, ManhuaTop, ManhuaUS (CF), Manhwa Comics, Manhwa Reads, Manhwa18.today (CF), Manhwa68 (CF), ManhwaDen, ManhwaHub.to, Manhwatop, OctopusManga, Orchisasia, Paritehaber, Petrotechsociety, Pornhwaz, S2Manga, SeraphicDeviltry, Sleepy Translations, ToonGod (CF), Toonizy, Top Manhua, TopManhua.net (CF), TritiniaScans, WebtoonScan (CF), WuxiaWorld, YaoiScan (CF), Yaoihub, Zinmanga
 
 **mangathemesia** (8): Akaza Scans, Aster Scans, Hentai Desi, King of Shojo, Lagoon Scans, Manga Trend, Raven Scans, Wildtoon (CF)
 
@@ -78,10 +104,9 @@ python rust/tools/port/collect.py --reports *.json --check check.jsonl --out rus
 | Fonte | Tema | Motivo |
 |---|---|---|
 | Aqua Manga | madara | HTTP 404 for https://aquareader.org/manga/?m_orderby=views |
-| Athrea Scans | mangathemesia | https://athreascans.com/manga/?page=1&order=popular: curl: curl: (28) Operation timed out  |
+| Athrea Scans | mangathemesia | no pages |
 | Aunt Manhwa | madara | the page has no title (the site changed?) |
 | Daily Manhwa | madara | HTTP 525 for https://www.dailymanhwa.com/wp-admin/admin-ajax.php |
-| Decadence Scans | madara | https://reader.decadencescans.com/wp-admin/admin-ajax.php: curl: curl: (28) Operation time |
 | Eva Scans | mangathemesia | popular is empty |
 | Galaxy Manga | mangathemesia | popular is empty |
 | GingeRTooN | madara | popular is empty |
@@ -99,7 +124,6 @@ python rust/tools/port/collect.py --reports *.json --check check.jsonl --out rus
 | Read Black Clover Manga Online | mangacatalog | https://ww10.readblackclover.com/manga/black-clover/: curl: curl: (6) Could not resolve ho |
 | Rizz Comic (unoriginal) | mangathemesia | HTTP 500 for https://rizzcomic.com/manga/?page=1&order=popular |
 | Spmanhwa | madara | https://spmanhwa.online/wp-admin/admin-ajax.php: curl: curl: (56) Recv failure: Connection |
-| Top Manhua | madara | HTTP 400 |
 
 ## Limites conhecidos
 

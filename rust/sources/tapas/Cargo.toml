@@ -1,0 +1,13 @@
+[package]
+name = "sk-source-tapas"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1"
+sk-source-sdk = { version = "0.1.0", path = "../../crates/sk-source-sdk" }

@@ -8,10 +8,12 @@ pub struct Mangakakalot;
 
 impl Theme for Mangakakalot {
     const NAME: &'static str = "Mangakakalot";
-    const BASE_URL: &'static str = "https://www.mangakakalot.gg";
+    // mangakakalot.gg now answers a Cloudflare challenge on every page; the mirror serves titles, chapters and pictures
+    // without one (only its search page is challenged), so it is the default. The first address stays a choice.
+    const BASE_URL: &'static str = "https://www.mangakakalove.com";
     // The extension's id is md5("mangakakalot/en/0"), not version 1.
     const VERSION_ID: u32 = 0;
-    const MIRRORS: &'static [&'static str] = &["https://www.mangakakalot.gg", "https://www.mangakakalove.com"];
+    const MIRRORS: &'static [&'static str] = &["https://www.mangakakalove.com", "https://www.mangakakalot.gg"];
     const RATE_LIMIT: Option<RateLimit> = Some(RateLimit { permits: 2, period_ms: 1000, host: String::new(), skip_path: String::new() });
 
     /// Titles listed with an id (`ab123`) are addressed by their name instead.

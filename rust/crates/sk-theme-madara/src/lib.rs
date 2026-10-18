@@ -662,7 +662,7 @@ fn fetch_chapter_list<T: Theme>(manga_path: &str, id: &str, page: Option<&Docume
             let mut result: Vec<Chapter> = Vec::new();
             let mut last_url: Option<String> = None;
             for n in 1.. {
-                let resp = post(&format!("{}{}?t={n}", base::<T>(), chapter_ajax_path(manga_path))).header("X-Requested-With", "XMLHttpRequest").allow_errors().send()?;
+                let resp = post(&format!("{}{}?t={n}", base::<T>(), chapter_ajax_path(manga_path))).header("X-Requested-With", "XMLHttpRequest").form(&[]).allow_errors().send()?;
                 if resp.status == 404 {
                     break;
                 }

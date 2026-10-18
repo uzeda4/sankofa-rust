@@ -3473,6 +3473,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-grabberzone"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
 name = "sk-source-hadesscans"
 version = "0.1.0"
 dependencies = [
@@ -3502,6 +3510,14 @@ version = "0.1.0"
 dependencies = [
  "sk-source-sdk",
  "sk-theme-mangathemesia",
+]
+
+[[package]]
+name = "sk-source-hentaifox"
+version = "0.1.0"
+dependencies = [
+ "fancy-regex",
+ "sk-source-sdk",
 ]
 
 [[package]]
@@ -3619,6 +3635,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-madaradex"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
 name = "sk-source-madarascans"
 version = "0.1.0"
 dependencies = [
@@ -3648,6 +3672,14 @@ version = "0.1.0"
 dependencies = [
  "sk-source-sdk",
  "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-mangabat"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangabox",
 ]
 
 [[package]]
@@ -3719,6 +3751,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-mangagg"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-madara",
+]
+
+[[package]]
 name = "sk-source-mangakakalot"
 version = "0.1.0"
 dependencies = [
@@ -3741,6 +3781,14 @@ version = "0.1.0"
 dependencies = [
  "sk-source-sdk",
  "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-manganato"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangabox",
 ]
 
 [[package]]
@@ -4009,6 +4057,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "sk-source-ragescans"
+version = "0.1.0"
+dependencies = [
+ "sk-source-sdk",
+ "sk-theme-mangathemesia",
+]
+
+[[package]]
 name = "sk-source-ravenscans"
 version = "0.1.0"
 dependencies = [
@@ -4154,6 +4210,15 @@ version = "0.1.0"
 dependencies = [
  "sk-source-sdk",
  "sk-theme-madara",
+]
+
+[[package]]
+name = "sk-source-tapas"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sk-source-sdk",
 ]
 
 [[package]]

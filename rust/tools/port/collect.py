@@ -33,7 +33,8 @@ def main():
     for d, x in sorted(ported.items()):
         c = checks.get(d, {})
         status = c.get("status", "unchecked")
-        row = {"dir": d, "name": x["name"], "version": 1, "langs": ["en"], "theme": x["theme"], "check": status}
+        # version 2: the Madara theme's paginated chapter list was fixed after the first publication (serial 7)
+        row = {"dir": d, "name": x["name"], "version": 2, "langs": ["en"], "theme": x["theme"], "check": status}
         if status in ("ok", "cloudflare"):
             publish.append(row)
         else:

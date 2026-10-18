@@ -28,7 +28,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import eu.kanade.presentation.components.AppBar
+import eu.kanade.presentation.components.AppBarTitle
+import eu.kanade.presentation.components.SearchToolbar
 import eu.kanade.presentation.more.settings.widget.PreferenceGroupHeader
 import eu.kanade.presentation.more.settings.widget.TextPreferenceWidget
 import eu.kanade.presentation.util.Screen
@@ -75,12 +76,14 @@ class RustSourcesScreen : Screen() {
         var preview by remember { mutableStateOf<Pair<String, RepoInfo>?>(null) }
         var busyEntry by remember { mutableStateOf<String?>(null) }
         var languageFilter by remember { mutableStateOf(RustSourceRepos.languageFilter(context)) }
+        var searchQuery by remember { mutableStateOf<String?>(null) }
+        fun matchesSearch(e: RepoEntryInfo) = searchQuery.isNullOrBlank() || e.name.contains(searchQuery!!.trim(), ignoreCase = true)
         var confirmInstallAll by remember { mutableStateOf(false) }
         var confirmRemoveAll by remember { mutableStateOf(false) }
         val available = listings.flatMap { l -> l.info?.sources.orEmpty().map { l to it } }
         fun installedOf(e: RepoEntryInfo) = report?.sources?.firstOrNull { it.name == e.name && it.lang == e.lang }
         val toInstall = available.map { it.second }
-            .filter { (languageFilter.isEmpty() || it.lang in languageFilter) && installedOf(it) == null }
+            .filter { (languageFilter.isEmpty() || it.lang in languageFilter) && matchesSearch(it) && installedOf(it) == null }
         val toUpdate = available.map { it.second }.filter { e -> installedOf(e)?.let { it.version < e.version } == true }
         val toRemove = report?.sources.orEmpty().filter { s -> available.any { (_, e) -> e.name == s.name && e.lang == s.lang } }
         val refresh: () -> Unit = {
@@ -122,8 +125,11 @@ class RustSourcesScreen : Screen() {
 
         Scaffold(
             topBar = { scrollBehavior ->
-                AppBar(
-                    title = stringResource(KMR.strings.rust_sources_title),
+                // The search button narrows the "available" list by name (null = search closed).
+                SearchToolbar(
+                    searchQuery = searchQuery,
+                    onChangeSearchQuery = { searchQuery = it },
+                    titleContent = { AppBarTitle(stringResource(KMR.strings.rust_sources_title)) },
                     navigateUp = navigator::pop,
                     scrollBehavior = scrollBehavior,
                 )
@@ -222,7 +228,7 @@ class RustSourcesScreen : Screen() {
                         }
                     }
                 }
-                available.filter { languageFilter.isEmpty() || it.second.lang in languageFilter }.forEach { (l, entry) ->
+                available.filter { (languageFilter.isEmpty() || it.second.lang in languageFilter) && matchesSearch(it.second) }.forEach { (l, entry) ->
                     item(key = "avail-${l.repo.url}-${entry.name}-${entry.lang}") {
                         val installed = report?.sources?.firstOrNull { it.name == entry.name && it.lang == entry.lang }
                         val upToDate = installed != null && installed.version >= entry.version

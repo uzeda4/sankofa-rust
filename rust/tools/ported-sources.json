@@ -3,7 +3,7 @@
   {
    "dir": "akazascans",
    "name": "Akaza Scans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -13,7 +13,7 @@
   {
    "dir": "allporncomic",
    "name": "AllPornComic",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -23,7 +23,7 @@
   {
    "dir": "allporncomicio",
    "name": "AllPornComic.io",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -33,7 +33,7 @@
   {
    "dir": "anisascans",
    "name": "Anisa Scans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -43,7 +43,7 @@
   {
    "dir": "apcomics",
    "name": "AP Comics",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -53,7 +53,7 @@
   {
    "dir": "asterscans",
    "name": "Aster Scans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -63,7 +63,7 @@
   {
    "dir": "boratscans",
    "name": "Borat Scans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -73,17 +73,17 @@
   {
    "dir": "bunmanga",
    "name": "Bun Manga",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
    "theme": "madara",
-   "check": "cloudflare"
+   "check": "ok"
   },
   {
    "dir": "cocomic",
    "name": "Cocomic",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -93,7 +93,17 @@
   {
    "dir": "cucumbermanga",
    "name": "Cucumber Manga",
-   "version": 1,
+   "version": 2,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "decadencescans",
+   "name": "Decadence Scans",
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -103,7 +113,7 @@
   {
    "dir": "dragontea",
    "name": "DragonTea",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -113,7 +123,7 @@
   {
    "dir": "ero18x",
    "name": "Ero18x",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -123,7 +133,7 @@
   {
    "dir": "fourporncomic",
    "name": "4PornComic",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -133,7 +143,7 @@
   {
    "dir": "gakamangas",
    "name": "GakaMangas",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -143,7 +153,7 @@
   {
    "dir": "galaxydegenscans",
    "name": "GalaxyDegenScans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -153,7 +163,7 @@
   {
    "dir": "gourmetscans",
    "name": "Gourmet Scans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -163,7 +173,7 @@
   {
    "dir": "hentai1io",
    "name": "Hentai1.io",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -173,7 +183,7 @@
   {
    "dir": "hentai20lol",
    "name": "Hentai20 (Unoriginal)",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -183,7 +193,7 @@
   {
    "dir": "hentaidesi",
    "name": "Hentai Desi",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -193,7 +203,7 @@
   {
    "dir": "hentaixcomic",
    "name": "HentaiXComic",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -203,7 +213,7 @@
   {
    "dir": "hentaixyuri",
    "name": "HentaiXYuri",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -213,7 +223,7 @@
   {
    "dir": "hm2d",
    "name": "HM2D",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -223,7 +233,7 @@
   {
    "dir": "hunlightcomics",
    "name": "Hunlight Comics",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -233,7 +243,7 @@
   {
    "dir": "jinmangas",
    "name": "Jinmangas",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -243,7 +253,7 @@
   {
    "dir": "kaliscanorg",
    "name": "KaliScan.org (unoriginal)",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -253,7 +263,7 @@
   {
    "dir": "kingofshojo",
    "name": "King of Shojo",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -263,7 +273,7 @@
   {
    "dir": "ksgroupscans",
    "name": "KSGroupScans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -273,7 +283,7 @@
   {
    "dir": "lagoonscans",
    "name": "Lagoon Scans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -283,7 +293,7 @@
   {
    "dir": "lhtranslation",
    "name": "LHTranslation",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -293,7 +303,7 @@
   {
    "dir": "likemangain",
    "name": "MangaYY",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -303,7 +313,7 @@
   {
    "dir": "linkmanga",
    "name": "LinkManga",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -313,7 +323,7 @@
   {
    "dir": "manga18free",
    "name": "Manga18Free",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -323,7 +333,7 @@
   {
    "dir": "manga18x",
    "name": "Manga 18x",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -333,7 +343,7 @@
   {
    "dir": "mangadistrict",
    "name": "Manga District",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -343,7 +353,7 @@
   {
    "dir": "mangaeclipse",
    "name": "Manga Eclipse",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -353,7 +363,7 @@
   {
    "dir": "mangaforfreecom",
    "name": "Mangaforfree.com",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -363,7 +373,7 @@
   {
    "dir": "mangafree",
    "name": "Mangafree",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -373,7 +383,7 @@
   {
    "dir": "mangamaniacs",
    "name": "MangaManiacs",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -383,7 +393,7 @@
   {
    "dir": "mangaowlio",
    "name": "MangaOwl.io (unoriginal)",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -393,7 +403,7 @@
   {
    "dir": "mangaparktv",
    "name": "MangaPark.tv (unoriginal)",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -403,7 +413,7 @@
   {
    "dir": "mangasushi",
    "name": "Mangasushi",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -413,7 +423,7 @@
   {
    "dir": "mangatrend",
    "name": "Manga Trend",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -423,7 +433,7 @@
   {
    "dir": "manhuahot",
    "name": "ManhuaHot",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -433,7 +443,7 @@
   {
    "dir": "manhuaplus",
    "name": "Manhua Plus",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -443,7 +453,7 @@
   {
    "dir": "manhuatop",
    "name": "ManhuaTop",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -453,7 +463,7 @@
   {
    "dir": "manhuaus",
    "name": "ManhuaUS",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -463,7 +473,7 @@
   {
    "dir": "manhuazonghe",
    "name": "Manhua Zonghe",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -473,7 +483,7 @@
   {
    "dir": "manhwa18today",
    "name": "Manhwa18.today",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -483,7 +493,7 @@
   {
    "dir": "manhwa18tx",
    "name": "Manhwa18TX",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -493,7 +503,7 @@
   {
    "dir": "manhwa68",
    "name": "Manhwa68",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -503,7 +513,7 @@
   {
    "dir": "manhwacomics",
    "name": "Manhwa Comics",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -513,7 +523,7 @@
   {
    "dir": "manhwaddict",
    "name": "Manhwaddict",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -523,7 +533,7 @@
   {
    "dir": "manhwaden",
    "name": "ManhwaDen",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -533,7 +543,7 @@
   {
    "dir": "manhwagalaxy",
    "name": "ManhwaGalaxy",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -543,7 +553,7 @@
   {
    "dir": "manhwahubto",
    "name": "ManhwaHub.to",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -553,7 +563,7 @@
   {
    "dir": "manhwaonline",
    "name": "ManhwaOnline",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -563,7 +573,7 @@
   {
    "dir": "manhwareads",
    "name": "Manhwa Reads",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -573,7 +583,7 @@
   {
    "dir": "manhwatop",
    "name": "Manhwatop",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -583,7 +593,7 @@
   {
    "dir": "myreadingcomic",
    "name": "MyReadingComic",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -593,7 +603,7 @@
   {
    "dir": "octopusmanga",
    "name": "OctopusManga",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -603,7 +613,7 @@
   {
    "dir": "orchisasia",
    "name": "Orchisasia",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -613,7 +623,7 @@
   {
    "dir": "paritehaber",
    "name": "Paritehaber",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -623,7 +633,7 @@
   {
    "dir": "petrotechsociety",
    "name": "Petrotechsociety",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -633,7 +643,7 @@
   {
    "dir": "pornhwaz",
    "name": "Pornhwaz",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -643,7 +653,7 @@
   {
    "dir": "ravenscans",
    "name": "Raven Scans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -653,7 +663,7 @@
   {
    "dir": "readchainsawmanmangaonline",
    "name": "Read Chainsaw Man Manga Online",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -663,7 +673,7 @@
   {
    "dir": "readfairytailedenszeromangaonline",
    "name": "Read Fairy Tail & Edens Zero Manga Online",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -673,7 +683,7 @@
   {
    "dir": "readjujutsukaisenmangaonline",
    "name": "Read Jujutsu Kaisen Manga Online",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -683,7 +693,7 @@
   {
    "dir": "readkingdommangaonline",
    "name": "Read Kingdom Manga Online",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -693,7 +703,7 @@
   {
    "dir": "readnanatsunotaizai7deadlysinsmangaonline",
    "name": "Read Nanatsu no Taizai 7 Deadly Sins Manga Online",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -703,7 +713,7 @@
   {
    "dir": "readonepiecemangaonline",
    "name": "Read One Piece Manga Online",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -713,7 +723,7 @@
   {
    "dir": "readsololevelingmangamanhwaonline",
    "name": "Read Solo Leveling Manga Manhwa Online",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -723,7 +733,7 @@
   {
    "dir": "readtokyoghoulretokyoghoulmangaonline",
    "name": "Read Tokyo Ghoul Re & Tokyo Ghoul Manga Online",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -733,7 +743,7 @@
   {
    "dir": "s2manga",
    "name": "S2Manga",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -743,7 +753,7 @@
   {
    "dir": "seraphicdeviltry",
    "name": "SeraphicDeviltry",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -753,7 +763,7 @@
   {
    "dir": "sleepytranslations",
    "name": "Sleepy Translations",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -763,7 +773,7 @@
   {
    "dir": "toongod",
    "name": "ToonGod",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -773,7 +783,17 @@
   {
    "dir": "toonizy",
    "name": "Toonizy",
-   "version": 1,
+   "version": 2,
+   "langs": [
+    "en"
+   ],
+   "theme": "madara",
+   "check": "ok"
+  },
+  {
+   "dir": "topmanhua",
+   "name": "Top Manhua",
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -783,7 +803,7 @@
   {
    "dir": "topmanhuanet",
    "name": "TopManhua.net",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -793,7 +813,7 @@
   {
    "dir": "tritiniascans",
    "name": "TritiniaScans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -803,7 +823,7 @@
   {
    "dir": "wearehunger",
    "name": "KokoMangas",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -813,7 +833,7 @@
   {
    "dir": "webtoonscan",
    "name": "WebtoonScan",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -823,7 +843,7 @@
   {
    "dir": "wildtoon",
    "name": "Wildtoon",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -833,7 +853,7 @@
   {
    "dir": "wuxiaworld",
    "name": "WuxiaWorld",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -843,7 +863,7 @@
   {
    "dir": "yaoihub",
    "name": "Yaoihub",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -853,7 +873,7 @@
   {
    "dir": "yaoiscan",
    "name": "YaoiScan",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -863,7 +883,7 @@
   {
    "dir": "yaoiscanme",
    "name": "YaoiScan (Unoriginal)",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -873,7 +893,7 @@
   {
    "dir": "zinmanga",
    "name": "Zinmanga",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -885,7 +905,7 @@
   {
    "dir": "aquamanga",
    "name": "Aqua Manga",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -896,18 +916,18 @@
   {
    "dir": "athreascans",
    "name": "Athrea Scans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
    "theme": "mangathemesia",
-   "check": "dead",
-   "why": "https://athreascans.com/manga/?page=1&order=popular: curl: curl: (28) Operation timed out after 40017 milliseconds with 0 bytes received"
+   "check": "broken",
+   "why": "no pages"
   },
   {
    "dir": "auntmanhwa",
    "name": "Aunt Manhwa",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -918,7 +938,7 @@
   {
    "dir": "dailymanhwa",
    "name": "Daily Manhwa",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -927,20 +947,9 @@
    "why": "HTTP 525 for https://www.dailymanhwa.com/wp-admin/admin-ajax.php"
   },
   {
-   "dir": "decadencescans",
-   "name": "Decadence Scans",
-   "version": 1,
-   "langs": [
-    "en"
-   ],
-   "theme": "madara",
-   "check": "dead",
-   "why": "https://reader.decadencescans.com/wp-admin/admin-ajax.php: curl: curl: (28) Operation timed out after 40009 milliseconds with 0 bytes received"
-  },
-  {
    "dir": "evascans",
    "name": "Eva Scans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -951,7 +960,7 @@
   {
    "dir": "galaxymanga",
    "name": "Galaxy Manga",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -962,7 +971,7 @@
   {
    "dir": "gingertoon",
    "name": "GingeRTooN",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -973,7 +982,7 @@
   {
    "dir": "hadesscans",
    "name": "Hades Scans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -984,7 +993,7 @@
   {
    "dir": "madarascans",
    "name": "Madara Scans",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -995,7 +1004,7 @@
   {
    "dir": "mahouirexnohentaikarte",
    "name": "Mahouirexnohentaikarte",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -1006,7 +1015,7 @@
   {
    "dir": "mangakiss",
    "name": "Manga Kiss",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -1017,7 +1026,7 @@
   {
    "dir": "mangareadorg",
    "name": "MangaRead.org",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -1028,7 +1037,7 @@
   {
    "dir": "manhuanext",
    "name": "Manhuanext",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -1039,7 +1048,7 @@
   {
    "dir": "manhwaget",
    "name": "ManhwaGet",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -1050,7 +1059,7 @@
   {
    "dir": "manhwamanhua",
    "name": "ManhwaManhua",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -1061,7 +1070,7 @@
   {
    "dir": "milftoon",
    "name": "Milftoon",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -1072,7 +1081,7 @@
   {
    "dir": "nexcomic",
    "name": "NexComic",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -1083,7 +1092,7 @@
   {
    "dir": "razure",
    "name": "Razure",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -1094,7 +1103,7 @@
   {
    "dir": "readblackclovermangaonline",
    "name": "Read Black Clover Manga Online",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -1105,7 +1114,7 @@
   {
    "dir": "rizzcomicunoriginal",
    "name": "Rizz Comic (unoriginal)",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
@@ -1116,24 +1125,13 @@
   {
    "dir": "spmanhwa",
    "name": "Spmanhwa",
-   "version": 1,
+   "version": 2,
    "langs": [
     "en"
    ],
    "theme": "madara",
    "check": "broken",
    "why": "https://spmanhwa.online/wp-admin/admin-ajax.php: curl: curl: (56) Recv failure: Connection was reset"
-  },
-  {
-   "dir": "topmanhua",
-   "name": "Top Manhua",
-   "version": 1,
-   "langs": [
-    "en"
-   ],
-   "theme": "madara",
-   "check": "broken",
-   "why": "HTTP 400"
   }
  ]
 }
