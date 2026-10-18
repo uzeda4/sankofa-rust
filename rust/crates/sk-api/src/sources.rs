@@ -311,6 +311,8 @@ fn instantiate(
             None => legacy_id(name, lang),
         },
     };
+    // A source in Rust and the extension it was ported from are two different sources in Browse and in the library.
+    let id = sk_source::rust_source_id(id);
     id_cell.store(id, Ordering::Relaxed);
     let info = RustSourceInfo {
         id,
@@ -418,4 +420,3 @@ mod tests {
         assert!(!slug("../../etc/passwd", "en").contains(['/', '.']));
     }
 }
-

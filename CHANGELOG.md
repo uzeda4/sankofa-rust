@@ -8,6 +8,13 @@ The text of the matching release on GitHub is what the app shows in **About > Wh
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-17
+
+### Fixed
+- A source in Rust and the APK extension it was ported from were shown as one item in Browse (the Rust one hid the
+  extension). Sources in Rust now have an id of their own, so both can be installed and listed side by side.
+  Titles saved in the library from a Rust source before this version no longer match it: add them again or use Migrate.
+
 ## [0.1.1] - 2026-10-17
 
 ### Added

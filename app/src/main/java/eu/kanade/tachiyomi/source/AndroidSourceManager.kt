@@ -130,8 +130,8 @@ class AndroidSourceManager(
                         }
                     }
                     // KMK -->
-                    // A source in Rust goes last: when it has the id of an installed extension (a conversion of it),
-                    // the library, history and downloads keep working and the Rust source answers.
+                    // A source in Rust has an id of its own (never the id of the extension it was ported from), so both
+                    // can be installed and show up as two sources in Browse.
                     rustSources.forEach {
                         mutableMap[it.id] = it
                         registerStubSource(StubSource.from(it))

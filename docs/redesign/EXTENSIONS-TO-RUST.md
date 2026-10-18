@@ -75,7 +75,7 @@ Escolhas, em ordem da escada do ponytail:
 - **`fancy-regex`** para os `(?<!...)` do Madara; `regex` para o resto.
 - **Datas** com `time` + tabela de nomes de mês/palavras relativas por idioma (os temas já listam as palavras).
 - **Imagens processadas no app, não no wasm.** Interpretar `Bitmap` em wasmi (sem JIT) seria lento; o módulo só descreve a operação, o Kotlin executa.
-- **Mesmo `id` da extensão.** Para a biblioteca e o histórico continuarem ligados, a fonte Rust informa o `id` que a extensão tinha (`MD5("nome/idioma/versionId")`, 8 primeiros bytes). Ao instalar, a fonte Rust passa na frente da extensão de mesmo id.
+- **`id` próprio.** O módulo informa o `id` que a extensão tinha (`MD5("nome/idioma/versionId")`, 8 primeiros bytes), e o app o mistura com uma constante (`sk_source::rust_source_id`). A fonte Rust nunca tem o `id` da extensão, então as duas podem estar instaladas e aparecem separadas em Navegar. Itens da biblioteca salvos de uma ou de outra ficam ligados a ela; para passar de uma à outra use Migrar.
 
 ## 4. Melhorias além da paridade
 

@@ -316,6 +316,15 @@ pub fn extension_id(name: &str, lang: &str, version_id: u32) -> i64 {
     (id & (i64::MAX as u64)) as i64
 }
 
+/// The app-wide id of a source in Rust: the id the module reports (the one its extension had) mixed with a fixed
+/// constant, so it never equals the extension's id and both can be installed and listed side by side.
+/// A bijection on 63 bits that keeps the id positive and non-zero; the same input always gives the same id.
+pub fn rust_source_id(module_id: i64) -> i64 {
+    const SALT: i64 = 0x5253_5400_5253_5400;
+    let id = (module_id ^ SALT) & i64::MAX;
+    if id == 0 { SALT } else { id }
+}
+
 /// A source shared between threads (the app calls from a pool).
 pub type SharedSource = Arc<Mutex<WasmSource>>;
 
@@ -417,6 +426,16 @@ mod tests {
         assert_eq!(extension_id("Mangakakalot", "en", 1), 2_528_986_671_771_677_900);
         assert_eq!(extension_id("Asura Scans", "en", 1), 6_247_824_327_199_706_550);
         assert_eq!(extension_id("Webtoons.com", "en", 2), 8_510_171_328_472_873_347);
+    }
+
+    #[test]
+    fn a_rust_source_never_shares_the_id_of_its_extension() {
+        let extension = extension_id("Asura Scans", "en", 1);
+        let rust = rust_source_id(extension);
+        assert_ne!(rust, extension);
+        assert!(rust > 0);
+        assert_eq!(rust, rust_source_id(extension), "stable between runs");
+        assert_ne!(rust_source_id(1), rust_source_id(2));
     }
 
     #[test]

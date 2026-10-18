@@ -53,8 +53,8 @@ android {
         // so extensions and upstream cherry-picks keep working.
         applicationId = "app.sankofa.rust"
 
-        versionCode = 2
-        versionName = "0.1.1"
+        versionCode = 3
+        versionName = "0.1.2"
         // KMK <--
 
         buildConfigField("String", "COMMIT_COUNT", "\"${getCommitCount()}\"")
