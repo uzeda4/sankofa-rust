@@ -26,6 +26,14 @@ pub trait Theme: 'static {
     /// Other addresses of the same site; the user picks one in settings.
     const MIRRORS: &'static [&'static str] = &[];
     const RATE_LIMIT: Option<RateLimit> = None;
+    /// Hosts the rate limit applies to (`a.com,b.com`); empty limits every request, pictures included.
+    const RATE_LIMIT_HOSTS: &'static str = "";
+    /// Addresses whose quick search (`/home/search/json`, the box that suggests titles as you type) answers without the
+    /// Cloudflare challenge that guards the HTML search page on some mirrors. A text search asks these first; a title has
+    /// the same slug on every mirror, so a hit opens on the source's own address.
+    const SEARCH_API: &'static [&'static str] = &[];
+    /// Hosts the site had before; a title saved with an address there is found again by its title (see `healed`).
+    const LEGACY_HOSTS: &'static [&'static str] = &[];
 
     const POPULAR_PATH: &'static str = "manga-list/hot-manga?page=";
     const LATEST_PATH: &'static str = "manga-list/latest-manga?page=";
@@ -85,7 +93,7 @@ impl<T: Theme> Source for Site<T> {
             version_id: T::VERSION_ID,
             mirrors: T::MIRRORS.iter().map(|m| m.to_string()).collect(),
             supports_latest: true,
-            rate_limit: T::RATE_LIMIT,
+            rate_limit: T::RATE_LIMIT.map(|r| RateLimit { host: T::RATE_LIMIT_HOSTS.into(), ..r }),
             prefs: vec![PrefDef::switch(
                 MERGE_PREF,
                 "Merge Split Images",
@@ -107,6 +115,11 @@ impl<T: Theme> Source for Site<T> {
     }
 
     fn search(&self, page: u32, query: &str, filters: &Filters) -> Result<MangaPage> {
+        if page == 1 {
+            if let Some(found) = quick_search::<T>(query) {
+                return Ok(found);
+            }
+        }
         let url = if !query.trim().is_empty() {
             format!("{}/{}{}?page={page}", base::<T>(), T::SEARCH_PATH, url_encode(&normalize_query(query)))
         } else {
@@ -133,16 +146,23 @@ impl<T: Theme> Source for Site<T> {
     }
 
     fn details(&self, manga: &Manga) -> Result<Manga> {
+        let manga = &healed::<T>(manga)?;
         let doc = get(&manga_url::<T>(manga)).send()?.html();
         parse_details::<T>(&doc)
     }
 
     fn chapters(&self, manga: &Manga) -> Result<Vec<Chapter>> {
+        let manga = &healed::<T>(manga)?;
         parse_chapters::<T>(manga, get(&chapters_url::<T>(manga)).send()?)
     }
 
     /// Details and chapters are separate requests; run them together.
     fn update(&self, manga: &Manga, fetch_details: bool, fetch_chapters: bool) -> Result<Update> {
+        // a title found again under its new address needs its details (they carry the new slug) and its chapters now: the
+        // saved ones point to the former site
+        let found_again = is_legacy::<T>(manga);
+        let (fetch_details, fetch_chapters) = (fetch_details || found_again, fetch_chapters || found_again);
+        let manga = &healed::<T>(manga)?;
         let mut requests = Vec::new();
         if fetch_details {
             requests.push(get(&manga_url::<T>(manga)));
@@ -247,6 +267,92 @@ fn manga_from_element<T: Theme>(el: &El, base: &str) -> Option<Manga> {
     };
     manga.memo = Some(json!({ "slug": T::compute_slug(&manga) }));
     Some(manga)
+}
+
+/// One suggestion of the quick search.
+#[derive(Deserialize)]
+struct QuickHit {
+    slug: String,
+    name: String,
+    #[serde(default)]
+    thumb: String,
+}
+
+/// The suggestions of the first address in `SEARCH_API` that answers: up to 20 titles. `None` when no address is set,
+/// the text is empty or nothing answered.
+fn quick_hits<T: Theme>(query: &str) -> Option<Vec<QuickHit>> {
+    if query.trim().is_empty() {
+        return None;
+    }
+    let word = url_encode(&normalize_query(query));
+    T::SEARCH_API.iter().find_map(|host| {
+        let host = host.trim_end_matches('/');
+        let hits: Vec<QuickHit> = get(&format!("{host}/home/search/json?searchword={word}"))
+            .header("X-Requested-With", "XMLHttpRequest")
+            .header("Referer", &format!("{host}/"))
+            .send()
+            .ok()?
+            .json()
+            .ok()?;
+        Some(hits).filter(|h| !h.is_empty())
+    })
+}
+
+/// A text search through the quick search: no further pages. `None` falls back to the HTML search page.
+fn quick_search<T: Theme>(query: &str) -> Option<MangaPage> {
+    let mangas = quick_hits::<T>(query)?
+        .into_iter()
+        .map(|h| Manga {
+            url: format!("/manga/{}", h.slug),
+            title: h.name,
+            thumbnail_url: Some(h.thumb).filter(|t| !t.is_empty()),
+            memo: Some(json!({ "slug": h.slug })),
+            ..Default::default()
+        })
+        .collect();
+    Some(MangaPage { mangas, has_next: false })
+}
+
+/// Letters and digits only, lower case: titles written differently on two sites still compare equal.
+fn simplified(title: &str) -> String {
+    title.chars().filter(|c| c.is_alphanumeric()).flat_map(char::to_lowercase).collect()
+}
+
+/// Saved with an address on a former host and not yet found again (no slug kept).
+fn is_legacy<T: Theme>(manga: &Manga) -> bool {
+    let has_slug = manga.memo.as_ref().is_some_and(|m| m["slug"].as_str().is_some_and(|s| !s.is_empty()));
+    if has_slug || T::LEGACY_HOSTS.is_empty() {
+        return false;
+    }
+    // an address on a former host, or only its path (`/manga-ab123456`: two letters and digits after `manga-`, the old ids)
+    let last = manga.url.split('?').next().unwrap_or_default().trim_end_matches('/').rsplit('/').next().unwrap_or_default();
+    let old_id = last.strip_prefix("manga-").is_some_and(|id| {
+        let b = id.as_bytes();
+        b.len() > 2 && b[..2].iter().all(u8::is_ascii_lowercase) && b[2..].iter().all(u8::is_ascii_digit)
+    });
+    old_id || T::LEGACY_HOSTS.iter().any(|h| manga.url.contains(h))
+}
+
+/// A title saved under a former address of the site (`https://chapmanganato.to/manga-ab123456`, with an id of the old
+/// scheme) has no page now. It is found again by its title, and the new slug goes to `memo`, which the app keeps.
+fn healed<T: Theme>(manga: &Manga) -> Result<Manga> {
+    if !is_legacy::<T>(manga) {
+        return Ok(manga.clone());
+    }
+    let hits: Vec<(String, String)> = match quick_hits::<T>(&manga.title) {
+        Some(hits) => hits.into_iter().map(|h| (h.slug, h.name)).collect(),
+        None => {
+            let url = format!("{}/{}{}?page=1", base::<T>(), T::SEARCH_PATH, url_encode(&normalize_query(&manga.title)));
+            let page = parse_list::<T>(&get(&url).send()?.html(), T::SEARCH_SELECTOR, "");
+            page.mangas.into_iter().map(|m| (T::compute_slug(&m), m.title)).collect()
+        }
+    };
+    let wanted = simplified(&manga.title);
+    let pick = hits.iter().find(|(_, name)| simplified(name) == wanted).or(if hits.len() == 1 { hits.first() } else { None });
+    match pick {
+        Some((slug, _)) => Ok(Manga { url: format!("/manga/{slug}"), memo: Some(json!({ "slug": slug })), ..manga.clone() }),
+        None => Err(format!("\"{}\" was saved under a former address of the site and no title of that name was found: migrate it", manga.title)),
+    }
 }
 
 // ------------------------------------------------------------------ details and chapters

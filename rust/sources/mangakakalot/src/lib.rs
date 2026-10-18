@@ -14,6 +14,8 @@ impl Theme for Mangakakalot {
     // The extension's id is md5("mangakakalot/en/0"), not version 1.
     const VERSION_ID: u32 = 0;
     const MIRRORS: &'static [&'static str] = &["https://www.mangakakalove.com", "https://www.mangakakalot.gg"];
+    // The HTML search page is challenged on both addresses; the quick search is not.
+    const SEARCH_API: &'static [&'static str] = &["https://www.mangakakalove.com", "https://www.mangakakalot.gg"];
     const RATE_LIMIT: Option<RateLimit> = Some(RateLimit { permits: 2, period_ms: 1000, host: String::new(), skip_path: String::new() });
 
     /// Titles listed with an id (`ab123`) are addressed by their name instead.

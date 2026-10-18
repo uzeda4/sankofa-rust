@@ -171,3 +171,102 @@ fn the_source_declares_its_filters_and_settings() {
     assert_eq!(f.len(), 5);
     assert!(matches!(&f[4], FilterDef::Select { options, .. } if options.len() == GENRES.len()));
 }
+
+struct Quick;
+impl Theme for Quick {
+    const NAME: &'static str = "Quick";
+    const BASE_URL: &'static str = "https://site.test";
+    const SEARCH_API: &'static [&'static str] = &["https://other.test/"];
+}
+
+#[test]
+fn a_text_search_uses_the_quick_search_of_the_other_address() {
+    mock(|u| {
+        u.starts_with("https://other.test/home/search/json?searchword=solo_leveling").then_some(
+            r#"[{"id":1,"name":"Solo Leveling","slug":"solo-leveling","thumb":"https://img.test/s.webp","url":"x"}]"#,
+        )
+    });
+    set_context("en", &[]);
+    let page = Site::<Quick>::default().search(1, "Solo Leveling", &Filters::default()).unwrap();
+    assert_eq!(page.mangas.len(), 1);
+    assert_eq!((page.mangas[0].url.as_str(), page.mangas[0].title.as_str()), ("/manga/solo-leveling", "Solo Leveling"));
+    assert_eq!(page.mangas[0].memo.as_ref().unwrap()["slug"], "solo-leveling");
+    assert!(!page.has_next);
+}
+
+#[test]
+fn the_html_search_runs_when_the_quick_search_is_down() {
+    mock(|u| u.starts_with("https://site.test/search/story/solo").then_some(LIST));
+    set_context("en", &[]);
+    let page = Site::<Quick>::default().search(1, "solo", &Filters::default()).unwrap();
+    assert_eq!(page.mangas.len(), 2);
+}
+
+struct Legacy;
+impl Theme for Legacy {
+    const NAME: &'static str = "Legacy";
+    const BASE_URL: &'static str = "https://site.test";
+    const SEARCH_API: &'static [&'static str] = &["https://other.test"];
+    const LEGACY_HOSTS: &'static [&'static str] = &["chapmanganato.to"];
+}
+
+#[test]
+fn a_title_saved_under_a_former_address_is_found_again_by_its_title() {
+    mock(|u| {
+        if u.starts_with("https://other.test/home/search/json") {
+            Some(r#"[{"id":2,"name":"Solo Leveling: Ragnarok","slug":"solo-leveling-ragnarok","thumb":""},{"id":1,"name":"Solo Leveling","slug":"solo-leveling","thumb":""}]"#)
+        } else if u == "https://site.test/manga/solo-leveling" {
+            Some(DETAILS)
+        } else {
+            None
+        }
+    });
+    set_context("en", &[]);
+    let old = Manga { url: "https://chapmanganato.to/manga-ab123456".into(), title: "Solo Leveling".into(), ..Default::default() };
+    let m = Site::<Legacy>::default().details(&old).unwrap();
+    assert_eq!(m.memo.as_ref().unwrap()["slug"], "solo-leveling");
+    // a title with its slug kept is not searched again, and a current address is left alone
+    let kept = Manga { memo: Some(json!({ "slug": "kept" })), ..old.clone() };
+    assert_eq!(healed::<Legacy>(&kept).unwrap().memo.unwrap()["slug"], "kept");
+    let current = Manga { url: "/manga/solo-leveling".into(), title: "x".into(), ..Default::default() };
+    assert_eq!(healed::<Legacy>(&current).unwrap().url, "/manga/solo-leveling");
+}
+
+#[test]
+fn a_former_address_with_no_title_of_that_name_asks_to_migrate() {
+    mock(|u| u.starts_with("https://other.test/home/search/json").then_some(r#"[{"id":2,"name":"Another","slug":"another","thumb":""},{"id":3,"name":"Other","slug":"other","thumb":""}]"#));
+    set_context("en", &[]);
+    let old = Manga { url: "https://chapmanganato.to/manga-zz9".into(), title: "Missing".into(), ..Default::default() };
+    assert!(healed::<Legacy>(&old).unwrap_err().contains("migrate it"));
+}
+
+#[test]
+fn updating_a_title_found_again_also_fetches_its_chapters() {
+    mock(|u| {
+        if u.starts_with("https://other.test/home/search/json") {
+            Some(r#"[{"id":1,"name":"Solo Leveling","slug":"solo-leveling","thumb":""}]"#)
+        } else if u == "https://site.test/manga/solo-leveling" {
+            Some(DETAILS)
+        } else if u.starts_with("https://site.test/api/manga/solo-leveling/chapters") {
+            Some(r#"{"success":true,"data":{"chapters":[{"chapter_name":"Chapter 1","chapter_slug":"chapter-1","chapter_num":1,"updated_at":"2024-01-01T00:00:00.000000Z"}]}}"#)
+        } else {
+            None
+        }
+    });
+    set_context("en", &[]);
+    let old = Manga { url: "https://chapmanganato.to/manga-ab123456".into(), title: "Solo Leveling".into(), ..Default::default() };
+    // the app asked for nothing, and still gets the new details and chapters
+    let u = Site::<Legacy>::default().update(&old, false, false).unwrap();
+    assert_eq!(u.manga.unwrap().memo.unwrap()["slug"], "solo-leveling");
+    assert_eq!(u.chapters.unwrap().len(), 1);
+}
+
+#[test]
+fn an_old_id_path_without_a_host_is_found_again_too() {
+    let m = |url: &str| Manga { url: url.into(), title: "x".into(), ..Default::default() };
+    assert!(is_legacy::<Legacy>(&m("/manga-ab123456")));
+    assert!(is_legacy::<Legacy>(&m("/manga/manga-ab123456/")));
+    assert!(!is_legacy::<Legacy>(&m("/manga/manga-of-the-year")), "a title whose own name starts with manga-");
+    assert!(!is_legacy::<Legacy>(&m("/manga/solo-leveling")));
+    assert!(!is_legacy::<Test>(&m("/manga-ab123456")), "a site with no former hosts is left alone");
+}

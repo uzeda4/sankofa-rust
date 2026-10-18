@@ -8,6 +8,33 @@ The text of the matching release on GitHub is what the app shows in **About > Wh
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-10-18
+
+### Added
+- **Browse > Migrate: "Move titles to Rust sources"** (the arrows icon at the top). Library titles of sources that are no
+  longer installed (an extension you removed) move to the Rust source of the same name and language, with their chapters,
+  history and categories, and no search. The dialog lists each source and its titles, all ticked: clear a source or open
+  it to pick title by title. A source whose titles all move takes its pin and saved searches along.
+
+### Fixed
+- MangaDex (Rust) v3: opening a title failed ("unknown variant `update`"); the published package was older than the app.
+- Manganato v5: natomanga.com listed titles in a layout the parser could not read (an empty list) and challenges its list
+  and search pages with Cloudflare; the default address is now manganato.gg (the others stay a choice in "Domain"), the
+  text search goes through the site's quick search, and the requests of the site's pages are paced (3 per second) so a
+  library update does not get HTTP 503. Titles saved with an address of the former domains (chapmanganato.to, or only
+  `/manga-ab123456`) are found again by their name when opened or updated, with chapters from the new address.
+- Mangakakalot v3: the text search goes through the site's quick search, which the Cloudflare challenge does not guard,
+  so searching (and migrating) finds titles.
+- Read Comics Online shows "No results found" (and a migration finds nothing) while the site asks for its Cloudflare
+  "Verify you are human" check. Nothing is wrong with the source: open it, tap the globe icon (WebView) and tick the box
+  once.
+
+### Other
+- Repository serial 9 (138 sources): MangaDex v3, Manganato v5, Mangakakalot v3. Use "Update all" in Settings > Browse >
+  Rust sources.
+- ReadComicOnline (readcomiconline.li) cannot be ported: the site is offline and the extension is gone from the Keiyoushi
+  repository. Move those titles to another source by searching.
+
 ## [0.1.3] - 2026-10-18
 
 ### Added

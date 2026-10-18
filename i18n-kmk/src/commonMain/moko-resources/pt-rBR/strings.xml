@@ -267,4 +267,9 @@ As fontes deste publicador vão rodar no app e podem ver o que você busca e lê
     <string name="rust_repos_lang_all">Todos</string>
     <string name="rust_repos_lang_multi">Múltiplos</string>
     <string name="rust_repos_lang_other">Outros</string>
+    <string name="rust_move_title">Mover títulos para fontes Rust</string>
+    <string name="rust_move_message">Títulos de fontes que não estão mais instaladas podem ir para a fonte Rust de mesmo nome e idioma, com capítulos, histórico e categorias. Não precisa buscar. Um site que mudou de endereço (Manganato) reencontra cada título pelo nome quando ele é aberto.</string>
+    <string name="rust_move_confirm">Mover</string>
+    <string name="rust_move_done">%1$d títulos movidos para fontes Rust</string>
+    <string name="rust_move_confirm_count">Mover %1$d</string>
 </resources>

@@ -310,4 +310,9 @@ Sources from this publisher will run in the app and can see what you search and 
     <string name="pref_discord_show_download_button_summary">Displays a button to download the app</string>
     <string name="pref_discord_show_discord_button">Show Discord Button</string>
     <string name="pref_discord_show_discord_button_summary">Displays a button to join the Discord server</string>
+    <string name="rust_move_title">Move titles to Rust sources</string>
+    <string name="rust_move_message">Titles of sources that are no longer installed can move to the Rust source of the same name and language, with their chapters, history and categories. No search is needed. A site that changed its addresses (Manganato) finds each title again by its name when it is opened.</string>
+    <string name="rust_move_confirm">Move</string>
+    <string name="rust_move_done">%1$d titles moved to Rust sources</string>
+    <string name="rust_move_confirm_count">Move %1$d</string>
 </resources>

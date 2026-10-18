@@ -12,11 +12,13 @@ struct Curl;
 
 impl Http for Curl {
     fn request(&self, req: &HttpRequest) -> HttpReply {
-        let dir = std::env::temp_dir().join(format!("sk-check-{}", std::process::id()));
+        // one folder per request: the host runs the requests of an update in parallel
+        static N: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+        let dir = std::env::temp_dir().join(format!("sk-check-{}-{}", std::process::id(), N.fetch_add(1, std::sync::atomic::Ordering::Relaxed)));
         let _ = std::fs::create_dir_all(&dir);
         let (head, body) = (dir.join("h"), dir.join("b"));
         let mut c = Command::new("curl");
-        c.args(["-s", "-S", "--max-time", "40", "-A", "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Mobile Safari/537.36"]);
+        c.args(["-g", "-s", "-S", "--max-time", "40", "-A", "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Mobile Safari/537.36"]);
         if req.follow_redirects {
             c.arg("-L");
         }
@@ -64,6 +66,27 @@ fn call(s: &mut WasmSource, req: Value) -> Result<Value, String> {
     }
 }
 
+
+/// The picks the app sends when it searches with `source.getFilterList()` untouched (as a library migration does):
+/// every filter at its default, keyed the way `RustFilters.state` does.
+fn default_state(defs: &[Value]) -> Value {
+    let mut o = serde_json::Map::new();
+    for d in defs {
+        let Some(key) = d["key"].as_str() else { continue };
+        let v = match d["type"].as_str() {
+            Some("select") => json!(d["default"].as_i64().unwrap_or(0)),
+            Some("checkbox") => json!(d["default"].as_bool().unwrap_or(false)),
+            Some("tristate") => json!(0),
+            Some("text") => json!(d["default"].as_str().unwrap_or_default()),
+            Some("group") => default_state(d["items"].as_array().map(Vec::as_slice).unwrap_or_default()),
+            Some("sort") => json!({ "index": d["default_index"].as_i64().unwrap_or(0), "ascending": d["default_ascending"].as_bool().unwrap_or(false) }),
+            _ => continue,
+        };
+        o.insert(key.to_string(), v);
+    }
+    Value::Object(o)
+}
+
 fn verdict(error: &str) -> &'static str {
     let e = error.to_lowercase();
     if e.contains("http 403") || e.contains("http 503") || e.contains("just a moment") || e.contains("cloudflare") || e.contains("http 429") {
@@ -78,6 +101,8 @@ fn verdict(error: &str) -> &'static str {
 fn main() {
     let args: Vec<String> = std::env::args().collect();
     let wasm = std::fs::read(&args[1]).expect("module");
+    // a published package: check the module inside it (what the phone downloaded), signature included
+    let wasm = if args[1].ends_with(".sksource") { sk_source::package::decode_and_verify(&wasm).expect("package").wasm } else { wasm };
     let lang = args.get(2).cloned().unwrap_or_else(|| "en".into());
     // SK_MIRROR=https://other.site tests a source against one of its mirrors (the "Domain" setting of the app).
     let ctx = match std::env::var("SK_MIRROR") {
@@ -89,10 +114,49 @@ fn main() {
     let result: Result<(), String> = (|| {
         let info = call(&mut s, json!({ "op": "info", "ctx": ctx }))?;
         out["name"] = info["info"]["name"].clone();
+        if std::env::var("SK_INFO").is_ok() {
+            out["info"] = info["info"].clone();
+        }
         out["base"] = info["info"]["base_url"].clone();
-        let page = call(&mut s, json!({ "op": "popular", "page": 1, "ctx": ctx }))?;
+        // SK_QUERY=title checks the first search result instead of the first popular one
+        // SK_LEGACY_URL=<address> SK_LEGACY_TITLE=<title>: a saved title is opened as the app would (details and chapters)
+        if let (Ok(url), Ok(title)) = (std::env::var("SK_LEGACY_URL"), std::env::var("SK_LEGACY_TITLE")) {
+            let manga = json!({ "url": url, "title": title });
+            let upd = call(&mut s, json!({ "op": "update", "manga": manga, "fetch_details": true, "fetch_chapters": true, "ctx": ctx }))?;
+            out["healed_memo"] = upd["update"]["manga"]["memo"].clone();
+            out["healed_title"] = upd["update"]["manga"]["title"].clone();
+            out["healed_chapters"] = json!(upd["update"]["chapters"].as_array().map(Vec::len).unwrap_or(0));
+            return Ok(());
+        }
+        let page = match std::env::var("SK_QUERY") {
+            Ok(q) => call(&mut s, json!({ "op": "search", "page": 1, "query": q, "ctx": ctx }))?,
+            // SK_OP=latest and SK_PAGE=n list another page (a migration meets titles of every popularity)
+            Err(_) => call(
+                &mut s,
+                json!({ "op": std::env::var("SK_OP").unwrap_or_else(|_| "popular".into()), "page": std::env::var("SK_PAGE").ok().and_then(|p| p.parse::<u32>().ok()).unwrap_or(1), "ctx": ctx }),
+            )?,
+        };
         let mangas = page["page"]["mangas"].as_array().cloned().unwrap_or_default();
         out["popular"] = json!(mangas.len());
+        out["titles"] = json!(mangas.iter().take(5).map(|m| m["title"].clone()).collect::<Vec<_>>());
+        // SK_SELFSEARCH=1: does searching a listed title's own name bring that title back? (what a library migration does)
+        if std::env::var("SK_SELFSEARCH").is_ok() {
+            let defs = call(&mut s, json!({ "op": "filters", "ctx": ctx }))?;
+            out["filters"] = json!(defs["filters"].as_array().map(Vec::len).unwrap_or(0));
+            let state = default_state(defs["filters"].as_array().map(Vec::as_slice).unwrap_or_default());
+            let (mut found, mut misses) = (0, Vec::new());
+            for m in &mangas {
+                let title = m["title"].as_str().unwrap_or_default();
+                let hits = call(&mut s, json!({ "op": "search", "page": 1, "query": title.trim(), "filters": state, "ctx": ctx }))?;
+                let hits = hits["page"]["mangas"].as_array().cloned().unwrap_or_default();
+                match hits.iter().position(|h| h["url"] == m["url"]) {
+                    Some(_) => found += 1,
+                    None => misses.push(json!({ "title": title, "results": hits.len(), "first": hits.first().map(|h| h["title"].clone()) })),
+                }
+            }
+            out["selfsearch_found"] = json!(found);
+            out["selfsearch_misses"] = json!(misses);
+        }
         let first = mangas.first().ok_or("popular is empty")?.clone();
         out["first"] = first["title"].clone();
         let upd = call(&mut s, json!({ "op": "update", "manga": first, "fetch_details": true, "fetch_chapters": true, "ctx": ctx }))?;
@@ -107,6 +171,7 @@ fn main() {
         };
         let n = pages["pages"].as_array().map(Vec::len).unwrap_or(0);
         out["pages"] = json!(n);
+        out["image"] = pages["pages"][0]["image_url"].clone();
         if n == 0 {
             return Err("no pages".into());
         }
