@@ -220,3 +220,18 @@ fn live_api_flow() {
     println!("related: {}", Luscious.related(&page.mangas[0]).unwrap().len());
     assert!(!Luscious.search(1, "love", &Filters::default()).unwrap().mangas.is_empty());
 }
+
+#[test]
+fn a_refusal_from_the_site_is_shown_as_the_sites_message() {
+    set_context("all", &[]);
+    set_mock_http(|r| {
+        Ok(HttpResponse {
+            status: 400,
+            body: r#"{"errors":[{"message":"Invalid Facet Value: 6 for facet: Content Type. Reason: This item cannot be viewed in your location. [Error BK-03]"}]}"#.into(),
+            url: r.url.clone(),
+            ..Default::default()
+        })
+    });
+    let err = Luscious.popular(1).err().unwrap();
+    assert!(err.contains("cannot be viewed in your location") && !err.contains("https://"), "{err}");
+}

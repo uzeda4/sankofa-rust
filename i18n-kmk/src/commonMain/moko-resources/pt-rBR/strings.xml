@@ -254,4 +254,17 @@ As fontes deste publicador vão rodar no app e podem ver o que você busca e lê
     <string name="pref_fetch_manga_chapters_on_add">Buscar capítulos ao adicionar à biblioteca</string>
     <string name="pref_fetch_manga_chapters_on_add_description">Busca novos capítulos de um mangá automaticamente ao adicionar à biblioteca</string>
     <string name="pref_webdav_url">URL do servidor WebDAV</string>
+    <string name="rust_manage_header">Gerenciar fontes do repositório</string>
+    <string name="rust_manage_update_all">Atualizar todas</string>
+    <string name="rust_manage_update_all_summary">%1$d com versão mais nova nos repositórios</string>
+    <string name="rust_manage_install_all">Instalar todas as exibidas</string>
+    <string name="rust_manage_install_all_summary">%1$d não instaladas (segue o filtro de idioma abaixo)</string>
+    <string name="rust_manage_remove_all">Desinstalar todas</string>
+    <string name="rust_manage_remove_all_summary">%1$d instaladas a partir dos repositórios</string>
+    <string name="rust_manage_confirm_install">Instalar %1$d fontes? O publicador delas já é confiável pelo repositório.</string>
+    <string name="rust_manage_confirm_remove">Desinstalar %1$d fontes? Os itens da biblioteca ficam e voltam a funcionar quando a fonte for reinstalada.</string>
+    <string name="rust_manage_done">%1$d concluídas, %2$d com falha</string>
+    <string name="rust_repos_lang_all">Todos</string>
+    <string name="rust_repos_lang_multi">Múltiplos</string>
+    <string name="rust_repos_lang_other">Outros</string>
 </resources>

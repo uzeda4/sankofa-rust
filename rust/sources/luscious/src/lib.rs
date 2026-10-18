@@ -174,7 +174,13 @@ fn api(operation: &str, query: &str, variables: &Value) -> String {
 }
 
 fn fetch<T: for<'de> Deserialize<'de>>(operation: &str, query: &str, variables: &Value) -> Result<T> {
-    Ok(get(&api(operation, query, variables)).send()?.json::<Answer<T>>()?.data)
+    let reply = get(&api(operation, query, variables)).allow_errors().send()?;
+    if !(200..300).contains(&reply.status) {
+        // the site explains itself ("This item cannot be viewed in your location"): show that, not a bare status and a long address
+        let message = reply.json::<Value>().ok().and_then(|v| v["errors"][0]["message"].as_str().map(str::to_string));
+        return Err(message.unwrap_or_else(|| format!("HTTP {}", reply.status)));
+    }
+    Ok(reply.json::<Answer<T>>()?.data)
 }
 
 fn album_list(page: u32, sort: &str, filters: &Filters, query: &str) -> Result<MangaPage> {

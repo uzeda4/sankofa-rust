@@ -15,6 +15,10 @@ The text of the matching release on GitHub is what the app shows in **About > Wh
 - Browse > Extensions has a "Rust sources" entry, apart from the APK extensions, that opens the Rust source repository.
 
 ### Fixed
+- Luscious shows the site's own message when it refuses a filter (for example "Real People" is blocked by region and
+  some selections need a login) instead of a bare "HTTP 400" with the whole address (Luscious v3, serial 6).
+- Rust sources screen: "Update all" and the other bulk actions say which source failed and why, refresh the list when
+  done, are translated to Portuguese, and the repository line shows the serial it really has.
 - Luscious in Rust sent no language to the site (a bare "+"): every Luscious source listed all languages. It now sends
   its own language plus the ones ticked in the filters (Luscious v2 in the repository, serial 5; use "Update all").
 - A source in Rust and the APK extension it was ported from were shown as one item in Browse (the Rust one hid the

@@ -93,12 +93,17 @@ class RustSourcesScreen : Screen() {
             busyEntry = "bulk"
             scope.launch {
                 var failed = 0
+                var firstError: String? = null
                 withContext(Dispatchers.IO) {
-                    entries.forEach { e -> runCatching { RustSources.installFromRepo(context, e, reload = false) }.onFailure { failed++ } }
+                    entries.forEach { e ->
+                        runCatching { RustSources.installFromRepo(context, e, reload = false) }
+                            .onFailure { failed++; if (firstError == null) firstError = "${e.name} (${e.lang}): ${it.readable()}" }
+                    }
                     RustSources.reload(context)
                 }
-                context.toast(context.stringResource(KMR.strings.rust_manage_done, entries.size - failed, failed))
+                context.toast(context.stringResource(KMR.strings.rust_manage_done, entries.size - failed, failed) + firstError?.let { "\n$it" }.orEmpty())
                 busyEntry = null
+                refresh()
             }
         }
 
@@ -147,7 +152,7 @@ class RustSourcesScreen : Screen() {
                             subtitle = l.error?.let { stringResource(KMR.strings.rust_repos_error, it) }
                                 ?: stringResource(
                                     KMR.strings.rust_repos_summary,
-                                    l.repo.serial.toInt(),
+                                    (l.info?.serial?.toInt() ?: l.repo.serial.toInt()),
                                     l.info?.sources?.size ?: 0,
                                     l.repo.fingerprint.take(FINGERPRINT_SHORT),
                                 ),

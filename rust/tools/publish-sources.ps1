@@ -22,7 +22,7 @@ $sources = @(
     @{ Dir = 'asmotoon'; Name = 'Asmodeus Scans'; Version = 1; Langs = @('en') },
     @{ Dir = 'asurascans'; Name = 'Asura Scans'; Version = 1; Langs = @('en') },
     @{ Dir = 'kissmangain'; Name = 'Kissmanga.in'; Version = 1; Langs = @('en') },
-    @{ Dir = 'luscious'; Name = 'Luscious'; Version = 2; Langs = $all },
+    @{ Dir = 'luscious'; Name = 'Luscious'; Version = 3; Langs = $all },
     @{ Dir = 'mangademon'; Name = 'Manga Demon'; Version = 1; Langs = @('en') },
     @{ Dir = 'mangafire'; Name = 'MangaFire'; Version = 1; Langs = @('en', 'ja', 'pt', 'es', 'es-419', 'fr', 'pt-BR') },
     @{ Dir = 'mangafox'; Name = 'MangaFox'; Version = 1; Langs = @('en') },
