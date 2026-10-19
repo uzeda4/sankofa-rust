@@ -17,12 +17,12 @@ impl Theme for Manganato {
     // The search page of every address sits behind a Cloudflare challenge the app cannot always solve; the quick search of
     // these two does not (manganato.gg guards that one too).
     const SEARCH_API: &'static [&'static str] = &["https://www.natomanga.com", "https://www.nelomanga.net"];
-    // Library titles saved with an address of the former domains are found again by their title (ids of the old scheme).
-    // The site answers a burst (a library update finding many saved titles again) with 503; the pages and the chapter
-    // API of its addresses are paced, the pictures (another host) are not.
+    // The site answers a burst (a library update finding many saved titles again) with 503, and its picture host
+    // (img-r1.2xstorage.com) answers a burst of pages with 429 and keeps doing it for about a minute: every request, the
+    // pictures included, is paced (2 per second). The app also asks again after a 429.
     const RATE_LIMIT: Option<RateLimit> =
-        Some(RateLimit { permits: 3, period_ms: 1000, host: String::new(), skip_path: String::new() });
-    const RATE_LIMIT_HOSTS: &'static str = "www.manganato.gg,www.natomanga.com,www.nelomanga.net";
+        Some(RateLimit { permits: 2, period_ms: 1000, host: String::new(), skip_path: String::new() });
+    // Library titles saved with an address of the former domains are found again by their title (ids of the old scheme).
     const LEGACY_HOSTS: &'static [&'static str] = &["chapmanganato.to", "manganato.com", "readmanganato.com"];
 }
 

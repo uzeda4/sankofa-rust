@@ -107,6 +107,26 @@ class RustSource(private val info: RustSourceInfo) : HttpSource(), ConfigurableS
     override val client: OkHttpClient by lazy {
         applyCookies()
         super.client.newBuilder().apply {
+            // First, so that a retry goes through the rate limit again: a server that answers 429 or 503 (a picture host
+            // that punishes a burst of pages for a while, or is overloaded) is asked again after a pause instead of
+            // showing an error. Only for GET: asking again must not repeat something that changes the site.
+            addInterceptor { chain ->
+                var response = chain.proceed(chain.request())
+                var pause = 1_500L
+                repeat(RETRIES_ON_429) {
+                    if ((response.code != 429 && response.code != 503) || chain.request().method != "GET" || chain.call().isCanceled()) return@repeat
+                    val asked = response.header("Retry-After")?.toLongOrNull()?.times(1_000)
+                    response.close()
+                    try {
+                        Thread.sleep((asked ?: pause).coerceAtMost(MAX_PAUSE_ON_429))
+                    } catch (_: InterruptedException) {
+                        throw IOException("Canceled")
+                    }
+                    pause *= 2
+                    response = chain.proceed(chain.request())
+                }
+                response
+            }
             (meta["rate_limit"] as? JsonObject)?.let { r ->
                 val permits = (r["permits"] as? JsonPrimitive)?.intOrNull ?: return@let
                 val period = (r["period_ms"] as? JsonPrimitive)?.longOrNull ?: return@let
@@ -312,4 +332,8 @@ class RustSource(private val info: RustSourceInfo) : HttpSource(), ConfigurableS
 }
 
 class RustSourceException(message: String) : Exception(message)
+
+/** Asks again up to this many times when a server answers 429 or 503, waiting 1.5 s, 3 s, 6 s, 12 s, 15 s, 15 s (or its `Retry-After`, at most 15 s). */
+private const val RETRIES_ON_429 = 6
+private const val MAX_PAUSE_ON_429 = 15_000L
 // KMK <--

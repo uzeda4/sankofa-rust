@@ -8,6 +8,20 @@ The text of the matching release on GitHub is what the app shows in **About > Wh
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-10-19
+
+### Fixed
+- HTTP 429 and 503 while reading (Manganato, and any Rust source whose picture host limits requests): the picture host of
+  Manganato answers a good share of the requests with 429 or 503 and keeps doing it for about a minute, whatever the pace.
+  The app now asks again by itself, up to 6 times, waiting 1.5 s, 3 s, 6 s, 12 s and 15 s (or the server's `Retry-After`,
+  at most 15 s), instead of showing the error. Only GET requests are repeated. If the server still refuses after about a
+  minute, the error and its Retry button show as before.
+- Manganato v6: every request of the source, pictures included, goes out at 2 per second at most. Use "Update all" in
+  Settings > Browse > Rust sources.
+
+### Other
+- Repository serial 10 (138 sources): Manganato v6.
+
 ## [0.1.4] - 2026-10-18
 
 ### Added
